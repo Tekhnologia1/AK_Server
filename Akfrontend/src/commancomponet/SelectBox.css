@@ -1,0 +1,17 @@
+.select-box-group {
+    position: relative;
+  }
+  
+  .select-box-input-group {
+    position: relative;
+  }
+  
+  .select-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  

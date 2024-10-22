@@ -1,0 +1,39 @@
+
+.login {
+    background-image: url('../../../assets//images/loginbackground.png');
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+  }
+  .login-second {
+    background-image: url('../../../assets/images/unsplash_m9pzwmxm2rk.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 75%;
+    height: 75%; 
+    border-radius: 8px;
+  }
+
+
+  .login_sign_in_color {
+    color:  #98690C;
+    
+  }
+
+  .hello{
+padding-top: 80px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .login-second {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100%; 
+        border-radius: 8px;
+      }
+    
+  }
+

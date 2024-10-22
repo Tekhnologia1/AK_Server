@@ -1,0 +1,16 @@
+.nav-link {
+    display: flex;
+    align-items: center;
+    color: black; /* Default text color */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for background and text color */
+  }
+  
+  .nav-link:hover {
+    background-color: #7B3F00; /* Background color on hover */
+    color: white; /* Change text color on hover if desired */
+  }
+  
+  .nav-icon {
+    margin-right: 8px; /* Space between icon and text */
+  }
+  

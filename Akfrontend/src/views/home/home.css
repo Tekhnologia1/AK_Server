@@ -1,0 +1,46 @@
+.home-container {
+    width: 100%;
+  }
+  
+  /* Responsive background image */
+  .home_image {
+    background: url('../../assets/images/home.png') no-repeat center center;
+    background-size: cover;
+    height: 40vh;
+    width: 100%;
+  }
+
+  .card-size{
+    width: "28rem !important" 
+     }
+  
+  /* Ensure text alignment and spacing on smaller screens */
+  @media (max-width: 768px) {
+
+    .home_image{
+        background-size: cover;
+        height: 20vh;
+        width: 100%;
+    }
+    .card-size{
+        width: "18rem" 
+     }
+   
+  }
+  
+
+/* 
+  .img-rounded-circle {
+    border-color: #D7BB9E;
+    width: 150px;
+    transform: translateX(1.5rem);
+    top: 40px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 3px;
+    border: 5px solid white;
+    position: relative;
+    z-index: 1;
+    padding-left: 20px;
+  }
+   */

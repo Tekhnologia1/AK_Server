@@ -1,0 +1,291 @@
+.pc_container {
+    padding-top: 28px;
+}
+
+.pc_container .row_margin{
+    margin: 0 10%;
+}
+
+.pc_container .cards {
+    border: 1px solid #D7BB9E;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.pc_container .toggle-group {
+    width: 100%;
+}
+
+.pc_container .toggle-button:focus,
+.pc_container .toggle-button:active {
+    outline: none;
+    box-shadow: none;
+    background: #D7BB9E;
+    border: inherit;
+}
+
+.pc_container .toggle-button {
+    width: 50%;
+    border-radius: 8px;
+    border: 1px solid #D7BB9E;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.pc_container .toggle-button.active {
+    background: #D7BB9E;
+    color: #7B3F00;
+}
+
+.pc_container .outline-cream {
+    background: transparent;
+    color: #171A1F;
+}
+
+.pc_container .inner_spacing {
+    margin-bottom: 30px;
+}
+
+.pc_container .bottom-border {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #CFCECE;
+}
+
+.pc_container .card-title {
+    font-size: 20px;
+    font-weight: 600;
+    font-family: "Noto Sans", sans-serif;
+}
+
+.pc_container .sub-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #0B0A0A;
+    width: max-content;
+}
+
+.pc_container .sub-text {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #64707D;
+}
+
+.pc_container .price_container {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 20px;
+}
+
+.pc_container .increment-decrement-group {
+    border-radius: 8px;
+    background: #7B3F00;
+    color: white;
+    padding: 5px 10px;
+}
+
+.pc_container .btn-custom {
+    background-color: #7B3F00;
+    color: white;
+    border: none;
+    padding: 0;
+}
+
+.pc_container .btn-custom:focus,
+.pc_container .btn-custom:active {
+    outline: none;
+    box-shadow: none;
+    background-color: #7B3F00;
+    color: white;
+}
+
+.pc_container .count-display {
+    background-color: #7B3F00;
+    color: white !important;
+    font-weight: bold;
+    width: 20px;
+    text-align: center;
+    padding: 0;
+}
+
+.pc_container .no_border_input {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    width: 100%;
+    border: none;
+}
+
+.pc_container .no_border_input:focus {
+    outline: unset;
+}
+
+.pc_container .no_border_input::placeholder {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #64707D;
+}
+
+.pc_container .combo_offer {
+    display: flex;
+    gap: 20px;
+}
+
+.pc_container .custom_link {
+    font-family: "Noto Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+.pc_container .payment_text {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #565D6D;
+}
+
+.pc_container .payment_total {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: #0B0A0A;
+}
+
+.pc_container .btn-brown {
+    background: #7B3F00;
+    box-shadow: 0px 8px 17px 0px #6D31ED26;
+    box-shadow: 0px 0px 2px 0px #6D31ED1F;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.pc_container .btn-brown:focus,
+.pc_container .btn-brown:active {
+    outline: none;
+    box-shadow: none;
+    background-color: #7B3F00;
+    color: white;
+}
+
+.pc_container .btn-brown:hover {
+    border: 1px solid #7B3F00;
+    background: transparent;
+    color: #7B3F00;
+}
+
+.pc_container .checkbox-container {
+    margin: 20px 0;
+}
+
+.pc_container .checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
+.pc_container .custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.pc_container .custom-checkbox input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.pc_container .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 1px solid #7a4209;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.pc_container .custom-checkbox input:checked + .checkmark {
+    background-color: #7a4209; 
+    border: none; 
+  }
+
+.pc_container .custom-checkbox .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.pc_container .custom-checkbox input:checked+.checkmark:after {
+    display: block;
+}
+
+.pc_container .checkbox-text {
+    font-size: 14px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    color: #565D6D;
+    margin-left: 5px;
+}
+
+
+.pc_container .info_container {
+    margin: 20px 0px;
+    gap: 15px;
+    display: flex;
+    background: #F7F7F7;
+    padding: 5px 0px;
+}
+
+.pc_container .info_container p {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #565D6D;
+    margin-bottom: 0;
+}
+
+.pc_container .info_container svg{
+    width: 2rem;
+}
+
+@media screen and (max-width: 480px) {
+    .pc_container .row_margin{
+        margin: 0px 15px;
+    }
+    .pc_container .cards{
+        padding: 10px;
+    }
+    .pc_container .sub-title{
+        font-size: 12px;
+    }
+    .pc_container .increment-decrement-group{
+        padding: 5px;
+    }
+    .pc_container .count-display{
+        font-size: 12px;
+    }
+    .pc_container .price_container{
+        justify-content: space-between;
+    }
+}
