@@ -1,185 +1,3 @@
-// import React from "react";
-// import { Row, Col } from "react-bootstrap";
-// import "./home.css";
-// import CommanButton from "../../commancomponet/CommanButton";
-// import Logo from "../../assets/images/ai-01 1.png";
-// function Home() {
-//   return (
-//     <div >
-//       <div className="home-container">
-//         <Row className=" m-0 ">
-//           <Col lg={6} sm={12} className="">
-//             <div className="justify-content-start d-flex align-items-center ps-lg-5 ">
-//               <div>
-//                 <img
-//                   src={Logo}
-//                   alt=""
-//                   style={{ height: "80px", width: "80px" }}
-//                 />
-//               </div>
-//               <div>
-//                 <div className="fs-5 fw-bold " style={{ color: " #522800" }}>
-//                   AK Golden Crust Foods
-//                 </div>
-//                 <div>(OVEN FRESH & DELICIOUS) </div>
-//               </div>
-//             </div>
-//           </Col>
-//           <Col lg={6} sm={12}>
-//             <div className="justify-content-end d-flex pe-lg-5 pe-3"></div>
-//           </Col>
-//         </Row>
-//       </div>
-
-//       <div className="home_image img-fluid"></div>
-
-//       <div className="" style={{ backgroundColor: " #F2ECE6" }}>
-//         <div className="row m-0 p-lg-5">
-//         <div className="col-lg-9">
-//   <div className="fs-5 fw-bold pb-3">Menu</div>
-//   <div className="row m-0 p-lg-2">
-//     <div className="col-lg-3 col-sm-6 col-6">
-//       <div className="card" style={{ width: "18rem" }}>
-//         <div className="card-body">
-//           <h5 className="card-title">Card title</h5>
-//           <p className="card-text">
-//             Some quick example text to build on the card title and make up the
-//             bulk of the card's content.
-//           </p>
-//           <a href="#" className="btn btn-primary">
-//             Go somewhere
-//           </a>
-//         </div>
-//       </div>
-//     </div>
-//     <div className="col-lg-3 col-sm-6 col-6">
-//       <div className="card" style={{ width: "18rem" }}>
-//         <div className="card-body">
-//           <h5 className="card-title">Card title</h5>
-//           <p className="card-text">
-//             Some quick example text to build on the card title and make up the
-//             bulk of the card's content.
-//           </p>
-//           <a href="#" className="btn btn-primary">
-//             Go somewhere
-//           </a>
-//         </div>
-//       </div>
-//     </div>
-//     <div className="col-lg-3 col-sm-6 col-6">
-//       <div className="card" style={{ width: "18rem" }}>
-//         <div className="card-body">
-//           <h5 className="card-title">Card title</h5>
-//           <p className="card-text">
-//             Some quick example text to build on the card title and make up the
-//             bulk of the card's content.
-//           </p>
-//           <a href="#" className="btn btn-primary">
-//             Go somewhere
-//           </a>
-//         </div>
-//       </div>
-//     </div>
-//     <div className="col-lg-3 col-sm-6 col-6">
-//       <div className="card" style={{ width: "18rem" }}>
-//         <div className="card-body">
-//           <h5 className="card-title">Card title</h5>
-//           <p className="card-text">
-//             Some quick example text to build on the card title and make up the
-//             bulk of the card's content.
-//           </p>
-//           <a href="#" className="btn btn-primary">
-//             Go somewhere
-//           </a>
-//         </div>
-//       </div>
-//     </div>
-//   </div>
-// </div>
-
-//           <div className="col-lg-3 d-none d-lg-block">
-//   <div className="col-lg-3">
-//     <div className="card card-size" style={{ width: '25rem' }}>
-//       <div className="card-body">
-//         <div className="fs-5 fw-bold pb-4">Your Card</div>
-
-//         <div className="pb-4 d-flex justify-content-center">
-//           <div className="btn-group btn-group-toggle border w-lg-80">
-//             <label
-//               className="btn active"
-//               style={{
-//                 backgroundColor: "#D7BB9E",
-//                 borderColor: "#D7BB9E",
-//                 fontWeight: "500",
-//               }}
-//             >
-//               <div className="ps-lg-5 pe-lg-5">Delivery</div>
-//             </label>
-//             <label className="btn">
-//               <div className="ps-lg-5 pe-lg-5">Pickup</div>
-//             </label>
-//           </div>
-//         </div>
-
-//         <div>
-//           <div>
-//             <div className="row m-0">
-//               <div className="col-lg-8 p-2">
-//                 <div>Eggless Dutch truffle pastry (1 Piece)</div>
-//                 <div>1 x ₹ 129 = ₹129</div>
-//               </div>
-
-//               <div className="col-lg-4">
-//                 <div
-//                   className="btn-group border"
-//                   role="group"
-//                   aria-label="Basic example"
-//                 >
-//                   <button type="button" className="btn">-</button>
-//                   <button type="button" className="btn">1</button>
-//                   <button type="button" className="btn">+</button>
-//                 </div>
-//               </div>
-//             </div>
-
-//             <hr />
-
-//             {/* Repeat structure for other items */}
-
-//             <div className="d-flex justify-content-between p-2">
-//               <div className="fw-bold">Subtotal</div>
-//               <div className="fw-bold">₹129</div>
-//             </div>
-//             <div className="pt-5 d-flex justify-content-center">
-//               <CommanButton
-//                 label="Add Checkout ₹129.00"
-//                 onClick={() => alert("Button clicked!")}
-//                 variant="#7B3F0080"
-//                 className="mb-3 ps-4 pe-4 w-100"
-//                 style={{ borderRadius: "5px" }}
-//               />
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   </div>
-//            </div>
-
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Home;
-
-
-
-
-
-
-
 import React, { useState } from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -197,8 +15,69 @@ import home2 from "../../assets/images/home_2.png";
 import home3 from "../../assets/images/home_3.png";
 import { useNavigate } from "react-router-dom";
 import Header from "../../commancomponet/Header";
+import MenuCard from "../../commancomponet/MenuCard";
 
 function Home() {
+
+
+  const [menuList, setMenuList] = useState([
+    {
+        image: '/images/menu_image.png',
+        name: 'Build Your Own Croissants',
+        type: 'veg',
+        description: 'Extra proteins for an additional charge.',
+        price: '99'
+    },
+    {
+        image: '/images/menu_image.png',
+        name: 'Almond Croissant',
+        type: 'non-veg',
+        description: `Salmon* • Avocado • Cucumber •   Pineapple • Carrot • Sesame Seeds •  House Sauce`,
+        price: '139'
+    },
+    {
+        image: '/images/menu_image.png',
+        type: 'veg',
+        name: 'Cajun Spiced Potato Croissant Sandwich',
+        description: `Spicy Salmon* • Spicy Tuna* • Green Onion • Cabbage • Cucumber • Carrot • Jalapeno • Ginger`,
+        price: '379'
+    },
+    {
+        image: '/images/menu_image.png',
+        type: 'veg',
+        name: 'Butter Croissant',
+        description: `Tuna* • Ground Spicy Tuna* • Avocado • Carrot •Cucumber • Edamame • Watermelon • Radish `,
+        price: '99'
+    },
+    {
+        image: '/images/menu_image.png',
+        type: 'non-veg',
+        name: 'Creamy Donuts',
+        description: `Tuna* • Shrimp • Carrot • Mango • Jalapeno • Cucumber • Chili Flakes • Sesame Seeds `,
+        price: '49'
+    },
+    {
+        image: '/images/menu_image.png',
+        type: 'non-veg',
+        name: 'The Donut',
+        description: `Tuna* •  Salmon •  Shrimp • Seaweed • Salad • Jalapeno • Sweet Onion • Edamame • Cucumber`,
+        price: '29'
+    },
+    {
+        image: '/images/menu_image.png',
+        type: 'veg',
+        name: 'Almond Cinnamon Roll',
+        description: `Shrimp • Crab • Cucumber • Green Onion • Carrot • Edamame • Avocado • Soy Sauce • Spicy Mayo Drizzle`,
+        price: '79'
+    },
+    {
+        image: '/images/menu_image.png',
+        type: 'veg',
+        name: 'Custard Donut',
+        description: `Spicy Salmon* • Green Onion • Avocado • Cucumber  •  House Sauce mixed with light sriracha •  Lemon`,
+        price: '99'
+    },
+])
   const navigate=useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -230,42 +109,52 @@ function Home() {
     image: donut,
   }));
 
+
+  const CarouselImageFirst = ({ text, image }) => (
+    <img src={home1} alt={text} className="d-block w-100" />
+  );
+  const CarouselImageSecond = ({ text, image }) => (
+    <img src={home2} alt={text} className="d-block w-100" />
+  );
+  const CarouselImageThird = ({ text, image }) => (
+    <img src={home3} alt={text} className="d-block w-100" />
+  );
+
+  const UncontrolledExample = () => {
+    return (
+      <Carousel>
+        <Carousel.Item>
+          <CarouselImageFirst text="First slide" />
+        </Carousel.Item>
+
+        <Carousel.Item>
+          <CarouselImageSecond text="Second slide" />
+        </Carousel.Item>
+
+        <Carousel.Item>
+          <CarouselImageThird text="Third slide" />
+        </Carousel.Item>
+      </Carousel>
+    );
+  }
+
+
   return (
     <div className="home-container">
-      {/* <Row className="m-0">
-        <Col lg={6} sm={12} className="">
-          <div className="justify-content-start d-flex align-items-center ps-lg-5 ">
-            <div>
-              <img
-                src={Logo}
-                alt="A. K. Golden Crust Foods"
-                className="img-fluid"
-                style={{ height: "80px", width: "80px" }}
-              />
-            </div>
-            <div>
-              <div className="fs-5 fw-bold " style={{ color: " #522800" }}>
-                AK Golden Crust Foods
-              </div>
-              <div>(OVEN FRESH & DELICIOUS) </div>
-            </div>
-          </div>
-        </Col>
-
-        <Col lg={6} sm={12}>
-          <div className="justify-content-end d-flex pe-lg-5 pe-3"></div>
-        </Col>
-      </Row> */}
+   
       <Header/>
-      {/* <UncontrolledExample /> */}
+      <UncontrolledExample />
 
-      <div className="home_image img-fluid"></div>
+      {/* <div className="home_image img-fluid"></div> */}
 
       <div style={{ backgroundColor: "#F2ECE6" }}>
         <Row className="m-0 p-lg-5">
           <Col lg={8} sm={12}>
             <h2 className="fs-5 fw-bold pb-2">Menu</h2>
             <div className="m-0 p-lg-2  row align-items-center">
+
+
+              
               {menuItems.map((item) => (
                 <div key={item.id}  className="mb-3 col-lg-3 col-6">
                   <Card
@@ -306,6 +195,12 @@ function Home() {
                   </Card>
                 </div>
               ))}
+                        {/* {menuList.map((menu, index) => (
+                            <div className="col-sm-4 col-md-4 col-lg-3 col-6 mt-2 pt-2" key={index}>
+                                <MenuCard image={donut} type={menu.type} name={menu.name} description={menu.description} price={menu.price}/>
+                            </div>
+                        ))} */}
+
             </div>
           </Col>
 

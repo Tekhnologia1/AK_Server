@@ -60,7 +60,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
   },
   {
     id: 5,
-    title: "Cafe Deal",
+    title: "Cafe Deals",
     imageSrc: dealsImage,
     altText: "Cafe Deals Image",
     color: "#7B3F00",
@@ -79,7 +79,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/cafedeal'
+    path:'/dashboard/adminpanel/cafeduser'
 
   },
   {
@@ -115,7 +115,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/product'
+    path:'/dashboard/adminpanel/invoices'
 
   },
   {
@@ -127,7 +127,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/product'
+    path:'/dashboard/adminpanel/payment'
 
   },
   {
@@ -139,7 +139,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/product'
+    path:'/dashboard/adminpanel/modulepermmission'
 
   },
   {

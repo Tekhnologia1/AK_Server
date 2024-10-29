@@ -1,0 +1,11 @@
+.custom_multi_select{
+    border-radius: 0px;
+    background: white;
+    border-color: rgba(123, 63, 0, 0.5);
+    padding: 5px;
+}
+
+.custom_multi_select:hover{
+    background: rgba(240, 240, 240);
+    border-color: rgba(255, 127, 80);
+}

@@ -1,17 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputBox from "../../commancomponet/InputBox";
 import CommanButton from "../../commancomponet/CommanButton";
-import Tablecom from "../../commancomponet/Tablecom";
-import { Button } from "react-bootstrap";
+import { Button, Modal, Table } from "react-bootstrap";
 import SearchBox from "../../commancomponet/Searchbox";
-import { FaArrowRight, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaEdit,
+  FaEllipsisV,
+  FaTrash,
+} from "react-icons/fa";
 import productImage from "../../assets/images/lucide_image-down.png";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { validateProductData } from "../validation/Validationall";
+import {
+  createProduct,
+  deleteProduct,
+  fetchFillingTypes,
+  fetchMasterProducts,
+  fetchProducts,
+} from "../store/productSlice";
+import SelectBox from "../../commancomponet/SelectBox";
 
 function Product() {
+  const products = useSelector((state) => state.products.products);
+  const masterProducts = useSelector((state) => state.products.masterProducts);
+  const fillingTypes = useSelector((state) => state.products.fillingTypes);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const navigate=useNavigate()
+  const [showFirstModal, setShowFirstModal] = useState(false);
+  const [deleteId, setDeleteId] = useState();
+  const [errors, setErrors] = useState({});
   const [productData, setProductData] = useState({
     name: "",
     details: "",
@@ -20,10 +41,23 @@ function Product() {
     basePrice: "",
     makingPrice: "",
   });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
 
   
-  const [selectedImage, setSelectedImage] = useState(null); // State for the uploaded image
+  const transformedCities = masterProducts.map((masterproduct) => ({
+    label: masterproduct.name,
+    option: masterproduct.pro_mast_id,
+  }));
+
+
+  const transformedfillingtype= fillingTypes.map((fillingtype) => ({
+    label: fillingtype.name,
+    option: fillingtype.filling_types_id,
+  }));
+
 
   const columns = [
     "#",
@@ -31,22 +65,31 @@ function Product() {
     "Product Details",
     "Price",
     "Marking Price",
+    "Status",
   ];
 
-  const handleButtonClick = (productId) => {
-    console.log(`Button clicked for product ${productId}`);
+  useEffect(() => {
+    dispatch(fetchFillingTypes())
+    dispatch(fetchProducts());
+    dispatch(fetchMasterProducts())
+  }, [dispatch]);
+
+  const handleFirstModalClose = () => setShowFirstModal(false);
+  const handleFirstModalShow = (id) => {
+    setDeleteId(id);
+    setShowFirstModal(true);
   };
 
-  const data = [
-    // ... Your existing data
-  ];
-
   const handleAddButtonClick = () => {
-    // Process the data (e.g., log it or send it to an API)
-    console.log("Product Data:", productData);
+    const validationErrors = validateProductData(productData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+console.log("productData",productData)
+    setErrors({});
+    dispatch(createProduct(productData)); // Pass product data to createProduct
     alert("Product added: " + JSON.stringify(productData));
-
-    // Optionally reset the input fields
     setProductData({
       name: "",
       details: "",
@@ -59,37 +102,79 @@ function Product() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProductData((prevData) => ({
-      ...prevData,
+    const updatedData = {
+      ...productData,
       [name]: value,
-    }));
+    };
+  
+    if (name === "basePrice" || name === "weight") {
+      updatedData.makingPrice = updatedData.basePrice * updatedData.weight;
+    }
+  
+    setProductData(updatedData);
   };
-
-  // Handle image upload
+  
   const handleImageUpload = (e) => {
-    const file = e.target.files[0]; // Get the selected file
+    const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSelectedImage(reader.result); // Set the image preview
+        setSelectedImage(reader.result);
       };
-      reader.readAsDataURL(file); // Read the file as a data URL
+      reader.readAsDataURL(file);
     }
   };
 
+  const handleDelete = async () => {
+    if (deleteId) {
+      await dispatch(deleteProduct(deleteId));
+      dispatch(fetchProducts());
+      setShowFirstModal(false);
+    }
+  };
+
+
+
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="p-lg-5 ">
-
-
-<div className="pb-2">
-        <span onClick={()=>{navigate('/dashboard/adminpanel')}}  style={{ color: '#7B3F00', cursor: 'pointer' }}
- className="fs-5 fw-bold">Adminpanel</span><span style={{color:'#7B3F00'}}> <FaArrowRight/></span><span className="fs-5 fw-bold " style={{color:'#7B3F00'}}> Product</span>  
-
-
+    <div className="p-lg-5">
+      <div className="pb-2">
+        <span
+          onClick={() => navigate("/dashboard/adminpanel")}
+          style={{ color: "#7B3F00", cursor: "pointer" }}
+          className="fs-5 fw-bold"
+        >
+          Adminpanel
+        </span>
+        <span style={{ color: "#7B3F00" }}>
+          <FaArrowRight />
+        </span>
+        <span className="fs-5 fw-bold" style={{ color: "#7B3F00" }}>
+          Product
+        </span>
       </div>
+
       <div className="row m-0 border rounded pb-3">
-        <div className="col-lg-10 p-4 ">
-          <div className="row m-0 ">
+        <div className="col-lg-12 p-4">
+          <div className="row m-0">
+            <div className="col-lg-4 gy-4">
+              <SelectBox
+                options={transformedCities}
+                value={productData.selectedPaymentTerm}
+                onChange={handleChange}
+                name="selectedPaymentTerm"
+                defaultValue="Master Product"
+              />
+              <p className="text-danger">{errors.selectedPaymentTerm}</p>
+            </div>
             <div className="col-lg-4 gy-4">
               <InputBox
                 placeholder="Product Name"
@@ -97,6 +182,7 @@ function Product() {
                 onChange={handleChange}
                 name="name"
               />
+              {errors.name && <p className="text-danger">{errors.name}</p>}
             </div>
             <div className="col-lg-4 gy-4">
               <InputBox
@@ -105,17 +191,22 @@ function Product() {
                 onChange={handleChange}
                 name="details"
               />
+              {errors.details && <p className="text-danger">{errors.details}</p>}
             </div>
-            <div className="col-lg-4 gy-4 ">
-              <InputBox
-                placeholder="Fill items"
+          </div>
+
+
+          <div className="row m-0">
+            <div className="col-lg-4 gy-4">
+              <SelectBox
+                options={transformedfillingtype}
                 value={productData.items}
                 onChange={handleChange}
                 name="items"
+                defaultValue="Fill items"
               />
+              <p className="text-danger">{errors.items}</p>
             </div>
-          </div>
-          <div className="row m-0 ">
             <div className="col-lg-4 gy-4">
               <InputBox
                 placeholder="Product Wt."
@@ -123,6 +214,7 @@ function Product() {
                 onChange={handleChange}
                 name="weight"
               />
+              {errors.weight && <p className="text-danger">{errors.weight}</p>}
             </div>
             <div className="col-lg-4 gy-4">
               <InputBox
@@ -131,6 +223,23 @@ function Product() {
                 onChange={handleChange}
                 name="basePrice"
               />
+              {errors.basePrice && <p className="text-danger">{errors.basePrice}</p>}
+            </div>
+          </div>
+
+
+          <div className="row m-0 justify-content-center">
+
+
+          <div className="col-lg-4 gy-4">
+              <SelectBox
+                options={transformedfillingtype}
+                value={productData.items}
+                onChange={handleChange}
+                name="items"
+                defaultValue="Price Scale"
+              />
+              <p className="text-danger">{errors.items}</p>
             </div>
             <div className="col-lg-4 gy-4">
               <InputBox
@@ -139,29 +248,47 @@ function Product() {
                 onChange={handleChange}
                 name="makingPrice"
               />
+              {errors.makingPrice && <p className="text-danger">{errors.makingPrice}</p>}
             </div>
           </div>
         </div>
-        <div className="col-lg-2 d-flex align-items-center justify-content-center pt-2">
+
+
+
+
+
+        
+        {/* <div className="col-lg-2 d-flex align-items-center justify-content-center pt-2">
           <div
             className="p-lg-5"
-            style={{ backgroundColor: "#F2ECE6", border: "dotted", cursor: "pointer" }}
-            onClick={() => document.getElementById("fileInput").click()} // Trigger file input click
+            style={{
+              backgroundColor: "#F2ECE6",
+              border: "dotted",
+              cursor: "pointer",
+            }}
+            onClick={() => document.getElementById("fileInput").click()}
           >
             {selectedImage ? (
-              <img src={selectedImage} alt="Selected" style={{ width: "100%", height: "auto" }} />
+              <img
+                src={selectedImage}
+                alt="Selected"
+                style={{ width: "100%", height: "auto" }}
+              />
             ) : (
               <img src={productImage} alt="Upload" />
             )}
             <input
               type="file"
               id="fileInput"
-              style={{ display: "none" }} // Hide the file input
-              accept="image/*" // Accept only images
-              onChange={handleImageUpload} // Handle image upload
+              style={{ display: "none" }}
+              accept="image/*"
+              onChange={handleImageUpload}
             />
           </div>
-        </div>
+        </div> */}
+
+
+
 
         <div className="d-flex justify-content-center pt-2">
           <CommanButton
@@ -179,58 +306,69 @@ function Product() {
           <div className="col-lg-4">
             <SearchBox
               placeholder="Type to search..."
-              value={"searchTerm"}
-              // onChange={handleSearchChange}
-              // onSearch={handleSearchClick}
+              value={searchTerm}
+              onChange={handleSearchChange}
             />
           </div>
         </div>
       </div>
 
-      <div className="pt-5">
-        <Tablecom columns={columns} data={data} />
+      <div className="pt-4">
+        <Table responsive="sm">
+          <thead>
+            <tr className="text-center">
+              {columns.map((column, index) => (
+                <th
+                  key={index}
+                  style={{ backgroundColor: "#F2ECE6", color: "#7B3F00" }}
+                >
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredProducts.map((item, rowIndex) => (
+              <tr key={item.id} className="text-center">
+                <td>{rowIndex + 1}</td>
+                <td>{item.name}</td>
+                <td>{item.details}</td>
+                <td>{item.base_price}</td>
+                <td>{item.making_price}</td>
+                <td>
+                  <Button variant="transparent">
+                    <FaEdit />
+                  </Button>
+                  <Button
+                    variant="transparent"
+                    onClick={() => handleFirstModalShow(item.id)}
+                  >
+                    <FaTrash />
+                  </Button>
+                  <Button variant="transparent">
+                    <FaEllipsisV />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
 
-      <div>
-        <nav aria-label="Page navigation example">
-          <ul className="pagination justify-content-end">
-            <li className="page-item disabled">
-              <a className="page-link" href="#" tabIndex="-1">
-                <FaChevronLeft /> {/* Left arrow icon */}
-              </a>
-            </li>
-            <li className="page-item ">
-              <a
-                className="page-link text-white"
-                style={{ backgroundColor: " #7B3F00" }}
-                href="#"
-              >
-                1
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                2
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                ...
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                3
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                <FaChevronRight /> {/* Right arrow icon */}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      <Modal show={showFirstModal} onHide={handleFirstModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleFirstModalClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

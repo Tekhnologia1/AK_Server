@@ -1,0 +1,9 @@
+
+.sidebar-narrow-unfoldable:hover {
+    width: 64px !important; /* Maintain folded width on hover */
+    transition: none !important; /* Disable transition effects */
+  }
+
+  .sidebar-narrow-unfoldable:hover{
+    box-shadow: none !important;
+  }

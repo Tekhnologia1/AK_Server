@@ -142,8 +142,106 @@
 
 // export default AppHeader;
 
+// import React, { useEffect, useRef } from "react";
+// import { NavLink, useNavigate } from "react-router-dom";
+// import { useSelector, useDispatch } from "react-redux";
+// import { Envelope, Bell } from "react-bootstrap-icons";
+// import {
+//   CContainer,
+//   CHeader,
+//   CHeaderNav,
+//   CHeaderToggler,
+//   CNavLink,
+//   CNavItem,
+// } from "@coreui/react";
+// import { AppHeaderDropdown } from "./header/index";
+// import { set } from "../views/store/uiSlice";
+// import { FaBed, FaBell, FaEnvelope } from "react-icons/fa";
 
+// const AppHeader = () => {
+//   const navigate = useNavigate();
+//   const headerRef = useRef();
+//   const dispatch = useDispatch();
+//   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
 
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       if (headerRef.current) {
+//         headerRef.current.classList.toggle(
+//           "shadow-sm",
+//           document.documentElement.scrollTop > 0
+//         );
+//       }
+//     };
+
+//     document.addEventListener("scroll", handleScroll);
+
+//     return () => {
+//       document.removeEventListener("scroll", handleScroll);
+//     };
+//   }, []);
+
+//   return (
+//     <CHeader
+//       position="sticky"
+//       className="mb-4 p-0"
+//       ref={headerRef}
+//       style={{ background: "#FFFFFF" }} // Fixed background color to white
+//     >
+//       <CContainer className="border-bottom px-4" fluid>
+//         <CHeaderToggler
+//           onClick={() => dispatch(set({ sidebarShow: !sidebarShow }))}
+//           style={{ marginInlineStart: "-14px" }}
+//         >
+//           <svg
+//             xmlns="http://www.w3.org/2000/svg"
+//             width="24"
+//             height="24"
+//             fill="currentColor"
+//             className="bi bi-list"
+//             viewBox="0 0 16 16"
+//           >
+//             <path
+//               fillRule="evenodd"
+//               d="M2.5 12a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0-5.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0-5.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11z"
+//             />
+//           </svg>
+//         </CHeaderToggler>
+
+//         <CHeaderNav className="d-none d-md-flex">
+//           <CNavItem>
+//             <CNavLink to="/dashboard" component={NavLink}>
+//               Dashboard
+//             </CNavLink>
+//           </CNavItem>
+//         </CHeaderNav>
+
+//         <CHeaderNav className="ms-auto"></CHeaderNav>
+
+//         <CHeaderNav className="d-none d-md-flex pe-5">
+//           <CNavItem className=""></CNavItem>
+
+//           <CNavItem className="">
+//             <CNavLink to="/dashboard" component={NavLink}>
+//               <span className="pe-3">
+//                 <FaEnvelope className="me-3" size={24} />
+//               </span>
+//               <span>
+//                 <FaBell size={24} />
+//               </span>
+//             </CNavLink>
+//           </CNavItem>
+//         </CHeaderNav>
+
+//         <CHeaderNav className="d-flex align-items-center justify-content-center">
+//           <AppHeaderDropdown />
+//         </CHeaderNav>
+//       </CContainer>
+//     </CHeader>
+//   );
+// };
+
+// export default AppHeader;
 
 
 import React, { useEffect, useRef } from "react";
@@ -165,6 +263,7 @@ const AppHeader = () => {
   const headerRef = useRef();
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
+  const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -192,7 +291,10 @@ const AppHeader = () => {
     >
       <CContainer className="border-bottom px-4" fluid>
         <CHeaderToggler
-          onClick={() => dispatch(set({ sidebarShow: !sidebarShow }))}
+          onClick={()=>{
+            dispatch(set({ sidebarUnfoldable: !unfoldable, sidebarShow: window.innerWidth < 768 ? !sidebarShow : true }))
+            // dispatch(set({ sidebarUnfoldable: !unfoldable }))
+          }}
           style={{ marginInlineStart: "-14px" }}
         >
           <svg
