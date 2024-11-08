@@ -1,5 +1,6 @@
 const { query } = require('express');
 const sql = require('../config/database'); 
+const { createFillingType } = require('./fillingTypedController');
 
 const createRoute = async (req, res) => {
     const { name, route_details, route_start_point, route_end_point, cities_id, areas_id } = req.body;
@@ -30,6 +31,57 @@ const getAllRoutes = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+
+
+
+
+// const getAllRoutes = async (req, res) => {
+//     const { page: pageQuery, pageSize: pageSizeQuery } = req.query; // Destructure from req.query
+//     const page = parseInt(pageQuery, 10) || 1; // Default page to 1
+//     const pageSize = parseInt(pageSizeQuery, 10) || 10; // Default pageSize to 10
+//     const offset = (page - 1) * pageSize; // Calculate offset
+
+//     try {
+//         // Call the stored procedure with pagination parameters
+//         console.log('Page:', page);
+//         console.log('Page Size:', pageSize);
+//         console.log('Offset:', offset);
+        
+//         const [routes] = await sql.query('CALL GetAllRoutes(?, ?)', [pageSize, offset]);
+
+//         return res.status(200).json(routes); // Send the paginated routes in the response
+//     } catch (error) {
+//         console.error('Error retrieving routes:', error);
+//         return res.status(500).json({ message: 'Internal Server Error' });
+//     }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const findRouteById = async (req, res) => {
     const routeId = parseInt(req.params.id, 10); // Get the route ID from the request parameters

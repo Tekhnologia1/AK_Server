@@ -23,7 +23,11 @@ const CafeOrder = require('../controllers/cafeOrderController')
 const { verifyToken } = require('../middleware/authMiddleware');
 
 Router.get('/protected', verifyToken, (req, res) => {
-    res.json({ message: 'This is a protected route', employeesId: req.employees_id, employeeTypeId: req.employee_type_id });
+    res.json({
+         message: 'This is a protected route',
+         employeesId: req.employees_id,
+          employeeTypeId: req.employee_type_id 
+        });
 });
 
 

@@ -1,12 +1,24 @@
 const { query } = require('express');
 const sql = require('../config/database'); 
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcrypt');
 // const nodemailer = require('nodemailer');
 
 // POST API to create a new employee
 const createEmployee = async (req, res) => {
-    const { name, username, password, employee_type_id, email, cell_number, salary, enrollment_datetime, increament_datetime, increament_amount, created_by } = req.body;
+    const { 
+        name, 
+        username, 
+        password, 
+        employee_type_id, 
+        email, 
+        cell_number, 
+        salary, 
+        enrollment_datetime, 
+        increament_datetime, 
+        increament_amount, 
+        created_by 
+    } = req.body;
 
     // Validate required fields
     if (!name || !username || !password || !employee_type_id || !email || !cell_number || !salary || !created_by) {
@@ -14,11 +26,14 @@ const createEmployee = async (req, res) => {
     }
 
     try {
-        const hashedPassword = bcrypt.hashSync(password, 8);
+        // Hash the password before storing it
+        const hashedPassword = bcrypt.hashSync(password);
+
+        // Call the stored procedure to create the employee, passing in the hashed password
         const result = await sql.query('CALL CreateEmployee(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             name,
             username,
-            password,
+            hashedPassword,  // Use the hashed password here
             employee_type_id,
             email,
             cell_number,
@@ -29,14 +44,24 @@ const createEmployee = async (req, res) => {
             created_by
         ]);
 
+       // Check if insertion was successful
+       if (!result[0]?.insertId) {
+        // If the employee is successfully created, return the employee ID
         res.status(201).json({
-            message: 'Employee created successfully',
-            employeeId: result[0]?.insertId 
+            message: 'Employee created successfully. Employee ID: ' + result[0]?.insertId,
+            employeeId: result[0]?.insertId  // Return the inserted employee's ID
         });
-    } catch (error) {
-        console.error('Error creating employee:', error);
-        res.status(500).json({ message: 'An error occurred while creating the employee.' });
+    } else {
+        // If insertion failed, return a failure message
+        res.status(500).json({ message: 'Failed to create employee. Please try again later.' });
     }
+} catch (error) {
+    console.error('Error creating employee:', error);
+    res.status(500).json({
+        message: 'An error occurred while creating the employee. Please try again later.',
+        error: error.message // Include the error message in the response for debugging (you can remove this in production)
+    });
+}
 };
 
 // GET API to retrieve all employees
@@ -133,7 +158,7 @@ const updateEmployeeById = async (req, res) => {
             id,
             name,
             username,
-            password,
+            hashedPassword,  // Use the hashed password here
             employee_type_id,
             email,
             cell_number,
@@ -161,6 +186,7 @@ const updateEmployeeById = async (req, res) => {
     }
 };
 
+// login employee API 
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
@@ -170,28 +196,42 @@ const loginUser = async (req, res) => {
     }
 
     try {
+        // Assume `sql.query` is working as expected and returns the user record
         const result = await sql.query('CALL loginUser(?)', [username]);
-        const employee = result[0][0]; // Assuming the first result set contains the employee data
-        // console.log('login user data of employee',employee)
+        const employee = result[0][0]; 
+        
+        if (!employee) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
+        
+        // Step 1: Check if the password is valid using bcrypt
+        const isPasswordValid = await bcrypt.compare(password, employee[0].password);
+   
+        // If password is invalid, return unauthorized error
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
 
-  // Check if employee exists and password is valid
-        // if (!employee || !employee.password || !bcrypt.compareSync(password, employee.password)) {
-        //     return res.status(401).json({ message: 'Invalid credentials' });
-        // }
+        // Step 2: Check employee types and create JWT token
+        const { id, employee_type_id } = employee;
 
-        // Create JWT token
-        const token = jwt.sign({ id: employee.id, employee_type_id: employee.employee_type_id}, 'AKGoldenCrust@99', { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id, employee_type_id }, 
+            'AKGoldenCrust@99', 
+            { expiresIn: '1h' }
+        );
 
         res.status(200).json({
             message: 'Login successful',
-            token: token,
-            employeeTypeId: employee.employee_type_id // Include employee type if needed
+            token,
+            employeeTypeId: employee_type_id
         });
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).json({ message: 'An error occurred while logging in.' });
     }
 };
+
 
 
 

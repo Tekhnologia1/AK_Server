@@ -431,7 +431,7 @@ CREATE TABLE `tbl_employees` (
   `employees_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `employee_type_id` int NOT NULL,
   `email` varchar(255) NOT NULL,
   `cell_number` bigint NOT NULL,
@@ -445,7 +445,7 @@ CREATE TABLE `tbl_employees` (
   `updated_by` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`employees_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -454,7 +454,7 @@ CREATE TABLE `tbl_employees` (
 
 LOCK TABLES `tbl_employees` WRITE;
 /*!40000 ALTER TABLE `tbl_employees` DISABLE KEYS */;
-INSERT INTO `tbl_employees` VALUES (6,'Raj','Raj','123',2,'abc@gmail.com',982727636,37822,'2024-08-06 00:00:00','2024-08-08 00:00:00',100,'2024-10-21 12:12:36','fff','2024-10-26 10:41:42','ssa'),(13,'Raj','Rai','123',3,'abc@gmail.com',9827276363,37822,'2024-08-07 00:00:00','2024-08-09 00:00:00',100,'2024-10-21 12:28:44','fff','2024-10-21 12:28:44',NULL),(14,'Raj','Ri','123',3,'abc@gmail.com',9827276363,37822,'2024-08-07 00:00:00','2024-08-09 00:00:00',100,'2024-10-21 12:28:55','fff','2024-10-21 12:28:55',NULL),(19,'vishal Mavalka','Ckhandagale49_','123',1,'abc@gmail.com',9827276363,100,'2024-10-08 00:00:00','2024-10-16 00:00:00',1000,'2024-10-26 10:41:29','vvv','2024-10-26 10:41:29',NULL),(20,'wdas','gf','ghf',1,'chaitanyank06.tekhnologia@gmail.com',7845121245,54,'2024-10-07 00:00:00','2024-10-07 00:00:00',100,'2024-10-28 06:02:23','vvv','2024-10-28 06:02:23',NULL),(25,'vcgh','hgsd','fghjhjjhjhjh',1,'heda@gmail.com',9827276363,45,'2024-10-28 00:00:00','2024-10-09 00:00:00',1000,'2024-10-28 13:19:31','vvv','2024-10-28 13:19:31',NULL),(27,'dedrewfg','rtgrrgr','frfggtg',1,'abc@gmail.com',7504330304,45,'2024-10-27 00:00:00','2024-10-27 00:00:00',1000,'2024-10-28 13:23:01','vvv','2024-10-29 04:33:11','ssa');
+INSERT INTO `tbl_employees` VALUES (29,'Vishal Mavalkar','vishal@123','123',1,'vishalmavalkar22@gmail.com',7507182677,15000,'2024-01-01 00:00:00','2024-01-06 00:00:00',1000,'2024-11-07 07:45:36','','2024-11-07 07:45:36',NULL),(30,'vinod','vinod123','123',1,'vinod@123gmail.com',7823874837,30000,'2023-01-31 00:00:00','2023-12-31 00:00:00',1000,'2024-11-07 11:49:30','vinod','2024-11-07 11:49:30',NULL),(31,'Ravi Jadhav','Ravi@123','$2a$10$6tZpCmalM5Rf33HdCEHQC.tXVLUhpWzoIl6RVDjLnleqX05JneMS2',1,'ravi@gmail.com',7507182677,15000,'2023-12-31 00:00:00','2024-01-05 00:00:00',1000,'2024-11-07 12:05:54','vinod','2024-11-07 12:05:54',NULL),(33,'Sagar Sonar','Sagar@123','$2a$10$BlbNlKkZ/HkmxFfnbY7Bner4YR.LCH6RTCeSMYhpjPRxnc0d9paVu',1,'sagar@gmail.com',7340232830,13000,'2023-12-31 00:00:00','2024-01-05 00:00:00',1000,'2024-11-07 12:08:36','vinod','2024-11-07 12:08:36',NULL),(34,'Sagar Patil','patil@123','$2a$10$ovN8V6VrOCxvJ49aTfXmWO3xYfqK0gYcXpAvq5dB./AVLOZ/tS/sK',1,'sagarpatil@gmail.com',7340232830,13000,'2023-12-31 00:00:00','2024-01-05 00:00:00',1000,'2024-11-07 12:15:07','vinod','2024-11-07 12:15:07',NULL),(35,'dinesh','dinesh@123','$2a$10$D3o7GJjAaztOzd7EjclzzOY8xYSpGSD3KNAMxTLkt3iNKAr/BLHGi',1,'dinesh@gmail.com',7340232830,13000,'2023-12-31 00:00:00','2024-01-05 00:00:00',1000,'2024-11-07 12:17:51','vinod','2024-11-07 12:17:51',NULL),(36,'Tekhnologia','tekhnologia@gmail.com','Tekh@123',1,'tekh@gmail.com',1234567890,12,'2024-11-12 00:00:00','2024-12-11 00:00:00',12,'2024-11-07 13:04:19','ck','2024-11-07 13:04:19',NULL);
 /*!40000 ALTER TABLE `tbl_employees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2677,4 +2677,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-29 18:37:00
+-- Dump completed on 2024-11-08 11:34:23

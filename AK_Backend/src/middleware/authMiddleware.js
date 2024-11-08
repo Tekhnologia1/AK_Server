@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 
+// Middleware to verify token and authorize user
 const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.headers['authorization']?.split(' ')[1]; // Extract token from Authorization header
 
     if (!token) {
         return res.status(403).json({ message: 'Token is required' });
@@ -11,10 +12,14 @@ const verifyToken = (req, res, next) => {
         if (err) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
+        req.employee_id = decoded.id;  
+        req.employee_type_id = decoded.employee_type_id;
 
-        req.userId = decoded.id;
-        req.role_id = decoded.role_id;
-        next();
+        if (req.employee_type_id !== 1) { // Example: Only allow employee type 1 (e.g., admin)
+            return res.status(403).json({ message: 'Access forbidden: You do not have sufficient permissions' });
+        }
+
+        next(); 
     });
 };
 
