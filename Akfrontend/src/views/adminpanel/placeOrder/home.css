@@ -1,0 +1,232 @@
+.home-container {
+    width: 100%;
+    background-color: #F2ECE6;
+  }
+  
+  /* Responsive background image */
+  .home_image {
+    background: url('../../../assets/images/home.png') no-repeat center center;
+    background-size: cover;
+    height: 40vh;
+    width: 100%;
+  }
+  
+  .card-size {
+    width: "28rem !important"
+  }
+  
+  .bottom_card .menu_card {
+    height: 200px;
+    padding-top: 50%;
+  }
+  
+  
+  .card-size .toggle-group {
+    width: 100%;
+  }
+  
+  .card-size .toggle-button:focus,
+  .card-size .toggle-button:active {
+    outline: none;
+    box-shadow: none;
+    background: #D7BB9E;
+    border: inherit;
+  }
+  
+  .card-size .toggle-button {
+    width: 50%;
+    border-radius: 8px;
+    border: 1px solid #D7BB9E;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .card-size .toggle-button.active {
+    background: #D7BB9E;
+    color: #7B3F00;
+  }
+  
+  .card-size .outline-cream {
+    background: transparent;
+    color: #171A1F;
+  }
+  
+  .cream_btn {
+    background: #FFF4D0;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #7B3F00;
+    padding: 5px;
+    border: 1px solid transparent;
+    font-weight: 600;
+  }
+  
+  button.btn.btn-primary.cream_btn:hover,
+  button.btn.btn-primary.cream_btn:active,
+  button.btn.btn-primary.cream_btn:focus{
+    background: #FFF4D0;
+    color: #7B3F00;
+    border: 1px solid transparent;
+  }
+  
+  .menu_cost {
+    font-size: 12px;
+    color: #171A1F;
+    margin-bottom: 0;
+    font-weight: 600;
+  }
+  
+  .custom_close_btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  
+  .swip_cont {
+    position: relative;
+  }
+  
+  .swip_cont .img_cont {
+    position: absolute;
+    top: -47%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 63%;
+    height: 80%;
+    padding: 0px 10px;
+    margin-top: 10px;
+  }
+  
+  .swip_card_img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+  }
+  
+  .swipper_card {
+    cursor: default;
+    padding-top: 25%;
+    margin-top: 35%;
+  }
+  
+  .quantity_grp .increment-decrement-group {
+    border-radius: 8px;
+    background: #7B3F00;
+    color: white;
+    padding: 0;
+  }
+  
+  .quantity_grp .btn-custom {
+    border: 1px solid #7B3F00;
+    color: #7B3F00;
+    background-color: white;
+    /* border: none; */
+    padding: 0;
+  }
+  
+  .quantity_grp .btn-custom:focus,
+  .quantity_grp .btn-custom:active
+   {
+    outline: none;
+    box-shadow: none;
+    background-color: white;
+    color: #7B3F00;
+    border-color: #7B3F00;
+  }
+
+  .quantity_grp .btn-custom:hover{
+    background-color: #7B3F00;
+    color: white;
+  }
+  
+  .quantity_grp .count-display {
+    background-color: #7B3F00;
+    color: white !important;
+    font-weight: bold;
+    width: 20px;
+    text-align: center;
+    padding: 0;
+  }
+  
+  .quantity_grp .remove_icon{
+    cursor: pointer;
+  }
+  
+  .quantity_grp .remove_icon:hover{
+    color: red;
+  }
+  
+  /* Ensure text alignment and spacing on smaller screens */
+  @media (max-width: 768px) {
+  
+    .home_image {
+      background-size: cover;
+      height: 20vh;
+      width: 100%;
+    }
+  
+    .card-size {
+      width: "18rem"
+    }
+  
+  }
+  
+  
+  /* 
+    .img-rounded-circle {
+      border-color: #D7BB9E;
+      width: 150px;
+      transform: translateX(1.5rem);
+      top: 40px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 3px;
+      border: 5px solid white;
+      position: relative;
+      z-index: 1;
+      padding-left: 20px;
+    }
+     */
+  
+  .checkout_btn {
+    width: 100%;
+  }
+  
+  @media only screen and (min-width: 1300px) {
+    .home-container .men_row {
+      padding: 3rem;
+    }
+  }
+  
+  @media only screen and (min-width: 576px) {
+    .bottom_card .menu_card {
+      padding-top: 40% !important;
+    }
+  
+    .bottom_card .img_container {
+      top: -34% !important;
+      width: 100% !important;
+    }
+  }
+  
+  @media only screen and (min-width: 1300px) {
+    .card-size .toggle-group {
+      width: 80%;
+    }
+  
+    .checkout_btn {
+      width: 80%;
+    }
+  }

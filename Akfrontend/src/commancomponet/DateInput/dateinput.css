@@ -1,0 +1,37 @@
+.custom_date .p-calendar{
+    width: 100%;
+}
+
+.p-datepicker.p-component.p-ripple-disabled{
+    z-index: 1100 !important;
+}
+
+.custom_date .p-inputtext{
+    padding: 12px;
+    border-radius: 4px 0px 0px 4px;
+    border-color: rgba(123, 63, 0, 0.5);
+    background-color: white;
+    border-right: none;
+}
+
+.custom_date .p-calendar:not(.p-calendar-disabled).p-focus > .p-inputtext{
+    outline: unset;
+    box-shadow: none;
+}
+
+.custom_date .p-button{
+    border-color: rgba(123, 63, 0, 0.5);
+    background: white;
+    border-radius: 0px 4px 4px 0px;
+    border-left: unset;
+    color: #9F9F9F;
+}
+
+.custom_date .p-inputtext:active,
+.custom_date .p-inputtext:focus{
+    box-shadow: unset;
+}
+
+.custom_date .p-button:focus{
+    box-shadow: none;
+}

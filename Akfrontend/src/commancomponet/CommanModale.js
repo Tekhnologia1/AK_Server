@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
 
-const CommonModal = ({ show, handleClose, isUpdate, modalForm, title, message, handleConfirm }) => {
+const CommonModal = React.memo(({ show, handleClose, isUpdate, component, title, message, handleConfirm }) => {
     return (
         <Modal
             show={show}
@@ -14,7 +14,7 @@ const CommonModal = ({ show, handleClose, isUpdate, modalForm, title, message, h
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
             {isUpdate ?
-                <Modal.Body>{modalForm}</Modal.Body> :
+                <Modal.Body>{component}</Modal.Body> :
                 <Modal.Body>{message}</Modal.Body>}
             {!isUpdate && <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
@@ -26,6 +26,5 @@ const CommonModal = ({ show, handleClose, isUpdate, modalForm, title, message, h
             </Modal.Footer>}
         </Modal>
     )
-}
-
+});
 export default CommonModal;

@@ -18,7 +18,10 @@ const UserTypes = require('../controllers/userType');
 const CafeUser = require('../controllers/cafeUsersController');
 const CafeOrderDetails = require('../controllers/cafeOrderDetailsController')
 const CafeOrder = require('../controllers/cafeOrderController')
-
+const CafeOrderDeliveries = require('../controllers/CafeOrderDeliveriesController');
+const DeliveryVendors = require('../controllers/DeliveryVendorsController');
+const CafePayment = require('../controllers/CafePaymentController');
+const InvoiceDetails = require('../controllers/InvoiceDetailsController');
 
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -30,32 +33,19 @@ Router.get('/protected', verifyToken, (req, res) => {
         });
 });
 
-
 // tbl_employee_types 
-
 Router.post('/AddEmploytype', EmployeeTypeController.create); // Create a new Employee Type
-
 Router.get('/GetAllEmployeeTypes', EmployeeTypeController.getAll); // Retrieve all Employee Types
-
 Router.get('/employee-types/:id', EmployeeTypeController.findEmployeeTypeById); // Retrieve a single Employee Type by id
-
 Router.put('/employee-types/:id', EmployeeTypeController.updateEmployeeTypeById); // Update an Employee Type by id
-
 Router.delete('/employee-types/:id', EmployeeTypeController.deleteById); // Delete an Employee Type by id
 
-
 // tbl_employees routes
-
 Router.post('/AddEmployee', EmployeesController.createEmployee); // Create a new Employee Type
-
 Router.get('/getAllEmployee', EmployeesController.getAllEmployees); // Retrieve all Employee Types
-
 Router.get('/employee/:id', EmployeesController.findEmployeeById); //rerieve single id wise employee data
-
 Router.delete('/employee/:id', EmployeesController.deleteEmployeeById); //delete an employee by id
-
 Router.put('/employee/:id', EmployeesController.updateEmployeeById); //update employee by id
-
 Router.post('/login', EmployeesController.loginUser); //login AK Employees 
 
 // tbl_cities routes 
@@ -68,7 +58,6 @@ Router.get('/GetAllAreas',AreasController.getAllAreas);
 Router.get('/findAreaById/:id', AreasController.findAreaById);
 Router.delete('/deleteAreaById/:id', AreasController.deleteAreaById);
 Router.put('/updateAreaById/:id', AreasController.updateAreaById);
-
 
 // tbl_routes routes
 Router.post('/CreateRoutes', RoutesController.createRoute);
@@ -142,16 +131,42 @@ Router.get('/GetAllCafeUsers', CafeUser.getAllCafeUsers);
 Router.get('/GetCafeUserById/:id',CafeUser.findCafeUserById)
 Router.delete('/DeleteCafeUser/:id', CafeUser.deleteCafeUser);
 Router.put('/UpdateCafeUser/:id', CafeUser.updateCafeUser)
+Router.post('/loginCafeUser', CafeUser.loginCafeUser);
 
 // Cafe order Details routes
 Router.post('/CreateCafeOrderDetails', CafeOrderDetails.createCafeOrderDetails);
-Router.get('/GetAllCafeOrderDetails', CafeOrderDetails.getAllCafeOrderDetails);
+Router.get('/GetAllCafeOrderDetails', CafeOrderDetails.GetAllCafeOrderDetails);
 Router.get('/GetCafeOrderDetailsById/:id',CafeOrderDetails.findCafeOrderDetailsById)
 Router.delete('/DeleteCafeOrderDetailsById/:id', CafeOrderDetails.deleteCafeOrderDetailsById);
 Router.put('/UpdateCafeOrderDetailsById/:id', CafeOrderDetails.updateCafeOrderDetailsById);
 
 // cafe order routes
-Router.post('/CreateCafe', CafeOrder.createCafeOrder);
+Router.post('/CreateCafeOrder', CafeOrder.createCafeOrder);
+Router.get('/GetAllCafeOrders', CafeOrder.getAllCafeOrders);
+Router.get('/FindCafeOrderById/:id', CafeOrder.findCafeOrderById);
+Router.delete('/DeleteCafeOrder/:id', CafeOrder.deleteCafeOrder);
+Router.put('/UpdateCafeOrder/:id', CafeOrder.updateCafeOrderById);
 
+// cafe order deliveries
+Router.post('/CafeOrderDeliveries', CafeOrderDeliveries.createCafeOrderDelivery);
+Router.get('/GetAllCafeOrdersDeliveries', CafeOrderDeliveries.getAllCafeOrderDeliveries);
+
+// Delivery Vendors
+Router.post('/CreateDilevaryVendor', DeliveryVendors.createDeliveryVendor);
+Router.get('/GetAllVendorsList', DeliveryVendors.getAllDeliveryVendors);
+Router.delete('/deleteDelivaryVendor/:dv_id', DeliveryVendors.deleteVendor);
+Router.put('/UpdateDelivaryVendor/:dv_id', DeliveryVendors.updateDeliveryVendor);
+
+// cafe Payment 
+Router.post('/CreateCafePayment', CafePayment.createCafePayment);
+Router.get('/GetAllCafePayments', CafePayment.getAllCafePayments);
+Router.delete('/DeleteCafePayment/:id', CafePayment.deleteCafePayment);
+Router.put('/UpdateCafePayment/:id', CafePayment.updateCafePayment);
+
+// Invoice Details
+Router.post('/CreateInvoiceDetails', InvoiceDetails.createInvoiceDetails);
+Router.get('/GetAllInvoiceDetails', InvoiceDetails.getAllInvoiceDetails);
+Router.delete('/DeleteInvoiceDetails/:id', InvoiceDetails.deleteInvoiceDetails);
+Router.put('/UpdateInvoiceDetails/:id', InvoiceDetails.updateInvoiceDetails);
 
 module.exports = Router;

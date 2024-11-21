@@ -7,3 +7,11 @@
   .sidebar-narrow-unfoldable:hover{
     box-shadow: none !important;
   }
+
+  .outline_btn{
+    border: 1px solid #7B3F00;
+    background: white;
+    color: #7B3F00;
+    border-radius: 4px;
+    width: 100%;
+  }

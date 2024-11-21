@@ -1,7 +1,5 @@
-// src/components/Areas.js
 import React, { useEffect, useState } from "react";
 import AreaForm from "./AreaForm ";
-import AreaTable from "./AreaTable ";
 import { useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -12,12 +10,17 @@ import {
   fetchCities,
   updateArea,
 } from "../store/areaSlice";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, ModalBody, Table } from "react-bootstrap";
 import { validateAreaForm } from "../validation/Validationall";
 import InputBox from "../../commancomponet/InputBox";
 import SelectBox from "../../commancomponet/SelectBox";
 import CommanButton from "../../commancomponet/CommanButton";
 import SearchBox from "../../commancomponet/Searchbox";
+import Pagination1 from "../../commancomponet/Pagination1";
+import { FaEdit, FaEllipsisV, FaEye, FaTrash } from "react-icons/fa";
+import BackdropAlert from "../../commancomponet/Alert/backdropAlert";
+import { MdNavigateNext } from "react-icons/md";
+import Backpage from "../../commancomponet/Backpage";
 
 function Areas() {
   const dispatch = useDispatch();
@@ -30,6 +33,15 @@ function Areas() {
   const [formErrors, setFormErrors] = useState({});
   const [formErrors1, setFormErrors1] = useState({});
   const [deleteId, setDeleteId] = useState(null);
+  const [totalPages, setTotalPages] = useState();
+  const [pageAreas, setPageAreas] = useState([]);
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+    varient: "success",
+  });
+  const columns = ["SR.NO.", "Area Name", "City Name", "Action", "View"];
+
   const [formData, setFormData] = useState({
     areaName: "",
     areaDetails: "",
@@ -42,12 +54,27 @@ function Areas() {
   });
   const navigate = useNavigate();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
 
-  // const filteredarea= areas.filter((areas) =>
-  //   areas.name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  useEffect(() => {
+    // Filter products based on search term (all products)
+    const filteredAreas = areas.filter((r) =>
+      r.name?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
+    );
 
+    const pages = Math.ceil(filteredAreas.length / pageSize);
+    setTotalPages(pages);
+    const area = filteredAreas.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize
+    );
+    setPageAreas(area);
+  }, [areas, currentPage, searchTerm]);
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   useEffect(() => {
     dispatch(fetchCities());
@@ -77,9 +104,27 @@ function Areas() {
 
   const handleDelete = async () => {
     if (deleteId) {
-      await dispatch(deleteArea(deleteId));
-      dispatch(fetchAreas());
+      console.log(deleteId);
+
+      const response = await dispatch(deleteArea(deleteId.areas_id));
+      console.log(response.meta.requestStatus);
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({ show: true, message: "Area Deleted!", varient: "success" });
+        dispatch(fetchAreas());
+      } else {
+        setAlert({
+          show: true,
+          message: "Area not deleted!",
+          varient: "danger",
+        });
+      }
+
       setShowFirstModal(false);
+      // Check if there's data on the current page after deletion
+      if (pageAreas.length === 1 && currentPage > 1) {
+        // Only decrease page if we're on an empty page after deletion
+        setCurrentPage(currentPage - 1);
+      }
     }
   };
 
@@ -111,8 +156,19 @@ function Areas() {
         cities_id: selectedCity,
         area_details: areaDetails,
       };
-      await dispatch(createArea(newArea));
-      dispatch(fetchAreas());
+
+      const response = await dispatch(createArea(newArea));
+
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({ show: true, message: "Area created!", varient: "success" });
+        dispatch(fetchAreas());
+      } else {
+        setAlert({
+          show: true,
+          message: "Area not created!",
+          varient: "danger",
+        });
+      }
       setFormData({ areaName: "", areaDetails: "", selectedCity: "" });
       setFormErrors({});
     }
@@ -120,10 +176,10 @@ function Areas() {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to the first page when searching
   };
 
-
-  const handleUpdate = async() => {
+  const handleUpdate = async () => {
     const validationErrors = validateAreaForm(formData1);
     setFormErrors1(validationErrors);
 
@@ -135,9 +191,20 @@ function Areas() {
         cities_id: selectedCity,
         area_details: areaDetails,
       };
-      console.log(updatedArea);
-     await dispatch(updateArea({ updatedData: updatedArea, id }));
-     dispatch(fetchAreas())
+      const response = await dispatch(
+        updateArea({ updatedData: updatedArea, id })
+      );
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({ show: true, message: "Area Updated!", varient: "success" });
+        dispatch(fetchAreas());
+      } else {
+        setAlert({
+          show: true,
+          message: "Area Update Failed!",
+          varient: "danger",
+        });
+      }
+
       setShowUpdateModal(false);
       setFormErrors1({});
     }
@@ -145,22 +212,13 @@ function Areas() {
 
   return (
     <div className="p-lg-5">
-      <div className="pb-2">
-        <span
-          onClick={() => navigate("/dashboard/adminpanel")}
-          style={{ color: "#7B3F00", cursor: "pointer" }}
-          className="fs-5 fw-bold"
-        >
-          Adminpanel
-        </span>
-        <span style={{ color: "#7B3F00" }}>&gt;</span>
-        <span className="fs-5 fw-bold" style={{ color: "#7B3F00" }}>
-          {" "}
-          Area / Location{" "}
-        </span>
-      </div>
+      <Backpage
+        mainPage="Adminpanel"
+        mainPagePath="/adminpanel"
+        currentPage="Area / Location"
+      />
 
-      <div className="row m-0 border rounded pb-3">
+      <div className="row m-0 form_container pb-3">
         <div className="col-lg-12 p-4 ">
           <div className="row m-0 ">
             <div className="col-lg-4 gy-4">
@@ -212,41 +270,109 @@ function Areas() {
         </div>
       </div>
 
-
-
       <div className="pt-5">
         <div className="row justify-content-end m-0">
           <div className="col-lg-4">
-            <SearchBox placeholder="Type to search..." 
-            value={searchTerm} 
-            // onChange={handleSearchChange}
-/>
+            <SearchBox
+              placeholder="Type to search..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
         </div>
       </div>
 
-
-
-      <div className="pt-4">
+      {/* <div className="pt-4">
         <AreaTable
-          areas={areas}
+          areas={currentAreas}
           onUpdate={handleUpdateModalOpen}
           onDelete={handleFirstModalShow}
         />
+      </div> */}
+
+      <div className="pt-4">
+        <Table responsive="sm">
+          <thead>
+            <tr className="text-center">
+              {columns.map((column, index) => (
+                <th
+                  key={index}
+                  style={{ backgroundColor: "#F2ECE6", color: "#7B3F00" }}
+                >
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {pageAreas.length > 0 ? (
+              pageAreas.map((item, rowIndex) => (
+                <tr key={item.id} className="text-center">
+                  <td>{rowIndex + 1 + (currentPage - 1) * pageSize}</td>
+                  <td>{item.name}</td>
+                  <td>{item.cities_name}</td>
+
+                  <td>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => handleUpdateModalOpen(item)}
+                    >
+                      <FaEdit />
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => handleFirstModalShow(item)}
+                    >
+                      <FaTrash />
+                    </Button>
+                    {/* <Button variant="transparent">
+                      <FaEllipsisV />
+                    </Button> */}
+                  </td>
+
+                  <td>
+                    <div className="d-flex justify-content-center">
+                      <Button variant="" size="sm" className="me-2">
+                        <FaEye />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="text-center">
+                  Data not found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
       </div>
 
-      <Modal
-        show={showFirstModal}
-        onHide={handleFirstModalClose}
-        backdrop="static"
-      >
+      {totalPages > 1 && (
+        <div className="pt-4">
+          <Pagination1
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
+
+      {/* Add Area Modal */}
+      <Modal show={showFirstModal} onHide={handleFirstModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
+          <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this area?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleFirstModalClose}>
-            Cancel
+            Close
           </Button>
           <Button variant="danger" onClick={handleDelete}>
             Delete
@@ -254,15 +380,12 @@ function Areas() {
         </Modal.Footer>
       </Modal>
 
-      <Modal
-        show={showUpdateModal}
-        onHide={() => setShowUpdateModal(false)}
-        backdrop="static"
-      >
+      {/* Update Area Modal */}
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Update Area</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <div className="p-2">
           <AreaForm
             formData={formData1}
             formErrors={formErrors1}
@@ -271,8 +394,17 @@ function Areas() {
             onSubmit={handleUpdate}
             buttonLabel="Update"
           />
-        </Modal.Body>
+        </div>
       </Modal>
+      <BackdropAlert
+        closeAlert={() => {
+          setAlert({ ...alert, show: false });
+        }}
+        show={alert.show}
+        setShow={setAlert}
+        varient={alert.varient}
+        message={alert.message}
+      />
     </div>
   );
 }

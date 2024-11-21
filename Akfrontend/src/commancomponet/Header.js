@@ -1,8 +1,9 @@
 import React from "react";
 import header from '../commancomponet/header.css'
 import logo from '../assets/images/ai-01 1.png'
+import { MdTrolley } from "react-icons/md";
 
-const Header = () => {
+const Header = ({count}) => {
     return (
         <header className="header-container">
             {/* <div className="row"> */}
@@ -16,7 +17,7 @@ const Header = () => {
                 <div className="text-end">
                     <button className="btn btn-cart">
                         <i class="bi bi-cart3 me-1"></i>
-                        <span className="mb-0 btn-text">0</span>
+                             <span> <MdTrolley style={{height:'30px',width:'30px'}}/></span><span className="mb-0 btn-text ">  {count}</span>
                     </button>
                         <i class="bi bi-cart3 icon-btn"></i>
                 </div>

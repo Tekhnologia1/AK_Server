@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Form } from "react-bootstrap"; // Using Bootstrap for styling
-
-const InputBox = ({
+import { Form } from "react-bootstrap";
+const InputBox = React.memo(({
   label,
   type = "text",
   placeholder,
@@ -9,6 +8,7 @@ const InputBox = ({
   onChange,
   name,
   className,
+  ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -17,10 +17,9 @@ const InputBox = ({
 
   const inputStyle = {
     padding: "12px",
-    borderRadius: 0,
-    borderColor: isHovered ? "#ff7f50" : "#7B3F0080", // Change border color on hover
-    backgroundColor: isHovered ? "#f0f0f0" : "white", // Change background color on hover
-
+    borderRadius: "4px",
+    borderColor: isHovered ? "#ff7f50" : "#7B3F0080", 
+    backgroundColor: isHovered ? "#f0f0f0" : "white", 
   };
 
   return (
@@ -36,9 +35,10 @@ const InputBox = ({
         style={inputStyle}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        {...props}
       />
     </Form.Group>
   );
-};
+});
 
 export default InputBox;

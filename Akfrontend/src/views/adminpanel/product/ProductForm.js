@@ -24,18 +24,17 @@ const productfilling = [
 const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
   const [errors, setErrors] = useState({});
   const [values, setValues] = useState({
-    product_master_id: data.pro_mast_id || "",
+    product_master_id: data.pro_mast_id || '',
     name: data.name || "",
     details: data.details || "",
-    product_fill: data.product_fill || "",
-    fill_items: data.product_filling || 0,
+    product_fill: data.product_filling === 1 ? 1 : data.product_filling === 0 ? 0 : "",
+    fill_items: data.product_filling || "",
     weight: data.product_weight || "",
     basePrice: data.base_price || "",
     makingPrice: data.making_price || "",
     price_scale: data.price_scale || "",
   });
 
-  console.log("price scale",typeof productfilling[0].option)
   const dispatch = useDispatch();
   const masterProducts = useSelector((state) => state.products.masterProducts);
   const fillingTypes = useSelector((state) => state.products.fillingTypes);
@@ -58,10 +57,10 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
   useEffect(() => {
     if (data) {
       setValues({
-        product_master_id: data.pro_mast_id || null,
+        product_master_id: data.pro_mast_id || '',
         name: data.name || "",
         details: data.details || "",
-        product_fill: data.product_filling || 0,
+        product_fill: data.product_filling === 1 ? 1 : data.product_filling === 0 ? 0 : "",
         fill_items: data.filling_types_id || "",
         weight: data.product_weight || "",
         basePrice: data.base_price || "",
@@ -71,6 +70,7 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
     }
   }, []); // Added 'data' as a dependency to update values when data changes
 
+  console.log("master product",values.product_master_id)
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -109,7 +109,7 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
       handleSubmit(values); // Submit the values
       // Reset the form values
       setValues({
-        product_master_id: data.product_master_id || null,
+        product_master_id: '',
         name: "",
         details: "",
         product_fill: "",
@@ -134,7 +134,7 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
         <SelectBox
           label={isEditMode ? "Master Product" : ""}
           options={transformedCities}
-          value={values.product_master_id}
+          value={values.product_master_id ? values.product_master_id : ''}
           onChange={handleChange}
           name="product_master_id"
           defaultValue={isEditMode ? "" : "Master Product"}
@@ -182,7 +182,7 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
       </div>
 
       {/* Fill Items Field */}
-      <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
+      {values.product_fill !== 0 && <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
         <SelectBox
           label={isEditMode ? "Fill Items" : ""}
           options={transformedfillingtype}
@@ -193,7 +193,7 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
           disabled={values.product_fill == 0} // Disable when product_fill is 0
         />
         {errors.fill_items && <p className="text-danger">{errors.fill_items}</p>}
-      </div>
+      </div>}
 
       {/* Product Weight Field */}
       <div className={isEditMode ? "" : "col-lg-4 gy-4"}>

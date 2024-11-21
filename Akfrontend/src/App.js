@@ -3,20 +3,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DefaultLayout from "./layout/DefaultLayout";
 import Login from "./views/pages/login/Login";
 import "./scss/style.scss";
-import Adminpanel from './views/adminpanel/Adminpanel'
-import Orderplace from './views/adminpanel/Orderplace'
-import Register from "./views/pages/register/Register";
-import SampleCrad from "./views/adminpanel/SampleCrad";
-import Home from "./views/home/Home";
-import Product from "./views/adminpanel/Product";
-import Areas from './views/adminpanel/Areas'
-import Routess from "./views/adminpanel/Routess";
-import Cafe from "./views/adminpanel/Cafe";
-import Cafedeal from "./views/adminpanel/Cafedeal";
-import Dashboard from '../src/views/dashboard/Dashboard'
-import Employees from "./views/adminpanel/Employees";
-import Enquiry from "./views/adminpanel/Enquiry";
+
 import AppRoutes from "./Route/AppRoute";
+import './App.css';
+
 function App() {
   return (
     <div className="App">

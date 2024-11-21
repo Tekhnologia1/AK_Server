@@ -1,20 +1,16 @@
-
-
 import React, { useEffect, useState } from "react";
 import CommanButton from "../../../commancomponet/CommanButton";
 import SelectBox from "../../../commancomponet/SelectBox";
 import InputBox from "../../../commancomponet/InputBox";
-import {
-  validateCafeForm,
-} from "../../validation/Validationall";
-import { useSelector, dispatch, useDispatch } from "react-redux";
+import { validateCafeForm } from "../../validation/Validationall";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchRoutes } from "../../store/routeSlice";
 import { fetchAreas, fetchCities } from "../../store/areaSlice";
 import { fetchSpecialDeals } from "../../store/cafeSlice";
 import { fetchDeals } from "../../store/cafeDealsSlice";
 import { fetchCafeDeal1 } from "../../store/cafeDeal1Slice";
 
-const CafeForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
+const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className }) => {
   const dispatch = useDispatch();
   const cities = useSelector((state) => state.areas.cities);
   const routes = useSelector((state) => state.routes.routes);
@@ -23,7 +19,6 @@ const CafeForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
   const deals = useSelector((state) => state.deals.deals);
   const cafeDeal1 = useSelector((state) => state.cafeDeal1.cafeDeal1);
 
-
   const [values, setValues] = useState({
     selectedCity: data.selectedCity || "",
     cafeName: data.cafeName || "",
@@ -31,22 +26,23 @@ const CafeForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
     area: data.area || "",
     selectedRoute: data.selectedRoute || "",
     selectedDeal: data.selectedDeal || "",
-    cafedeal:data.cafedeal||"",
+    // cafedeal:data.cafedeal||"",
     selectedPaymentTerm: data.selectedPaymentTerm || "",
     contactPerson: data.contactPerson || "",
   });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    dispatch(fetchDeals())
+    dispatch(fetchDeals());
     dispatch(fetchRoutes());
     dispatch(fetchCities());
     dispatch(fetchSpecialDeals());
     dispatch(fetchAreas());
-    dispatch(fetchDeals())
-    dispatch(fetchCafeDeal1())
+    dispatch(fetchDeals());
+    dispatch(fetchCafeDeal1());
   }, []);
 
+  console.log(routes);
   const transformedpaymentterm = paymentTerm.map((paymentterm) => ({
     label: paymentterm.name,
     option: paymentterm.payment_terms_id,
@@ -57,26 +53,22 @@ const CafeForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
     option: city.cities_id,
   }));
 
-
-  console.log("objectczddfssfsdfff",deals)
   const transformeddeals = cafeDeal1.map((deals) => ({
     label: deals.cafe_id,
     option: deals.cafe_deals_id,
   }));
-
 
   const transformedarea = areas.map((area) => ({
     label: area.name,
     option: area.areas_id,
   }));
 
-
   const transformedRoutes = routes.map((route) => ({
     label: route.route_name,
     option: route.routes_id,
   }));
 
-  const cafesdeals=[
+  const cafesdeals = [
     {
       label: "Yes",
       option: 1,
@@ -95,8 +87,9 @@ const CafeForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
         address: data.address || "",
         area: data.area || "",
         selectedRoute: data.selectedRoute || "",
-        selectedDeal: data.selectedDeal || "",
-        cafedeal:data.cafedeal||"",
+        selectedDeal:
+          data.selectedDeal == 0 ? 0 : data.selectedDeal == 1 ? 1 : "",
+        // cafedeal:data.cafedeal||"",
         selectedPaymentTerm: data.selectedPaymentTerm || "",
         contactPerson: data.contactPerson || "",
       });
@@ -110,60 +103,30 @@ const CafeForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
       [name]: value,
     }));
   };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
 
-  // const handleFormSubmit = (e) => {
-  //   e.preventDefault();
-  //   // const validationErrors = validateCafeForm(values);
-  //   // if (Object.keys(validationErrors).length === 0) {
-  //     console.log(values);
-  //     handleSubmit(values);
+    const validationErrors = validateCafeForm(values);
+    console.log(validationErrors);
+    if (Object.keys(validationErrors).length === 0) {
+      handleSubmit(values);
 
-  //     setValues({
-  //       selectedCity: "",
-  //       cafeName: "",
-  //       address: "",
-  //       area: "",
-  //       selectedRoute: "",
-  //       selectedDeal: "",
-  //       cafedeal:"",
-  //       selectedPaymentTerm: "",
-  //       contactPerson: "",
-  //     });
-  //   // } else {
-  //   //   setErrors(validationErrors);
-  //   // }
-  // };
-
-
-
-  // Import validateCafeForm from your validation file
-
-
-// In the handleFormSubmit function:
-const handleFormSubmit = (e) => {
-  e.preventDefault();
-
-  const validationErrors = validateCafeForm(values);
-  console.log(validationErrors)
-  if (Object.keys(validationErrors).length === 0) {
-    handleSubmit(values);
-
-    setValues({
-      selectedCity: "",
-      cafeName: "",
-      address: "",
-      area: "",
-      selectedRoute: "",
-      selectedDeal: "",
-      cafedeal: "",
-      selectedPaymentTerm: "",
-      contactPerson: "",
-    });
-    setErrors({})
-  } else {
-    setErrors(validationErrors);
-  }
-};
+      setValues({
+        selectedCity: "",
+        cafeName: "",
+        address: "",
+        area: "",
+        selectedRoute: "",
+        selectedDeal: "",
+        // cafedeal: "",
+        selectedPaymentTerm: "",
+        contactPerson: "",
+      });
+      setErrors({});
+    } else {
+      setErrors(validationErrors);
+    }
+  };
 
   return (
     <form className={className} onSubmit={handleFormSubmit}>
@@ -181,7 +144,7 @@ const handleFormSubmit = (e) => {
 
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <InputBox
-            label={isEditMode ? "Cafe Name" : ""}
+            label={isEditMode ? "Cafe Address" : ""}
             placeholder="Address"
             value={values.address}
             onChange={handleChange}
@@ -231,7 +194,7 @@ const handleFormSubmit = (e) => {
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <SelectBox
             label={isEditMode ? "Special Deal" : ""}
-            options={cafesdeals} // replace with your deal options
+            options={cafesdeals} 
             value={values.selectedDeal}
             onChange={handleChange}
             name="selectedDeal"
@@ -242,23 +205,10 @@ const handleFormSubmit = (e) => {
       </div>
 
       <div className="row justify-content-center">
-
-      <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
-          <SelectBox
-            label={isEditMode ? "Cafe Deal" : ""}
-            options={transformeddeals} // replace with your deal options
-            value={values.cafedeal}
-            onChange={handleChange}
-            name="cafedeal"
-            defaultValue="Cafe Deal"
-          />
-          {/* <p className="text-danger">{errors.selectedDeal}</p> */}
-        </div>
-      
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <SelectBox
             label={isEditMode ? "Payment Term" : ""}
-            options={transformedpaymentterm} // replace with your payment term options
+            options={transformedpaymentterm} 
             value={values.selectedPaymentTerm}
             onChange={handleChange}
             name="selectedPaymentTerm"
@@ -290,6 +240,6 @@ const handleFormSubmit = (e) => {
       </div>
     </form>
   );
-};
+});
 
 export default CafeForm;

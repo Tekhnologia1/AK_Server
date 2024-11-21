@@ -51,7 +51,7 @@
   background-position: center;
   background-repeat: no-repeat;
   width: 75%;
-  height: 75%;
+  height: 85%;
   border-radius: 8px;
 }
 
@@ -63,6 +63,14 @@
 
 .hello{
  padding-top: 50px;
+}
+
+.register_card .other_way{
+  color: #171A1F;
+}
+
+.register_card .field_cont{
+  margin-top: 0.5rem;
 }
 
 @media only screen and (max-width: 600px) {
@@ -79,33 +87,54 @@
 
 .register_card{
   width: 100%;
-  max-width: 24rem;
+  /* max-width: 24rem; */
+}
+
+@media only screen and (min-width: 767px){
+  .register{
+    height: 100vh !important;
+  }
+  .register_card .field_label{
+    font-size: 14px !important;
+  }
+
+  .other_way{
+    font-size: 12px !important;
+  }
+
+  .register_card .form-control{
+    font-size: 12px;
+  }
+
+  .register_btn{
+    font-size: 14px;
+  }
 }
 
 @media only screen and (min-width: 1300px){
   .register_card{
-    max-width: 28rem !important;
+    /* max-width: 28rem !important; */
   }
   .register_card .card-body{
-    padding: 1rem !important;
+    /* padding: 1rem !important; */
   }
   .register_card .login_sign_in_color{
     padding-top: 0.5rem !important;
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
   }
 
   .register_card .card-body .field_cont{
-    padding: 1rem !important;
+    padding: .5rem !important;
   }
   .register_card .card-body .field_cont label{
-    font-size: 1.25rem !important;
+    font-size: 1rem !important;
   }
   .register_card .card-body .field_cont input{
     padding: 10px !important;
   }
 
   .register_card .btn_cont{
-    padding: 1.5rem !important;
+    padding: .5rem !important;
     margin: 0 !important;
   }
   .register_card .btn_cont button{
@@ -113,6 +142,6 @@
   }
 
   .register_card .other_way{
-    padding-top: 1.5rem !important;
+    padding-top: .5rem !important;
   }
 }

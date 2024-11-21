@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
 import { Search } from 'react-bootstrap-icons'; // Importing a search icon
 
-const SearchBox = ({ placeholder, value, onChange, onSearch }) => {
+const SearchBox = React.memo(({ placeholder, value, onChange, onSearch }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -11,7 +11,7 @@ const SearchBox = ({ placeholder, value, onChange, onSearch }) => {
   const inputStyle = {
     boxShadow: isHovered ? '0 0 5px #EAA44D' : 'none', // Show box shadow on hover
     borderColor: '#EAA44D', // Show border color on hover
-    borderRadius: 0,
+    borderRadius: '4px 0px 0px 4px',
   };
 
   const inputStyle1 = {
@@ -19,7 +19,7 @@ const SearchBox = ({ placeholder, value, onChange, onSearch }) => {
     backgroundColor: '#EAA44D',
     boxShadow: isHovered ? '0 0 5px #EAA44D' : 'none', // Show box shadow on hover
     borderColor: isHovered ? '#EAA44D' : 'transparent', // Show border color on hover
-    borderRadius: 0,
+    borderRadius: '0px 4px 4px 0px',
   };
 
   return (
@@ -48,6 +48,6 @@ const SearchBox = ({ placeholder, value, onChange, onSearch }) => {
       </InputGroup>
     </Form>
   );
-};
+});
 
 export default SearchBox;

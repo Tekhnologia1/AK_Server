@@ -59,7 +59,10 @@ padding-top: 80px;
 
 .login_sign_in_color {
   color:  #98690C;
-  
+}
+
+.invalid_input{
+  border-color: red !important;
 }
 
 .login_card{
@@ -75,6 +78,10 @@ padding-top: 80px;
   height: 100%;
 }
 
+.login_card .other_way{
+  color: #171A1F;
+}
+
 @media only screen and (max-width: 600px) {
   .login-second {
       background-size: cover;
@@ -86,7 +93,7 @@ padding-top: 80px;
     }
 }
 
-@media only screen and (min-width: 1300px){
+@media only screen and (min-width: 1500px){
   .align_middle{
     height: 100%;
     padding: 0;
@@ -112,6 +119,9 @@ padding-top: 80px;
     padding: 10px !important;
   }
 
+  .card-body .field_cont .text-danger{
+    font-size: 12px;
+  }
   .login_card .btn_cont{
     padding: 1.5rem !important;
     margin: 0 !important;

@@ -70,7 +70,7 @@
 // export default AppHeaderDropdown
 
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   CDropdown,
@@ -81,15 +81,15 @@ import {
   CDropdownToggle,
 } from '@coreui/react'
 import { PersonFill, LockFill } from 'react-bootstrap-icons' // Import Bootstrap icons
+import LogoutConfirmation from '../../views/pages/logout/LogoutConfirmation'
 
 const AppHeaderDropdown = () => {
   const navigate = useNavigate();
   const userName = localStorage.getItem('userName');
   const firstLetter = userName ? userName.charAt(0).toUpperCase() : ''; // Get the first letter of the username
-
+  const [show, setShow] = useState(false)
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove token from local storage
-    navigate('/login'); // Redirect to login page
+    setShow(true)
   };
 
   // Inline styles for the circular avatar container and letter
@@ -132,6 +132,7 @@ const AppHeaderDropdown = () => {
           Logout
         </CDropdownItem>
       </CDropdownMenu>
+      <LogoutConfirmation show={show} setShow={setShow}/>
     </CDropdown>
   )
 }

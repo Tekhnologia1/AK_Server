@@ -4,9 +4,10 @@ import SelectBox from "../../../commancomponet/SelectBox";
 import InputBox from "../../../commancomponet/InputBox";
 // import { validateCafeForm, validateUserForm } from "../../validation/Validationall";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCafes} from "../../store/cafeSlice";
+import { fetchCafes } from "../../store/cafeSlice";
 import { fetchUsertype } from "../../store/cafeuserSlice";
 import { validateCafeUserForm } from "../../validation/Validationall";
+import SearchDropdown from "../../../commancomponet/SearchDropdown";
 
 const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
   const dispatch = useDispatch();
@@ -86,7 +87,7 @@ const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
     if (Object.keys(validationErrors).length == 0) {
       console.log("Submitting:", values);
       handleSubmit(values);
-   
+
       setValues({
         cafe: "",
         name: "",
@@ -105,32 +106,40 @@ const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
 
 
 
-console.log("cafe",cafe)
-// console.log("cafe",usertype)
+  console.log("cafe", cafe)
+  // console.log("cafe",usertype)
 
   const transformedcafe = cafe.map((cafe) => ({
-    label: cafe.name,
+    label: cafe.cafe_name,
     option: cafe.cafe_id,
   }));
 
-const transUserType =usertype.map((usertype) => ({
-  label: usertype.name,
-  option: usertype.user_type_id,
-}));
+  const transUserType = usertype.map((usertype) => ({
+    label: usertype.name,
+    option: usertype.user_type_id,
+  }));
 
 
   return (
     <form className={className} onSubmit={handleFormSubmit}>
       <div className="row">
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
-          <SelectBox
+          <SearchDropdown
+            name={"cafe"}
+            placeholder="Cafe"
+            isSearchabel={true}
+            options={transformedcafe}
+            onChange={handleChange}
+            value={values.cafe}
+          />
+          {/* <SelectBox
             label={isEditMode ? "Cafe" : ""}
             options={transformedcafe}
             value={values.cafe}
             onChange={handleChange}
             name="cafe"
             defaultValue="Cafe"
-          />
+          /> */}
           <p className="text-danger">{errors.cafe}</p>
         </div>
 

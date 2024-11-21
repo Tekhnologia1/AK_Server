@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Note = ({ value, onChange, placeholder, className }) => {
+const Note = React.memo(({ value, onChange, placeholder, className }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -20,12 +20,11 @@ const Note = ({ value, onChange, placeholder, className }) => {
     margin: "10px 0", // Space between elements
     lineHeight: "1.6", // Improve readability for more content
     width: "100%", // Full width
-    height: "150px", // Define height for the textarea
     resize: "vertical", // Allow vertical resizing only
   };
 
   return (
-    <textarea
+    <textarea rows={1}
       className={`note-textarea ${className}`}
       style={textareaStyle}
       value={value}
@@ -35,6 +34,6 @@ const Note = ({ value, onChange, placeholder, className }) => {
       onMouseLeave={handleMouseLeave}
     />
   );
-};
+});
 
 export default Note;

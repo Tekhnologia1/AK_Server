@@ -35,8 +35,8 @@ const CafeDealsForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
   }));
 
   const transformedcafes = cafedata.map((cafedata) => ({
-    label: cafedata.name,
-    option: cafedata.cities_id,
+    label: cafedata.cafe_name,
+    option: cafedata.cafe_id,
   }));
 
   useEffect(() => {

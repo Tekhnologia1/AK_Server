@@ -1,40 +1,119 @@
 // src/utils/validation.js
+export const validateRegisterData = (data) => {
+  console.log(data);
+  const errors = {};
+
+  if (!data.name) {
+    errors.name = "Name is required";
+  }
+
+  if (!data.username) {
+    errors.username = "Username is required";
+  }
+
+  if (!data.email) {
+    errors.email = "Email is required";
+  } else if (!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(data.email)) {
+    errors.email = "Invalid email address";
+  }
+
+  if (!data.mobile) {
+    errors.mobile = "Mobile number is required";
+  } else if (!/^[0-9]{10}$/.test(data.mobile)) {
+    errors.mobile = "Invalid mobile number";
+  }
+
+  if (!data.password) {
+    errors.password = "Password is required";
+  } else {
+    if (data.password.length < 8) {
+      errors.password = "Password must be at least 8 characters";
+    } else
+      if (!/[A-Z]/.test(data.password)) {
+        errors.password = "Password must contains uppercase letter"
+      } else
+        if (!/[a-z]/.test(data.password)) {
+          errors.password = "Password must contains lowercase letter"
+        } else
+          if (!/[0-9]/.test(data.password)) {
+            errors.password = "Password must contains number"
+          } else
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(data.password)) {
+              errors.password = "Password must contains special character"
+            }
+  }
+
+  return errors;
+};
+
+export const validateLoginData = (data) => {
+  console.log(data);
+  const errors = {};
+
+  if (!data.email) {
+    errors.email = "Email is required";
+  }
+  // else if (!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(data.email)) {
+  //   errors.email = "Invalid email address";
+  // }
+
+  if (!data.password) {
+    errors.password = "Password is required";
+  }
+  // else {
+  //   if (data.password.length < 8) {
+  //     errors.password = "Password must be at least 8 characters";
+  //   } else
+  //     if (!/[A-Z]/.test(data.password)) {
+  //       errors.password = "Password must contains uppercase letter"
+  //     } else
+  //       if (!/[a-z]/.test(data.password)) {
+  //         errors.password = "Password must contains lowercase letter"
+  //       } else
+  //         if (!/[0-9]/.test(data.password)) {
+  //           errors.password = "Password must contains number"
+  //         } else
+  //           if (!/[!@#$%^&*(),.?":{}|<>]/.test(data.password)) {
+  //             errors.password = "Password must contains special character"
+  //           }
+  // }
+
+  return errors;
+};
 
 export const validateProductData = (productData) => {
-    const errors = {};
-  
-    if (!productData.name) {
-      errors.name = "Product name is required.";
-    }
-  
-    if (!productData.details) {
-      errors.details = "Product details are required.";
-    }
-  
-    if (!productData.items) {
-      errors.items = "Number of items is required.";
-    }
-  
-    if (!productData.weight || isNaN(productData.weight)) {
-      errors.weight = "Weight must be a valid number.";
-    }
-  
-    if (!productData.basePrice || isNaN(productData.basePrice)) {
-      errors.basePrice = "Base price must be a valid number.";
-    }
-  
-    if (!productData.makingPrice || isNaN(productData.makingPrice)) {
-      errors.makingPrice = "Making price must be a valid number.";
-    }
-  
+  const errors = {};
 
-    if (!productData.price_scale ) {
-      errors.price_scale = " price scale must be a select.";
-    }
-    return errors;
-  };
+  if (!productData.name) {
+    errors.name = "Product name is required.";
+  }
 
-  
+  if (!productData.details) {
+    errors.details = "Product details are required.";
+  }
+
+  if (!productData.items) {
+    errors.items = "Number of items is required.";
+  }
+
+  if (!productData.weight || isNaN(productData.weight)) {
+    errors.weight = "Weight must be a valid number.";
+  }
+
+  if (!productData.basePrice || isNaN(productData.basePrice)) {
+    errors.basePrice = "Base price must be a valid number.";
+  }
+
+  if (!productData.makingPrice || isNaN(productData.makingPrice)) {
+    errors.makingPrice = "Making price must be a valid number.";
+  }
+
+  if (!productData.price_scale) {
+    errors.price_scale = " price scale must be a select.";
+  }
+  return errors;
+};
+
 // validation.js
 
 export const validateAreaForm = (formData) => {
@@ -56,7 +135,7 @@ export const validateAreaForm = (formData) => {
 };
 
 // src/validation.js
- // src/components/validation/Validationall.js
+// src/components/validation/Validationall.js
 
 export const validateCafeForm = (values) => {
   const errors = {};
@@ -95,10 +174,10 @@ export const validateCafeForm = (values) => {
     errors.selectedDeal = "Special Deal is required.";
   }
 
-  // Validation for cafedeal
-  if (values.cafedeal === "") {
-    errors.cafedeal = "Cafe Deal selection is required.";
-  }
+  // // Validation for cafedeal
+  // if (values.cafedeal === "") {
+  //   errors.cafedeal = "Cafe Deal selection is required.";
+  // }
 
   // Validation for selectedPaymentTerm
   if (!values.selectedPaymentTerm) {
@@ -115,9 +194,7 @@ export const validateCafeForm = (values) => {
   return errors;
 };
 
-
-
- export const validateCafeDealForm = (data) => {
+export const validateCafeDealForm = (data) => {
   const errors = {};
 
   if (!data.cafe) {
@@ -137,9 +214,7 @@ export const validateCafeForm = (values) => {
   return errors;
 };
 
-
-
- export const validateCafeUserForm = (data) => {
+export const validateCafeUserForm = (data) => {
   const errors = {};
 
   if (!data.cafe) {
@@ -179,12 +254,6 @@ export const validateCafeForm = (values) => {
   return errors;
 };
 
-
-
-
-
-
-
 // Helper function to validate date format
 const isValidDate = (date) => {
   return !isNaN(Date.parse(date));
@@ -195,7 +264,7 @@ export const validateEmployeeData = (values) => {
 
   // Validate Employee Name
   if (!values.employeeName || values.employeeName.trim() === "") {
-    errors.employeeName = "Employee name is required and cannot be empty.";
+    errors.employeeName = "Employee name is required.";
   }
 
   // Validate Username
@@ -242,20 +311,23 @@ export const validateEmployeeData = (values) => {
 
   // Validate Increment Date
   if (!values.incrementDate) {
-    errors.incrementDate = "IncrementDate date is required.";
+    errors.incrementDate = "Increment date is required.";
   } else if (!isValidDate(values.incrementDate)) {
     errors.enrollmentDate = "Invalid increment date.";
   }
 
   // Validate Increment Amount
-  if (values.incrementAmount && (isNaN(values.incrementAmount) || values.incrementAmount <= 0)) {
+  if (
+    values.incrementAmount &&
+    (isNaN(values.incrementAmount) || values.incrementAmount <= 0)
+  ) {
     errors.incrementAmount = "Increment amount must be a positive number.";
   }
 
   if (!values.incrementAmount) {
-    errors.incrementAmount = "IncrementAmount is required.";
+    errors.incrementAmount = "Increment amount is required.";
   } else if (isNaN(values.incrementAmount) || values.incrementAmount <= 0) {
-    errors.incrementAmount = "IncrementAmount must be a positive number.";
+    errors.incrementAmount = "Increment amount must be a positive number.";
   }
 
   // Validate Employee Type
@@ -265,7 +337,6 @@ export const validateEmployeeData = (values) => {
 
   return errors;
 };
-
 
 // src/components/validation/RouteValidation.js
 
@@ -309,6 +380,41 @@ export const validateRouteForm = (values) => {
   return errors;
 };
 
+export const validatePlaceOrderForm = (data) => {
+  const errors = {};
+
+  if (!data.cafeId) {
+    errors.cafeId = "Cafe is required";
+  }
+
+  if (!data.orderDate) {
+    errors.orderDate = "Order date is required";
+  }
+
+  if(data.paymentStatus !== 0 && !data.paymentStatus){
+    errors.paymentStatus = "Payment status is required"
+  }
+
+  if(!data.paymentTerm){
+    errors.paymentTerm = "Payment term is required"
+  }
+
+  if(!data.note){
+    errors.note = "Note is required"
+  }
+
+  return errors;
+};
+
+export const validateRepeatOrderForm = (data) => {
+  const errors = {};
+
+  if (!data.orderDate) {
+    errors.orderDate = "Order date is required";
+  }
+  
+  return errors;
+};
 
 //  export const validateProductForm = (data) => {
 //   const errors = {};
@@ -353,7 +459,7 @@ export const validateRouteForm = (values) => {
 
 //   if (!data.price_scale) {
 //     errors.price_scale = "Price scale is required";
-//   } 
+//   }
 
 //   return errors;
 // };
@@ -377,11 +483,9 @@ export const validateProductForm = (data) => {
 
   // Product fill validation
 
-
-  if (!data.product_fill) {
-    errors.product_fill = "Product master ID is required";
+  if (data.product_fill !== 0 && !data.product_fill) {
+    errors.product_fill = "Product filling is required";
   }
-
 
   // Weight validation
   if (!data.weight) {
@@ -411,5 +515,3 @@ export const validateProductForm = (data) => {
 
   return errors;
 };
-
-

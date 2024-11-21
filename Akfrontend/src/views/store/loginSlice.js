@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { apiurl } from '../../Api/apiurl'; // Replace with your actual API base URL
+import { apiurl } from '../../Api/apiurl'; 
 
 const API_BASE_URL = apiurl;
 
@@ -13,14 +13,14 @@ const initialState = {
 
 // Async thunk for login
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+  'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
-        console.log(credentials)
       const response = await axios.post(`${API_BASE_URL}/login`, credentials);
+      console.log("login data ",response);
       return response.data;  
     } catch (error) {
-      return rejectWithValue(error.response.data); // Pass error message
+      return rejectWithValue(error.response.data); 
     }
   }
 );
@@ -31,9 +31,9 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/register`, userData);
-      return response.data;  // Assuming response.data contains user info
+      return response.data;  
     } catch (error) {
-      return rejectWithValue(error.response.data); // Pass error message
+      return rejectWithValue(error.response.data); 
     }
   }
 );
@@ -43,9 +43,9 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = null;      // Clear user data on logout
-      state.status = 'idle';   // Reset status
-      state.error = null;      // Clear error messages
+      state.user = null;      
+      state.status = 'idle';   
+      state.error = null;      
     },
   },
   extraReducers: (builder) => {
@@ -56,12 +56,13 @@ const loginSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        console.log("inside login user success",action.payload)
         state.status = 'succeeded';
-        state.user = action.payload;  // Store user data
+        state.user = action.payload;  
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload || 'Login failed'; // Set error message
+        state.error = action.payload || 'Login failed'; 
       })
 
       // Handle registration
@@ -71,11 +72,11 @@ const loginSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload;  // Store user data after registration
+        state.user = action.payload;  
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload || 'Registration failed'; // Set error message
+        state.error = action.payload || 'Registration failed'; 
       });
   },
 });

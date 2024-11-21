@@ -1,12 +1,21 @@
-import React, { useEffect, useState } from "react";
-// import SearchBox from "../../commancomponet/Searchbox";
-import { FaArrowRight, FaEdit, FaEllipsisV, FaTrash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+
+
+
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Table } from "react-bootstrap";
 import CafeUserForm from "./CafeUserForm";
-import { createCafeUser, deleteCafeUser, fetchCafeUsers, updateCafeUser } from "../../store/cafeuserSlice";
+import {
+  createCafeUser,
+  deleteCafeUser,
+  fetchCafeUsers,
+  updateCafeUser,
+} from "../../store/cafeuserSlice";
 import SearchBox from "../../../commancomponet/Searchbox";
+import Pagination1 from "../../../commancomponet/Pagination1";
+import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
+import Backpage from "../../../commancomponet/Backpage";
 
 function CafeUser() {
   const dispatch = useDispatch();
@@ -15,230 +24,259 @@ function CafeUser() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
   const [formData, setFormData] = useState({
-        cafe: "",
-        name: "",
-        userName:"",
-        password:"",
-        userType: "",
-        email: "",
-        contactNo: "",   
+    cafe: "",
+    name: "",
+    userName: "",
+    password: "",
+    userType: "",
+    email: "",
+    contactNo: "",
   });
   const [deleteId, setDeleteId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
+  const [pageCafeUsers, setPageCafeUsers] = useState([]);
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+    varient: "success",
+  });
+  const pageSize = 5;
 
   useEffect(() => {
-    dispatch(fetchCafeUsers()); 
+    dispatch(fetchCafeUsers());
   }, [dispatch]);
 
-  // const filteredCafes = cafes.filter(cafe =>
-  //   cafe.name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  useEffect(() => {
+    const filteredUsers = cafeuser.filter((user) =>
+      user.cafe_name?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
+    );
 
-  const columns = ["SR.NO.", "Cafe User Name", "User Type", "Contact Number", "Actions"];
+    const pages = Math.ceil(filteredUsers.length / pageSize);
+    setTotalPages(pages);
+    const us = filteredUsers.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize
+    );
+    setPageCafeUsers(us);
+  }, [cafeuser, currentPage, searchTerm]);
 
-  const handleDeleteModalClose = () => setShowDeleteModal(false);
-  const handleDeleteModalShow = (id) => {
+  const columns = useMemo(
+    () => ["SR.NO.", "Cafe", "Cafe User Name", "Contact Number", "Actions", "View"],
+    []
+  );
+
+  const handleDeleteModalClose = useCallback(() => setShowDeleteModal(false), []);
+  const handleDeleteModalShow = useCallback((id) => {
     setDeleteId(id);
     setShowDeleteModal(true);
-  };
+  }, []);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (deleteId) {
-      console.log(deleteId)
-      await dispatch(deleteCafeUser(deleteId));
-      dispatch(fetchCafeUsers());
+      const response = await dispatch(deleteCafeUser(deleteId));
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({
+          show: true,
+          message: "Cafe User Deleted!",
+          varient: "success",
+        });
+        dispatch(fetchCafeUsers());
+      } else {
+        setAlert({
+          show: true,
+          message: "Cafe User Not Deleted!",
+          varient: "danger",
+        });
+      }
       setShowDeleteModal(false);
+      if (pageCafeUsers.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
     }
-  };
+  }, [deleteId, dispatch, pageCafeUsers.length, currentPage]);
 
+  const handleUpdate = useCallback(
+    async (values) => {
+      const id = selectedCafe.cafe_users_id;
+      const updatedData = {
+        cafe_id: values.cafe,
+        name: values.name,
+        username: values.userName,
+        password: values.password,
+        user_type_id: values.userType,
+        email: values.email,
+        cell_number: values.contactNo,
+      };
 
+      const response = await dispatch(updateCafeUser({ id, updatedData }));
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({
+          show: true,
+          message: "Cafe User Updated!",
+          varient: "success",
+        });
+        dispatch(fetchCafeUsers());
+      } else {
+        setAlert({
+          show: true,
+          message: "Cafe User Not Updated!",
+          varient: "danger",
+        });
+      }
+      setShowUpdateModal(false);
+    },
+    [dispatch, selectedCafe]
+  );
 
-  const handleUpdate = async (values) => {
-    const id = selectedCafe.cafe_users_id;
-    const updatedData = { 
-      cafe_id: values.cafe,
-      name: values.name,
-      username: values.userName,
-      password: values.password,
-      user_type_id: values.userType,
-      email: values.email,
-      cell_number: values.contactNo,
-    };
-  
-    console.log("updatedData", updatedData);
-  
-    // Dispatching with the correct key
-    await dispatch(updateCafeUser({ id, updatedData }));
-    dispatch(fetchCafeUsers());
-    setShowUpdateModal(false);
-  };
-  
-  const handleUpdateModalOpen = (cafe) => {
+  const handleUpdateModalOpen = useCallback((cafe) => {
     setSelectedCafe(cafe);
     setFormData({
       cafe: cafe.cafe_id,
       name: cafe.name,
       userName: cafe.username,
-      password:cafe.password,
+      password: cafe.password,
       contactNo: cafe.cell_number,
       userType: cafe.user_type_id,
       email: cafe.email,
     });
     setShowUpdateModal(true);
-  };
+  }, []);
 
-  const handleAddClick = async (values) => {
-    const data={
-         cafe_id:values.cafe,
-         name: values.name,
+  const handleAddClick = useCallback(
+    async (values) => {
+      const data = {
+        cafe_id: values.cafe,
+        name: values.name,
         username: values.userName,
-        password:values.password ,
+        password: values.password,
         user_type_id: values.userType,
         email: values.email,
-        cell_number: values.contactNo
-            
-}
-    console.log("values", values);
-    await dispatch(createCafeUser(data));
-    dispatch(fetchCafeUsers());
-    setFormData({
-      cafe: "",
-      name: "",
-      userName:"",
-      password:"",
-      userType: "",
-      email: "",
-      contactNo: "",   
-    });
-  };
+        cell_number: values.contactNo,
+      };
+      const response = await dispatch(createCafeUser(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({
+          show: true,
+          message: "Cafe User Created!",
+          varient: "success",
+        });
+        dispatch(fetchCafeUsers());
+      } else {
+        setAlert({
+          show: true,
+          message: "Cafe User Not Created!",
+          varient: "danger",
+        });
+      }
+      setFormData({
+        cafe: "",
+        name: "",
+        userName: "",
+        password: "",
+        userType: "",
+        email: "",
+        contactNo: "",
+      });
+    },
+    [dispatch]
+  );
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const handlePageChange = useCallback((page) => setCurrentPage(page), []);
 
   return (
     <div className="p-lg-5">
-      <div className="pb-2 ps-2">
-        <span
-          onClick={() => navigate("/dashboard/adminpanel")}
-          style={{ color: "#7B3F00", cursor: "pointer" }}
-          className="fs-5 fw-bold"
-        >
-          Adminpanel
-        </span>
-        <span style={{ color: "#7B3F00" }}>
-          <FaArrowRight />
-        </span>
-        <span className="fs-5 fw-bold" style={{ color: "#7B3F00" }}>
-          {" "}
-          Cafe User{" "}
-        </span>
-      </div>
-
-      <CafeUserForm
-        handleSubmit={handleAddClick}
-        isEditMode={false}
-        className="row m-0 border rounded p-4"
-      />
-
+      <Backpage mainPage="Adminpanel" mainPagePath="/adminpanel" currentPage="CafeUser" />
+      <CafeUserForm handleSubmit={handleAddClick} isEditMode={false} className="row m-0 form_container p-4" />
       <div className="pt-5">
         <div className="row justify-content-end m-0">
           <div className="col-lg-4">
-            <SearchBox
-              placeholder="Type to search..." 
-              value={searchTerm} 
-              onChange={(e) => setSearchTerm(e.target.value)} 
-            />
+            <SearchBox placeholder="Search by cafe name" value={searchTerm} onChange={handleSearchChange} />
           </div>
         </div>
       </div>
-
       <div className="pt-4">
         <Table responsive="sm">
           <thead>
             <tr className="text-center">
               {columns.map((column, index) => (
-                <th
-                  key={index}
-                  style={{ backgroundColor: "#F2ECE6", color: "#7B3F00" }}
-                >
+                <th key={index} style={{ backgroundColor: "#F2ECE6", color: "#7B3F00" }}>
                   {column}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {cafeuser.map((item, rowIndex) => (
-              <tr key={item.id} className="text-center">
-                <td>{rowIndex + 1}</td>
-                <td>{item.name}</td>
-                <td>{item.user_type_id}</td>
-                <td>{item.cell_number}</td>
-                <td>
-                  <div className="d-flex justify-content-center">
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleUpdateModalOpen(item)}
-                    >
-                      <FaEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleDeleteModalShow(item.cafe_users_id)}
-                    >
-                      <FaTrash />
-                    </Button>
-                    <Button
-                      size="sm"
-                      style={{
-                        background: "white",
-                        border: "none",
-                        color: "black",
-                      }}
-                    >
-                      <FaEllipsisV />
-                    </Button>
-                  </div>
+            {pageCafeUsers.length > 0 ? (
+              pageCafeUsers.map((item, rowIndex) => (
+                <tr key={item.id} className="text-center">
+                  <td>{rowIndex + 1 + (currentPage - 1) * pageSize}</td>
+                  <td>{item.cafe_name}</td>
+                  <td>{item.name}</td>
+                  <td>{item.cell_number}</td>
+                  <td>
+                    <div className="d-flex justify-content-center">
+                      <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleUpdateModalOpen(item)}>
+                        <FaEdit />
+                      </Button>
+                      <Button variant="outline-danger" size="sm" className="me-2" onClick={() => handleDeleteModalShow(item.cafe_users_id)}>
+                        <FaTrash />
+                      </Button>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-center">
+                      <Button variant="" size="sm" className="me-2">
+                        <FaEye />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="text-center">
+                  Data not found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </Table>
       </div>
-
-      <Modal
-        show={showDeleteModal}
-        onHide={handleDeleteModalClose}
-        backdrop="static"
-        keyboard={false}
-      >
+      {totalPages > 1 && (
+        <div className="pt-4">
+          <Pagination1 currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        </div>
+      )}
+      <Modal show={showDeleteModal} onHide={handleDeleteModalClose} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Confirmation</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this cafe?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this Cafe User?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleDeleteModalClose}>
-            Cancel
+            Close
           </Button>
           <Button variant="danger" onClick={handleDelete}>
             Delete
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} backdrop="static" keyboard={false} scrollable>
         <Modal.Header closeButton>
           <Modal.Title>Update Cafe</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <CafeUserForm
-            data={formData}
-            handleSubmit={handleUpdate}
-            isEditMode={true}
-          />
+          <CafeUserForm data={formData} handleSubmit={handleUpdate} isEditMode={true} />
         </Modal.Body>
       </Modal>
+      <BackdropAlert alert={alert} setAlert={setAlert} />
     </div>
   );
 }

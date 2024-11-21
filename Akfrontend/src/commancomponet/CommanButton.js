@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap"; // Using Bootstrap for styling
 
-const CommanButton = ({
+const CommanButton = React.memo
+(({
   label,
   onClick,
   variant = "",
@@ -32,6 +33,6 @@ const CommanButton = ({
       {label}
     </Button>
   );
-};
+});
 
 export default CommanButton;

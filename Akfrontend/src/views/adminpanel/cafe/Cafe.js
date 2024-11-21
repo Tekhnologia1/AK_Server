@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
-// import SearchBox from "../../commancomponet/Searchbox";
-import { FaArrowRight, FaChevronLeft, FaChevronRight, FaEdit, FaEllipsisV, FaTrash } from "react-icons/fa";
+import React, { useCallback, useEffect, useState } from "react";
+import {FaEdit,FaEye,FaTrash,} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createCafe,
-  deleteCafe,
-  fetchCafes,
-  updateCafe,
-} from "../../store/cafeSlice";
+import {createCafe,deleteCafe,fetchCafes,updateCafe,} from "../../store/cafeSlice";
+import { useMemo } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 import CafeForm from "./Cafeform";
 import SearchBox from "../../../commancomponet/Searchbox";
+import Pagination1 from "../../../commancomponet/Pagination1"; // Importing the Pagination1 component
+import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
+import Backpage from "../../../commancomponet/Backpage";
+// Memoize child components to avoid unnecessary re-renders
+const MemoizedSearchBox = React.memo(SearchBox);
+const MemoizedPagination1 = React.memo(Pagination1);
+const MemoizedCafeForm = React.memo(CafeForm);
+const MemoizedBackdropAlert = React.memo(BackdropAlert);
+const MemoizedBackpage = React.memo(Backpage);
 
 function Cafe() {
   const dispatch = useDispatch();
@@ -26,178 +30,197 @@ function Cafe() {
     selectedCity: "",
     selectedRoute: "",
     selectedDeal: "",
-    cafedeal: "",
+    // cafedeal: "",
     selectedPaymentTerm: "",
   });
   const [deleteId, setDeleteId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
+  const [pageCafes, setPageCafes] = useState([]);
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+    varient: "success",
+  });
+  const pageSize = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchCafes()); // Fetch cafes on mount
   }, [dispatch]);
 
-  // const filteredCafes = cafes.filter(cafe =>
-  //   cafe.name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
-  const columns = ["SR.NO.", "Cafe Name", "City", "Contact Person", "Actions"];
+  useEffect(() => {
+    const filteredCafes = cafes.filter((cafe) =>
+      cafe.cafe_name?.toLowerCase().includes(searchTerm?.toLowerCase())
+    );
 
-  const handleDeleteModalClose = () => setShowDeleteModal(false);
-  const handleDeleteModalShow = (id) => {
+    setTotalPages(Math.ceil(filteredCafes.length / pageSize));
+    setPageCafes(
+      filteredCafes.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    );
+  }, [cafes, currentPage, searchTerm]);
+
+  const columns = useMemo(
+    () => ["SR.NO.", "Cafe Name", "City", "Contact Person", "Actions", "View"],
+    []
+  );
+
+  const handleDeleteModalClose = useCallback(
+    () => setShowDeleteModal(false),
+    []
+  );
+  const handleDeleteModalShow = useCallback((id) => {
     setDeleteId(id);
     setShowDeleteModal(true);
-  };
+  }, []);
 
-  const handleDelete = async () => {
+
+
+
+  const handleDelete = useCallback(async () => {
     if (deleteId) {
-      console.log("objedfct");
-      await dispatch(deleteCafe(deleteId));
-      dispatch(fetchCafes());
+      const response = await dispatch(deleteCafe(deleteId));
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({ show: true, message: "Cafe Deleted!", varient: "success" });
+        dispatch(fetchCafes());
+      } else {
+        setAlert({
+          show: true,
+          message: "Cafe Not Deleted!",
+          varient: "danger",
+        });
+      }
       setShowDeleteModal(false);
+      if (pageCafes.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
     }
-  };
-
-  // const handleUpdate = async (values) => {
-  //   const id = selectedCafe.cafe_id;
-  //   const cafeDealId = parseInt(values.cafedeal, 10);
-  //   const data = {
-  //     name: values.cafeName,
-  //     address: values.address,
-  //     area: values.area,
-  //     route_id: values.selectedRoute,
-  //     cities_id: values.selectedCity,
-  //     special_deal: values.selectedDeal,
-  //     cafe_deal_id: cafeDealId,
-  //     payment_term_id: values.selectedPaymentTerm,
-  //     contact_person: values.contactPerson,
-  //   };
-
-  //   console.log("updatedData", data);
-  //   await dispatch(updateCafe(data, id));
-  //   dispatch(fetchCafes());
-  //   setShowUpdateModal(false);
-  // };
+  }, [deleteId, dispatch, pageCafes.length, currentPage]);
 
 
 
 
-  const handleUpdate = async (values) => {
-    const id = selectedCafe.cafe_id;
-    const cafeDealId = parseInt(values.cafedeal, 10);
-    const updatedData = {
-      name: values.cafeName,
-      address: values.address,
-      area: values.area,
-      route_id: values.selectedRoute,
-      cities_id: values.selectedCity,
-      special_deal: values.selectedDeal,
-      cafe_deal_id: cafeDealId,
-      payment_term_id: values.selectedPaymentTerm,
-      contact_person: values.contactPerson,
-    };
-  
-    console.log("updatedData", updatedData);
-  
-    // Pass an object containing both updatedData and id
-    await dispatch(updateCafe({ updatedData, id }));
-    dispatch(fetchCafes());
-    setShowUpdateModal(false);
-  };
-  
   const handleUpdateModalOpen = (cafe) => {
     setSelectedCafe(cafe);
+    console.log(cafe);
     setFormData({
-      cafeName: cafe.name,
+      cafeName: cafe.cafe_name,
       address: cafe.address,
       area: cafe.area,
       contactPerson: cafe.contact_person,
       selectedCity: cafe.cities_id,
       selectedRoute: cafe.routes_id,
       selectedDeal: cafe.special_deal,
-      selectedCafedeal: cafe.cafe_deals_id,
+      // selectedCafedeal: cafe.cafe_deals_id,
       selectedPaymentTerm: cafe.payment_terms_id,
     });
     setShowUpdateModal(true);
   };
 
-  const handleAddClick = async (values) => {
-    const data = {
-      name: values.cafeName,
-      address: values.address,
-      area: values.area,
-      route_id: values.selectedRoute,
-      cities_id: values.selectedCity,
-      special_deal: values.selectedDeal,
-      cafe_deal_id: values.cafedeal,
-      payment_term_id: values.selectedPaymentTerm,
-      contact_person: values.contactPerson,
-    };
+  const handleUpdate = useCallback(
+    async (values) => {
+      const id = selectedCafe.cafe_id;
+      const updatedData = {
+        name: values.cafeName,
+        address: values.address,
+        area: values.area,
+        route_id: values.selectedRoute,
+        cities_id: values.selectedCity,
+        special_deal: values.selectedDeal,
+        payment_term_id: values.selectedPaymentTerm,
+        contact_person: values.contactPerson,
+      };
 
-    console.log("values", data);
-    await dispatch(createCafe(data));
-    dispatch(fetchCafes());
-    setFormData({
-      cafeName: "",
-      address: "",
-      contactPerson: "",
-      selectedCity: "",
-      selectedRoute: "",
-      selectedDeal: "",
-      cafedeal: "",
-      selectedPaymentTerm: "",
-    });
-  };
+      const response = await dispatch(updateCafe({ updatedData, id }));
 
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({ show: true, message: "Cafe Updated!", varient: "success" });
+        dispatch(fetchCafes());
+      } else {
+        setAlert({
+          show: true,
+          message: "Cafe Not Updated!",
+          varient: "danger",
+        });
+      }
+
+      setShowUpdateModal(false);
+    },
+    [dispatch, selectedCafe]
+  );
+
+  const handleAddClick = useCallback(
+    async (values) => {
+      const data = {
+        name: values.cafeName,
+        address: values.address,
+        area: values.area,
+        route_id: values.selectedRoute,
+        cities_id: values.selectedCity,
+        special_deal: values.selectedDeal,
+        payment_term_id: values.selectedPaymentTerm,
+        contact_person: values.contactPerson,
+      };
+
+      const response = await dispatch(createCafe(data));
+      if (response.meta.requestStatus === "fulfilled") {
+        setAlert({ show: true, message: "Cafe Created!", varient: "success" });
+        dispatch(fetchCafes());
+      } else {
+        setAlert({
+          show: true,
+          message: "Cafe not created!",
+          varient: "danger",
+        });
+      }
+
+      setFormData({
+        cafeName: "",
+        address: "",
+        contactPerson: "",
+        selectedCity: "",
+        selectedRoute: "",
+        selectedDeal: "",
+        selectedPaymentTerm: "",
+      });
+    },
+    [dispatch]
+  );
+
+  console.log("pageCafes", pageCafes);
+
+  console.log(cafes);
   return (
     <div className="p-lg-5">
-      <div className="pb-2 ps-2">
-        <span
-          onClick={() => navigate("/dashboard/adminpanel")}
-          style={{ color: "#7B3F00", cursor: "pointer" }}
-          className="fs-5 fw-bold"
-        >
-          Adminpanel
-        </span>
-        <span style={{ color: "#7B3F00" }}>
-          <FaArrowRight />
-        </span>
-        <span className="fs-5 fw-bold" style={{ color: "#7B3F00" }}>
-          {" "}
-          Cafes{" "}
-        </span>
-      </div>
-
-      <CafeForm
-        handleSubmit={handleAddClick}
-        isEditMode={false}
-        className="row m-0 border rounded p-4"
+      <MemoizedBackpage
+        mainPage="Adminpanel"
+        mainPagePath="/adminpanel"
+        currentPage="Cafes"
       />
 
-      {/* <div className="pt-5">
-        <div className="row justify-content-end m-0">
-          <div className="col-lg-4">
-            <SearchBox 
-              placeholder="Type to search..." 
-              value={searchTerm} 
-              onChange={(e) => setSearchTerm(e.target.value)} 
-            />
-          </div>
-        </div>
-      </div> */}
+      <MemoizedCafeForm
+        handleSubmit={handleAddClick}
+        isEditMode={false}
+        className="row m-0 form_container p-4"
+      />
 
-<div className="pt-5">
+      <div className="pt-5">
         <div className="row justify-content-end">
           <div className="col-lg-4">
-            <SearchBox
+            <MemoizedSearchBox
               placeholder="Search Cafe"
               value={searchTerm}
-              // onChange={handleSearchChange}
+              onChange={handleSearchChange}
             />
           </div>
         </div>
       </div>
-
 
       <div className="pt-4">
         <Table responsive="sm">
@@ -214,89 +237,70 @@ function Cafe() {
             </tr>
           </thead>
           <tbody>
-            {cafes.map((item, rowIndex) => (
-              <tr key={item.id} className="text-center">
-                <td>{rowIndex + 1}</td>
-                <td>{item.name}</td>
-                <td>{item.cities_name}</td>
-                <td>{item.contact_person}</td>
-                <td>
-                  <div className="d-flex justify-content-center">
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleUpdateModalOpen(item)}
-                    >
-                      <FaEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleDeleteModalShow(item.cafe_id)}
-                    >
-                      <FaTrash />
-                    </Button>
-                    <Button
-                      size="sm"
-                      style={{
-                        background: "white",
-                        border: "none",
-                        color: "black",
-                      }}
-                    >
-                      <FaEllipsisV />
-                    </Button>
-                  </div>
+            {pageCafes.length > 0 ? (
+              pageCafes.map((item, rowIndex) => (
+                <tr key={item.id} className="text-center">
+                  <td>{rowIndex + 1 + (currentPage - 1) * pageSize}</td>
+                  <td>{item.cafe_name}</td>
+                  <td>{item.cities_name}</td>
+                  <td>{item.contact_person}</td>
+                  <td>
+                    <div className="d-flex justify-content-center">
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => handleUpdateModalOpen(item)}
+                      >
+                        <FaEdit />
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => handleDeleteModalShow(item.cafe_id)}
+                      >
+                        <FaTrash />
+                      </Button>
+                      {/* <Button
+                        size="sm"
+                        style={{
+                          background: "white",
+                          border: "none",
+                          color: "black",
+                        }}
+                      >
+                        <FaEllipsisV />
+                      </Button> */}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-center">
+                      <Button variant="" size="sm" className="me-2">
+                        <FaEye />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="text-center">
+                  Data not found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </Table>
       </div>
 
-
-      <div className="pt-4">
-        <nav aria-label="Page navigation example">
-          <ul className="pagination justify-content-end">
-            <li className="page-item disabled">
-              <a className="page-link" href="#" tabIndex="-1">
-                <FaChevronLeft /> {/* Left arrow icon */}
-              </a>
-            </li>
-            <li className="page-item ">
-              <a
-                className="page-link text-white"
-                style={{ backgroundColor: "#7B3F00" }}
-                href="#"
-              >
-                1
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                2
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                ...
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                3
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                <FaChevronRight/> {/* Right arrow icon */}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      {totalPages > 1 && (
+        <MemoizedPagination1
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
 
       <Modal
         show={showDeleteModal}
@@ -323,13 +327,22 @@ function Cafe() {
           <Modal.Title>Update Cafe</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <CafeForm
+          <MemoizedCafeForm
             data={formData}
             handleSubmit={handleUpdate}
             isEditMode={true}
           />
         </Modal.Body>
       </Modal>
+      <MemoizedBackdropAlert
+        closeAlert={() => {
+          setAlert({ ...alert, show: false });
+        }}
+        show={alert.show}
+        setShow={setAlert}
+        varient={alert.varient}
+        message={alert.message}
+      />
     </div>
   );
 }

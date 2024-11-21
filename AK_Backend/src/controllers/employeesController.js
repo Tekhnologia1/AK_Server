@@ -2,6 +2,7 @@ const { query } = require('express');
 const sql = require('../config/database'); 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const moment = require('moment'); // Import moment.js
 // const nodemailer = require('nodemailer');
 
 // POST API to create a new employee
@@ -21,13 +22,15 @@ const createEmployee = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!name || !username || !password || !employee_type_id || !email || !cell_number || !salary || !created_by) {
+    if (!name || !username || !password || !employee_type_id || !email || !cell_number) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
     try {
         // Hash the password before storing it
-        const hashedPassword = bcrypt.hashSync(password);
+        const hashedPassword = bcrypt.hashSync(password, 8);
+
+        console.log(increament_datetime)
 
         // Call the stored procedure to create the employee, passing in the hashed password
         const result = await sql.query('CALL CreateEmployee(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
@@ -73,15 +76,23 @@ const getAllEmployees = async (req, res) => {
             return res.status(404).json({ message: 'No employees found.' });
         }
 
+        // Adjust timezone for dates
+        const employees = rows[0].map((employee) => ({
+            ...employee,
+            enrollment_datetime: moment(employee.enrollment_datetime).format('YYYY-MM-DD HH:mm:ss'),
+            increament_datetime: moment(employee.increament_datetime).format('YYYY-MM-DD HH:mm:ss'),
+        }));
+
         res.status(200).json({
             message: 'Employees retrieved successfully.',
-            employees: rows[0] 
+            employees,
         });
     } catch (error) {
         console.error('Error retrieving employees:', error);
         res.status(500).json({ message: 'An error occurred while retrieving employees.' });
     }
 };
+
 
 // Get API to retrieve data employeeById wise 
 const findEmployeeById = async (req, res) => {
@@ -203,10 +214,9 @@ const loginUser = async (req, res) => {
         if (!employee) {
             return res.status(401).json({ message: 'Invalid username or password' });
         }
-        
         // Step 1: Check if the password is valid using bcrypt
         const isPasswordValid = await bcrypt.compare(password, employee[0].password);
-   
+       
         // If password is invalid, return unauthorized error
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid username or password' });

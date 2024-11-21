@@ -19,7 +19,7 @@ const createCafeOrderDetails = async (req, res) => {
 
     try {
         // Call the stored procedure to create cafe order details
-        await sql.query('CALL CreateCafeOrderDetails(?, ?, ?, ?, ?, ?, ?)', [
+        await sql.query('CALL CreateCafeOrderDetails(?, ?, ?, ?, ?, ?, ?, ?)', [
             cafe_id,
             product_id,
             description,
@@ -38,23 +38,41 @@ const createCafeOrderDetails = async (req, res) => {
     }
 };
 
-const getAllCafeOrderDetails = async (req, res) => {
-    try {
-        // Call the stored procedure to get all cafe order details
-        const [orderDetails] = await sql.query('CALL GetAllCafeOrderDetails()');
+// const GetAllCafeOrderDetailsByOrderId = async (req, res) => {
+//     try {
+//         const { id } = req.params; 
 
-        return res.status(200).json(orderDetails); // Return the list of order details
+//         // Ensure 'id' is provided
+//         if (!id) {
+//             return res.status(400).json({ message: 'Order ID is required' });
+//         }
+
+//         // Call the stored procedure with the 'id' parameter
+//         const [orderDetails] = await sql.query('CALL GetAllCafeOrderDetailsByOrderId(?)', [id]);
+
+//         // Return the order details
+//         return res.status(200).json(orderDetails);
+//     } catch (error) {
+//         console.error('Error retrieving cafe order details:', error);
+//         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+//     }
+// };
+
+const GetAllCafeOrderDetails = async (req, res) => {
+    try {
+        const [CafeOrder] = await sql.query('CALL GetAllCafeOrderDetailsByOrderId()');
+        return res.status(200).json(CafeOrder); // Return the list of cafe users
     } catch (error) {
-        console.error('Error retrieving cafe order details:', error);
+        console.error('Error retrieving cafe users:', error);
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
+
 
 const findCafeOrderDetailsById = async (req, res) => {
     const { id } = req.params; // Assuming the ID is passed as a route parameter
 
     try {
-        // Call the stored procedure to get order details by ID
         const [rows] = await sql.query('CALL FindCafeOrderDetailsById(?)', [id]);
 
         // Check if any results were returned
@@ -93,7 +111,7 @@ const deleteCafeOrderDetailsById = async (req, res) => {
 
 const updateCafeOrderDetailsById = async (req, res) => {
     const { id } = req.params; // Assuming the ID is passed as a route parameter
-    const { product_id, description, quantity, rate, sub_total_amount, received_quantity } = req.body; // Get updated data from request body
+    const { product_id, ProductName, description, quantity, rate, sub_total_amount, received_quantity } = req.body; // Get updated data from request body
 
     // Validate input
     if (!product_id || !description || !quantity || !rate || !sub_total_amount || !received_quantity) {
@@ -101,10 +119,10 @@ const updateCafeOrderDetailsById = async (req, res) => {
     }
 
     try {
-        // Call the stored procedure to update cafe order details by ID
-        const [result] = await sql.query('CALL UpdateCafeOrderDetailsById(?, ?, ?, ?, ?, ?, ?)', [
+        const [result] = await sql.query('CALL UpdateCafeOrderDetailsById(?, ?, ?, ?, ?, ?, ?, ?)', [
             id,
             product_id,
+            ProductName,
             description,
             quantity,
             rate,
@@ -126,4 +144,4 @@ const updateCafeOrderDetailsById = async (req, res) => {
 };
 
 
-module.exports = {createCafeOrderDetails, getAllCafeOrderDetails, findCafeOrderDetailsById, deleteCafeOrderDetailsById, updateCafeOrderDetailsById}
+module.exports = {createCafeOrderDetails, GetAllCafeOrderDetails, findCafeOrderDetailsById, deleteCafeOrderDetailsById, updateCafeOrderDetailsById}

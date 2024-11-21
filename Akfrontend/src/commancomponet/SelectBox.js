@@ -3,7 +3,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 import { ChevronDown } from 'react-bootstrap-icons'; // Importing an icon
 import './SelectBox.css'; // Import a custom CSS file
 
-const SelectBox = ({ label, options, value, onChange, name, defaultValue }) => {
+const SelectBox = React.memo(({ label, options, value, onChange, name, defaultValue }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -11,7 +11,7 @@ const SelectBox = ({ label, options, value, onChange, name, defaultValue }) => {
 
   const selectStyle = {
     padding: '12px',
-    borderRadius: 0,
+    borderRadius: "4px",
     borderColor: isHovered ? '#ff7f50' : '#7B3F0080', // Change border color on hover
     backgroundColor: isHovered ? '#f0f0f0' : 'white', // Change background color on hover
     appearance: 'none', // Hide the default dropdown arrow
@@ -25,7 +25,7 @@ const SelectBox = ({ label, options, value, onChange, name, defaultValue }) => {
       <InputGroup className="select-box-input-group">
         <Form.Control
           as="select"
-          value={value || defaultValue}
+          value={value}
           onChange={onChange}
           name={name}
           style={selectStyle}
@@ -44,6 +44,6 @@ const SelectBox = ({ label, options, value, onChange, name, defaultValue }) => {
       </InputGroup>
     </Form.Group>
   );
-};
+});
 
 export default SelectBox;

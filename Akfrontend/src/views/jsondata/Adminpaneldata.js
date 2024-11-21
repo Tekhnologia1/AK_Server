@@ -2,11 +2,12 @@ import product from "../../assets/images/Vector (18).png";
 import routesImage from "../../assets/images/Vector (19).png";
 import areaImage from "../../assets/images/Vector (21).png";
 import cafesImage from "../../assets/images/Vector (22).png";
- import dealsImage from "../../assets/images/Vector (23).png"
- import employeesImage from "../../assets/images/Vector (25).png"; 
+import cafeUser from "../../assets/images/Cafe User.png";
+ import dealsImage from "../../assets/images/Vector (24).png"
+ import employeesImage from "../../assets/images/Employees Icon.png"; 
  import ordersImage from "../../assets/images/Group 3466052.png"
  import invoicesImage from "../../assets/images/Vector (26).png";  
-import payment from "../../assets/images/Vector (29).png"; // Example image for Payments
+import payment from "../../assets/images/PaymentIcon.png"; // Example image for Payments
  import modulesImage from "../../assets/images/Vector (27).png";  // Example image for Modules & Permissions
  import enquiryImage from  "../../assets/images/Vector (28).png"; // Example image for Enquiry
 
@@ -20,7 +21,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/product'
+    path:'/adminpanel/product'
   },
   {
     id: 2,
@@ -31,7 +32,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/route'
+    path:'/adminpanel/route'
 
   },
   {
@@ -43,7 +44,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/areas'
+    path:'/adminpanel/areas'
 
   },
   {
@@ -55,11 +56,23 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/cafe'
+    path:'/adminpanel/cafe'
 
   },
   {
     id: 5,
+    title: "Cafe User",
+    imageSrc: cafeUser,
+    altText: "Cafe Deals Image",
+    color: "#7B3F00",
+    boxShadow: true,
+    imageWidth: "32px",
+    imageHeight: "32px",
+    path:'/adminpanel/cafeduser'
+
+  },
+  {
+    id: 6,
     title: "Cafe Deals",
     imageSrc: dealsImage,
     altText: "Cafe Deals Image",
@@ -67,19 +80,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/cafedeal'
-
-  },
-  {
-    id: 6,
-    title: "Cafe User",
-    imageSrc: dealsImage,
-    altText: "Cafe Deals Image",
-    color: "#7B3F00",
-    boxShadow: true,
-    imageWidth: "32px",
-    imageHeight: "32px",
-    path:'/dashboard/adminpanel/cafeduser'
+    path:'/adminpanel/cafedeal'
 
   },
   {
@@ -91,7 +92,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/employee'
+    path:'/adminpanel/employee'
 
   },
   {
@@ -103,7 +104,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/order'
+    path:'/adminpanel/order'
 
   },
   {
@@ -115,7 +116,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/invoices'
+    path:'/adminpanel/invoices'
 
   },
   {
@@ -127,7 +128,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/payment'
+    path:'/adminpanel/payment'
 
   },
   {
@@ -139,7 +140,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/modulepermmission'
+    path:'/adminpanel/modulepermmission'
 
   },
   {
@@ -151,7 +152,7 @@ import payment from "../../assets/images/Vector (29).png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/dashboard/adminpanel/enquiry'
+    path:'/adminpanel/enquiry'
 
   },
 

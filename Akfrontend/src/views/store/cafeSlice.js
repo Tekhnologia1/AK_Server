@@ -15,7 +15,11 @@ export const fetchCafes = createAsyncThunk(
   'cafes/fetchCafes',
   async () => {
     const response = await axios.get(`${API_BASE_URL}/GetAllCafes`);
+    console.log(response.data[0])
     return response.data[0];
+
+
+
   }
 );
 
@@ -33,6 +37,7 @@ export const fetchSpecialDeals = createAsyncThunk(
 export const createCafe = createAsyncThunk(
   'cafes/createCafe',
   async (cafeData) => {
+    console.log("object",cafeData)
     const response = await axios.post(`${API_BASE_URL}/createCafe`, cafeData);
     return response.data;
   }

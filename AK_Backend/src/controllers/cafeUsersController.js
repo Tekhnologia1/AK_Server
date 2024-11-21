@@ -1,6 +1,7 @@
 const { query } = require('express');
 const sql = require('../config/database'); 
-
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const createCafeUser = async (req, res) => {
     const {
@@ -20,12 +21,15 @@ const createCafeUser = async (req, res) => {
     }
 
     try {
+                // Hash the password before storing it
+                const hashedPassword = await bcrypt.hash(password, 10);
+
         // Call the stored procedure to create a cafe user
         const result = await sql.query('CALL CreateCafeUser(?, ?, ?, ?, ?, ?, ?, ?)', [
             cafe_id,
             name,
             username,
-            password,
+            hashedPassword,  // Use the hashed password here
             user_type_id,
             email,
             cell_number,
@@ -144,5 +148,48 @@ const updateCafeUser = async (req, res) => {
     }
 };
 
+// login Cafe Users 
+const loginCafeUser = async (req, res) => {
+    const { cafe_id, username, password } = req.body;
 
-module.exports = {createCafeUser, getAllCafeUsers, findCafeUserById, deleteCafeUser, updateCafeUser}
+    // Validate input fields
+    if (!cafe_id || !username || !password) {
+        return res.status(400).json({ message: 'Cafe ID, username, and password are required.' });
+    }
+
+    try {
+        // Query the database to get the user data based on cafe_id and username
+        const result = await sql.query('CALL GetCafeUserByUsernameAndCafeId(?, ?)', [cafe_id, username]);
+        const user = result[0][0]; // Assuming result[0][0] contains the user data
+        
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid username or cafe ID.' });
+        }
+
+        // Check if the provided password matches the stored hashed password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid password.' });
+        }
+
+        // If password is valid, generate a JWT token
+        const token = jwt.sign(
+            { id: user.id, cafe_id: user.cafe_id, user_type_id: user.user_type_id },
+            'AKGoldenCrust@99', // Secret key
+            { expiresIn: '1h' }  // Token expiration time
+        );
+
+        return res.status(200).json({
+            message: 'Login successful.',
+            token: token,
+            userTypeId: user.user_type_id,
+            cafeId: user.cafe_id
+        });
+    } catch (error) {
+        console.error('Error logging in:', error);
+        return res.status(500).json({ message: 'An error occurred while logging in.', error: error.message });
+    }
+};
+
+module.exports = {createCafeUser, getAllCafeUsers, findCafeUserById, deleteCafeUser, updateCafeUser, loginCafeUser}

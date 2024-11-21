@@ -1,69 +1,6 @@
 const { query } = require('express');
 const sql = require('../config/database'); 
 
-// const createProduct = async (req, res) => {
-//     const {
-//         product_master_id,
-//         name,
-//         details,
-//         product_weight,
-//         product_filling,
-//         filling_types_id,
-//         base_price,
-//         making_price,
-//         price_scale
-//     } = req.body; // Get product details from request body
-
-//     // Validate input
-//     if (!product_master_id || !name || !details || !product_weight || !base_price || !making_price || !price_scale) {
-//         return res.status(400).json({ message: 'All fields are required.' });
-//     }
-    
-    
-//     try {
-        
-//         if(product_filling==0){
-
-//             await sql.query('CALL CreateProduct(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-//                 product_master_id,
-//                 name,
-//                 details,
-//                 product_weight,
-//                 product_filling,
-//                 null,
-//                 base_price,
-//                 making_price,
-//                 price_scale
-//             ]);
-
-//             return res.status(201).json({ message: 'Product created successfully.' });
-
-//         }
-        
-
-//         await sql.query('CALL CreateProduct(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-//             product_master_id,
-//             name,
-//             details,
-//             product_weight,
-//             product_filling,
-//             filling_types_id,
-//             base_price,
-//             making_price,
-//             price_scale
-//         ]);
-//         // Call the stored procedure to create the product
-       
-
-//         return res.status(201).json({ message: 'Product created successfully.' });
-//     } catch (error) {
-//         console.error('Error creating product:', error);
-//         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
-//     }
-// };
-
-
-
 const createProduct = async (req, res) => {
     const {
         product_master_id,

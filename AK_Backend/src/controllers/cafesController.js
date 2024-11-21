@@ -3,13 +3,13 @@ const sql = require('../config/database');
 
 const createCafe = async (req, res) => {
     const {
+        franchise_id,
         name,
         address,
         area,
         route_id,
         cities_id,
         special_deal,
-        cafe_deal_id,
         payment_term_id,
         contact_person
     } = req.body;
@@ -21,13 +21,13 @@ const createCafe = async (req, res) => {
 
     try {
         const [result] = await sql.query('CALL CreateCafe(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            franchise_id,
             name,
             address,
             area,
             route_id,
             cities_id,
             special_deal,
-            cafe_deal_id,
             payment_term_id,
             contact_person
         ]);
@@ -102,42 +102,43 @@ const deleteCafeById = async (req, res) => {
 const updateCafe = async (req, res) => {
     const cafeId = parseInt(req.params.id, 10); // Get the cafe ID from request parameters
     const {
+        franchise_id,
         name,
         address,
         area,
         route_id,
         cities_id,
         special_deal,
-        cafe_deal_id,
         payment_term_id,
-        contact_person
+        contact_person,
     } = req.body;
 
-    // Validate input
+    // Validate the cafe ID
     if (isNaN(cafeId)) {
         return res.status(400).json({ message: 'Invalid cafe ID.' });
     }
 
     // Validate required fields
-    if (!name || !address || !area) {
+    if (!name || !address || area == null) {
         return res.status(400).json({ message: 'Cafe name, address, and area are required.' });
     }
 
     try {
+        // Execute the stored procedure
         const [result] = await sql.query('CALL UpdateCafe(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            cafeId,
+            franchise_id,
+            cafeId, // Note: Ensure cafe ID is passed as the second argument
             name,
             address,
             area,
             route_id,
             cities_id,
             special_deal,
-            cafe_deal_id,
             payment_term_id,
-            contact_person
+            contact_person,
         ]);
 
-        // Check if any rows were affected
+        // Response handling
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Cafe not found or no changes made.' });
         }
@@ -148,6 +149,7 @@ const updateCafe = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
+
 
 
 

@@ -1,0 +1,30 @@
+/* Custom styles for the modal */
+.modal-content {
+    border-radius: 4px;
+    border: none;
+  }
+  
+  .modal-content .btn-warning {
+    background-color: #7B3F00; /* Custom color to match the design */
+    border: 1px solid #D9D9D9;
+    font-weight: 500;
+  }
+  
+  .modal-content .btn-warning:hover,
+  .modal-content .btn-warning:active,
+  .modal-content .btn-warning:focus {
+    background-color: #8b4513;
+    box-shadow: 0px 4px 4px 0px #00000040;
+  }
+
+  .modal-content .btn-outline-light{
+    font-weight: 500;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    color: #7B3F00;
+  }
+
+  .modal-content .btn-outline-light:hover{
+    color: #7B3F00;
+
+  }
