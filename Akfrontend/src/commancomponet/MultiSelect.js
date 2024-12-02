@@ -7,7 +7,7 @@ import 'primeicons/primeicons.css';                        // Icons
 import { Form } from "react-bootstrap";
 import './common.css';
 
-const MultiSelectComponent = React.memo(({ name, label, placeholder, defaultValue, options, value, onChange, search, searchPlaceholder, ...props }) => {
+const MultiSelectComponent = ({ name, label, placeholder, defaultValue, options, value, onChange, search, searchPlaceholder, ...props }) => {
     return (
         <>
             {label && <Form.Label>{label}</Form.Label>}
@@ -33,7 +33,7 @@ const MultiSelectComponent = React.memo(({ name, label, placeholder, defaultValu
         </>
 
     );
-})
+}
 
 
 export default MultiSelectComponent;

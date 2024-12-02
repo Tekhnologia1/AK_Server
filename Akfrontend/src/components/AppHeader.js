@@ -49,7 +49,7 @@ const AppHeader = () => {
       ref={headerRef}
       style={{ background: '#FFFFFF' }}
     >
-      <CContainer className="border-bottom px-4 justify-content-between" fluid>
+      <CContainer className="border-bottom px-4 justify-content-start" fluid>
         <CHeaderToggler
           onClick={() => {
             dispatch(set({ sidebarUnfoldable: !unfoldable, sidebarShow: window.innerWidth < 768 ? !sidebarShow : true }))
@@ -71,7 +71,7 @@ const AppHeader = () => {
           </svg>
         </CHeaderToggler>
 
-        <CHeaderNav className="d-none d-md-flex">
+        <CHeaderNav className="d-none d-md-flex"> 
           <CNavItem>
             <CNavLink to="/" component={NavLink}>
               Dashboard
@@ -79,7 +79,7 @@ const AppHeader = () => {
           </CNavItem>
         </CHeaderNav>
 
-        <div className="d-none d-md-flex ms-auto">
+        <div className="d-none ms-auto">
           {/* Search Box with Icon */}
           <div className="search-box position-relative mx-4" style={{ maxWidth: "250px", display: "flex", alignItems: "center" }}>
             <CFormInput

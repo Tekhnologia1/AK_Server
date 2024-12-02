@@ -3,7 +3,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 import { ChevronDown } from 'react-bootstrap-icons'; // Importing an icon
 import './SelectBox.css'; // Import a custom CSS file
 
-const SelectBox = React.memo(({ label, options, value, onChange, name, defaultValue }) => {
+const SelectBox = ({ label, options, value, onChange, name, defaultValue, className}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -31,11 +31,11 @@ const SelectBox = React.memo(({ label, options, value, onChange, name, defaultVa
           style={selectStyle}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="select-box"
+          className={`select-box ${className}`}
         >
-          <option value="">{defaultValue}</option>
+          {defaultValue && <option value="">{defaultValue}</option>}
           {options.map((option, index) => (
-            <option key={index} value={option.option}>
+            <option key={index} value={option.option} className='text-black'>
               {option.label}
             </option>
           ))}
@@ -44,6 +44,6 @@ const SelectBox = React.memo(({ label, options, value, onChange, name, defaultVa
       </InputGroup>
     </Form.Group>
   );
-});
+};
 
 export default SelectBox;

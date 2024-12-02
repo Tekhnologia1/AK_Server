@@ -1,0 +1,164 @@
+
+.stepProgressBar {
+    --stepProgressBar-step-size: 60px; /* Reduce this value for closer steps */
+    --stepProgressBar-space-unit: 4px;
+    --stepProgressBar-indicator-size: 24px;
+    --stepProgressBar-font-size: 14px;
+    --stepProgressBar-step-line-size: 2px;
+    --stepProgressBar-color-primary: rgb(27, 158, 62);
+    --stepProgressBar-color-secondary: #dc3545;
+    --stepProgressBar-color-neutral: #fff;
+    --stepProgressBar-color-neutral-400: #a3a3a3;
+    --stepProgressBar-color-neutral-800: #262626;
+
+    display: flex;
+    width: 100%;
+    overflow-x: auto; /* Keep horizontal scrolling enabled */
+    scrollbar-width: thin; /* Thin scrollbar for better appearance */
+    scrollbar-color: var(--stepProgressBar-color-primary) transparent;
+    padding-bottom: 8px; /* Adjust for scrollbar visibility */
+}
+
+.stepProgressBar::-webkit-scrollbar {
+    height: 8px; /* Horizontal scrollbar height */
+}
+
+.stepProgressBar::-webkit-scrollbar-track {
+    background: transparent; /* Background of scrollbar track */
+}
+
+.stepProgressBar::-webkit-scrollbar-thumb {
+    background: var(--stepProgressBar-color-primary); /* Scrollbar color */
+    border-radius: 4px;
+}
+
+.stepProgressBar__step {
+    display: flex;
+    /* flex-shrink: 0; Prevent steps from shrinking */
+}
+
+/* .stepProgressBar__step:not(:first-child) {
+    width: 100%;
+} */
+
+/* --- button ---- */
+.stepProgressBar__step__button {
+    align-items: center;
+    color: var(--stepProgressBar-color-neutral-400);
+    display: flex;
+    font-size: var(--stepProgressBar-font-size);
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative;
+    /* transition: color 0.2s ease-in; */
+    width: var(--stepProgressBar-step-size);
+    background: transparent;
+    border: unset;
+}
+
+.stepProgressBar__step--current .stepProgressBar__step__button {
+    color: var(--stepProgressBar-color-neutral-800);
+}
+
+.stepProgressBar__step__button__indicator {
+    align-items: center;
+    background-color: var(--stepProgressBar-color-secondary);
+    border: calc(var(--stepProgressBar-indicator-size) / 5.5) solid var(--stepProgressBar-color-neutral);
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    height: var(--stepProgressBar-indicator-size);
+    /* transition: background-color 0.3s ease-in; */
+    width: var(--stepProgressBar-indicator-size);
+}
+
+.stepProgressBar__step__button__indicator__icon-completed {
+    fill: transparent; 
+}
+
+.stepProgressBar__step--completed .stepProgressBar__step__button__indicator__icon-completed {
+    background-color: var(--stepProgressBar-color-primary);
+    animation: fillColorChange 0.1s ease-in 0.2s forwards;
+}
+
+.stepProgressBar__step__button__label {
+    margin-top: var(--stepProgressBar-space-unit);
+    width: max-content;
+}
+
+/* --- button states ---- */
+@supports selector(:hover) {
+    .stepProgressBar__step__button:hover {
+        color: var(--stepProgressBar-color-primary);
+    }
+}
+
+.stepProgressBar__step__button:focus-visible {
+    border-radius: 4px;
+    outline: var(--stepProgressBar-color-primary) solid 2px;
+}
+
+@supports not selector(:focus-visible) { /* fallback for browsers without focus-visible support */
+    .stepProgressBar__step__button:focus {
+        border-radius: 4px;
+        outline: var(--stepProgressBar-color-primary) solid 2px;
+    }
+}
+
+/* --- line ---- */
+.stepProgressBar__step__line {
+    background-color: var(--stepProgressBar-color-secondary);
+    height: var(--stepProgressBar-step-line-size);
+    margin-top: calc(var(--stepProgressBar-indicator-size) / 2 - var(--stepProgressBar-step-line-size) / 2);
+    margin-left: calc(var(--stepProgressBar-step-size) / 2 * -1);
+    margin-right: calc(var(--stepProgressBar-step-size) / 2 * -1);
+    transition: background-color 0.3s ease-in;
+    width: 150px;
+}
+
+.stepProgressBar__step--navigable .stepProgressBar__step__line {
+    background-color: var(--stepProgressBar-color-primary);
+    transition: background-color 0.2s ease-in;
+}
+
+/* --- other ---- */
+@keyframes fillColorChange {
+    0% {
+        fill: var(--stepProgressBar-color-primary);
+    }
+    100% {
+        fill: var(--stepProgressBar-color-neutral)
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    .stepProgressBar__step__button {
+        width: auto;
+    }
+
+    .stepProgressBar__step__line {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .stepProgressBar__step__button__label {
+        display: none;
+    }
+}
+
+.stepProgressBar .cafe_name{
+    color: black;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.stepProgressBar .cafe_address{
+    color: #64707D;
+    font-size: 12px;
+}
+
+.stepProgressBar .order_number{
+    color: #7B3F00;
+    font-size: 12px;
+}

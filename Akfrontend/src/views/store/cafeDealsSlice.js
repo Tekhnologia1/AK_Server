@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { apiurl } from '../../Api/apiurl';
 const API_BASE_URL = apiurl;
-
+const token = localStorage.getItem("token");
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 const initialState = {
   deals: [],
   status: 'idle', // idle | loading | succeeded | failed
@@ -13,7 +14,8 @@ const initialState = {
 export const fetchDeals = createAsyncThunk(
   'deals/fetchDeals',
   async () => {
-    const response = await axios.get(`${API_BASE_URL}/GetAllCafeDealsDetails`);
+    const response = await axios.get(`${API_BASE_URL}/GetAllCafeDeals`);
+    console.log(response.data[0])
     return response.data[0]; // Adjust based on your API response
   }
 );
@@ -22,8 +24,7 @@ export const createDeal = createAsyncThunk(
   'deals/createDeal',
   async (dealData) => {
 
-    console.log("dealData",dealData)
-    const response = await axios.post(`${API_BASE_URL}/CreateCafeDealsDetails`, dealData);
+    const response = await axios.post(`${API_BASE_URL}/CreateCafeDeal`, dealData);
     return response.data;
   }
 );
@@ -34,7 +35,7 @@ export const createDeal = createAsyncThunk(
 export const updateDeal = createAsyncThunk(
   'deals/updateDeal',
   async ({ id, updatedData }) => {
-    const response = await axios.put(`${API_BASE_URL}/UpdateCafeDealsDetails/${id}`, updatedData);
+    const response = await axios.put(`${API_BASE_URL}/UpdateCafeDeals/${id}`, updatedData);
     return response.data;
   }
 );
@@ -43,7 +44,7 @@ export const updateDeal = createAsyncThunk(
 export const deleteDeal = createAsyncThunk(
   'deals/deleteDeal',
   async (id) => {
-    await axios.delete(`${API_BASE_URL}/DeleteCafeDealsDetails/${id}`);
+    await axios.delete(`${API_BASE_URL}/DeleteCafeDeals/${id}`);
     return id; // Return the deleted deal's ID
   }
 );

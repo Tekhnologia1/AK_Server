@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import InputBox from "../../../commancomponet/InputBox";
 import SearchDropdown from "../../../commancomponet/SearchDropdown";
 import DateInputs from "../../../commancomponet/DateInput";
-import Note from "../../../commancomponet/Note";
-import CommanButton from "../../../commancomponet/CommanButton";
 import { fetchCafes, fetchSpecialDeals } from "../../store/cafeSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -65,18 +62,7 @@ const RepeatOrder = () => {
             const cafe = cafes.find(item => item.cafe_id === formData.cafeId)
             dispatch(setData({ values, cafe }))
             navigate('/adminpanel/order/home')
-            //   console.log(values);
-            //   handleSubmit(values);
-
-            //   setFormData({
-            //     orderNumber: "",
-            //     cafeId: "",
-            //     orderDate: "",
-            //     paymentTerm: "",
-            //     totalPayment: "",
-            //     paymentStatus: "",
-            //     note: "",
-            //   });
+       
             setErrors({})
         } else {
             setErrors(validationErrors);
@@ -84,27 +70,51 @@ const RepeatOrder = () => {
     }
     return (
         <>
+
             <div className="row m-0 justify-content-center">
                 <div className="col-lg-4 gy-4">
                     <SearchDropdown
                         name={"cafeId"}
                         placeholder="Cafe Name"
                         isSearchabel={true}
-                        options={cafeList}
+                        options={cafeList} 
                         onChange={handleChange}
                         value={formData.cafeId}
                         className={"p-1"} />
                 </div>
                 <div className="col-lg-4 gy-4 ">
+     
                     <DateInputs
+                        // label={"Enter the date"}
                         value={formData.orderDate}
                         onChange={handleChange}
                         placeholder="Date"
                         name="orderDate"
                     />
                     {errors.orderDate && <p className="text-danger error_text">{errors.orderDate}</p>}
-
                 </div>
+
+                <div className="col-lg-4 gy-4 ">
+     {errors.orderDate && <p className="text-danger error_text">{errors.orderDate}</p>}
+ </div>
+
+
+{/* 
+<div className="col-lg-4 gy-4">
+  <label htmlFor="orderDate" className="form-label">
+    Enter the date
+  </label>
+  <DateInputs
+    id="orderDate"
+    label={"Enter the date"}
+    value={formData.orderDate}
+    onChange={handleChange}
+    placeholder="Date"
+    name="orderDate"
+  />
+  {errors.orderDate && <p className="text-danger error_text">{errors.orderDate}</p>}
+</div> */}
+
 
             </div>
         </>

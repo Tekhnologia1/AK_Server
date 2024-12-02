@@ -3,6 +3,7 @@ const sql = require('../config/database');
 
 const createCafeDealDetails = async (req, res) => {
     const {
+        cafe_deals_id,
         cafe_id,
         product_id,
         deal_price
@@ -15,7 +16,8 @@ const createCafeDealDetails = async (req, res) => {
 
     try {
         // Call the stored procedure to create cafe deal details
-        await sql.query('CALL CreateCafeDealsDetails(?, ?, ?)', [
+        await sql.query('CALL CreateCafeDealsDetails(?, ?, ?, ?)', [
+            cafe_deals_id,
             cafe_id,
             product_id,
             deal_price
@@ -89,6 +91,7 @@ const deleteCafeDealDetail = async (req, res) => {
 const updateCafeDealDetail = async (req, res) => {
     const cafeDealDetailId = parseInt(req.params.id, 10); // Get the ID from request parameters
     const {
+        cafe_deals_id,
         cafe_id, 
         product_id, 
         deal_price
@@ -105,6 +108,7 @@ const updateCafeDealDetail = async (req, res) => {
     try {
         const [result] = await sql.query('CALL UpdateCafeDealDetail(?, ?, ?, ?)', [
             cafeDealDetailId,
+            cafe_deals_id,
             cafe_id, 
             product_id, 
             deal_price

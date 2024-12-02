@@ -1,9 +1,5 @@
-.pc_container {
-    padding-top: 28px;
-}
-
 .pc_container .row_margin{
-    margin: 0 10%;
+    margin: 1rem;
 }
 
 .pc_container .cards {
@@ -65,7 +61,7 @@
     font-weight: 500;
     font-size: 14px;
     color: #0B0A0A;
-    width: max-content;
+    min-width: max-content;
 }
 
 .pc_container .sub-text {
@@ -76,6 +72,12 @@
 }
 
 .pc_container .price_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pc_container .price_container .input_quantity{
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -141,20 +143,20 @@
     font-family: "Noto Sans", sans-serif;
     font-weight: 600;
     font-size: 14px;
-    text-decoration: underline;
+    color: #0B0A0A;
 }
 
 .pc_container .payment_text {
     font-family: "Inter", sans-serif;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 14px;
     color: #565D6D;
 }
 
 .pc_container .payment_total {
     font-family: "Inter", sans-serif;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 14px;
     color: #0B0A0A;
 }
 
@@ -269,20 +271,21 @@
     width: 2rem;
 }
 
-.pc_container .remove_cart{
+.pc_container .price_container .remove_cart{
+    min-width: 20px;
     font-size: 18px;
     cursor: pointer;
     transition: transform .2s;
 }
 
-.pc_container .remove_cart:hover{
+.pc_container .price_container .remove_cart:hover{
     transform: scale(1.2);
     color: red;
 }
 
 @media screen and (max-width: 480px) {
     .pc_container .row_margin{
-        margin: 0px 15px;
+        margin: 15px;
     }
     .pc_container .cards{
         padding: 10px;
@@ -298,5 +301,11 @@
     }
     .pc_container .price_container{
         justify-content: space-between;
+    }
+}
+
+@media screen and (min-width: 1200px){
+    .pc_container .row_margin{
+        margin: 3rem;
     }
 }

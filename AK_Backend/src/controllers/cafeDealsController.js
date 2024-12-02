@@ -2,19 +2,21 @@ const { query } = require('express');
 const sql = require('../config/database'); 
 
 const createCafeDeal = async (req, res) => {
-    const { cafe_id, cafe_user_id, employee_id } = req.body;
+    const { cafe_id, cafe_user_id, employee_id, product_id, deal_price} = req.body;
 
     // Validate input
-    if (!cafe_id || !cafe_user_id || !employee_id) {
-        return res.status(400).json({ message: 'Cafe ID, User ID, and Employee ID are required.' });
+    if (!cafe_id || !product_id || !deal_price) {
+        return res.status(400).json({ message: 'Cafe ID, product_id and deal_priceare required.' });
     }
 
     try {
         // Call the stored procedure to create a cafe deal
-        await sql.query('CALL CreateCafeDeals(?, ?, ?)', [
+        await sql.query('CALL CreateCafeDeals(?, ?, ?, ?, ?)', [
             cafe_id,
             cafe_user_id,
-            employee_id
+            employee_id,
+            product_id,
+            deal_price
         ]);
 
         return res.status(201).json({ message: 'Cafe deal created successfully.' });
@@ -87,26 +89,30 @@ const deleteCafeDeals = async (req, res) => {
 const updateCafeDeals = async (req, res) => {
     const cafeDealId = parseInt(req.params.id, 10); // Get the cafe deal ID from request parameters
     const {
-        cafe_id,
-        cafe_user_id,
-        employee_id
+            cafe_id,
+            cafe_user_id,
+            employee_id,
+            product_id,
+            deal_price
     } = req.body; // Get the cafe deal details from request body
 
     // Validate input
     if (isNaN(cafeDealId)) {
         return res.status(400).json({ message: 'Invalid cafe deal ID.' });
     }
-    if (!cafe_id || !cafe_user_id || !employee_id) {
-        return res.status(400).json({ message: 'Cafe ID, user ID, and employee ID are required.' });
+    if (!cafe_id || !product_id || !deal_price) {
+        return res.status(400).json({ message: 'Cafe ID, product_id and deal_price are required.' });
     }
 
     try {
         // Call the stored procedure to update the cafe deal
-        const [result] = await sql.query('CALL UpdateCafeDeals(?, ?, ?, ?)', [
+        const [result] = await sql.query('CALL UpdateCafeDeals(?, ?, ?, ?, ?, ?)', [
             cafeDealId,
             cafe_id,
             cafe_user_id,
-            employee_id
+            employee_id,
+            product_id,
+            deal_price
         ]);
         // Check if any rows were affected
         if (result.affectedRows === 0) {
@@ -119,8 +125,6 @@ const updateCafeDeals = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
-
-
 
 
 

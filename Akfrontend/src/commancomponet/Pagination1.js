@@ -3,7 +3,7 @@ import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import './common.css';
 
-const Pagination1 = React.memo(({ currentPage, totalPages, onPageChange }) => {
+const Pagination1 = ({ currentPage, totalPages, onPageChange }) => {
   return (
     <nav aria-label="Page navigation example" className="custom-pagination">
       <ul className="pagination justify-content-end">
@@ -27,6 +27,6 @@ const Pagination1 = React.memo(({ currentPage, totalPages, onPageChange }) => {
       </ul>
     </nav>
   );
-});
+};
 
 export default Pagination1;

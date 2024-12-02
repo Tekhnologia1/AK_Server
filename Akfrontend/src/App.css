@@ -14,3 +14,81 @@
   font-size: 14px;
   margin-bottom: 0;
 }
+
+.ak_pages .common_outline_btn{
+  background-color: white;
+  color: #7B3F00;
+  border: 1px solid #7B3F00;
+}
+
+.ak_pages .common_outline_btn:hover{
+  background-color: #7B3F00;
+  color: white;
+  border-color: transparent;
+}
+
+.ak_pages .common_outline_btn:disabled{
+  opacity: 0.65;
+}
+
+.ak_pages .icon_blue{
+  background: #CDEDFE;
+  border-radius: 2px;
+  border: unset;
+  padding: 5px;
+  align-items: center;
+  display: flex;
+}
+
+.ak_pages .icon_blue svg{
+  color: #0588CF;
+}
+
+.ak_pages .icon_green{
+  background: #D1FDDC;
+  border-radius: 2px;
+  border: unset;
+  padding: 5px;
+  align-items: center;
+  display: flex;
+}
+
+.ak_pages .icon_green svg{
+  color: #058F27;
+}
+
+.ak_pages .icon_red{
+  background: #FFCACA;
+  border-radius: 2px;
+  border: unset;
+  padding: 5px;
+  align-items: center;
+  display: flex;
+}
+
+.ak_pages .icon_red svg{
+  color: #E80505;
+}
+
+.ak_pages .icon_purple{
+  background: #D7D7FF;
+  border-radius: 2px;
+  border: unset;
+  padding: 5px;
+  align-items: center;
+  display: flex;
+}
+
+.ak_pages .icon_purple svg{
+  color: #0303F5;
+}
+
+
+.ak_pages .icon_pink{
+  background: #FED9D9;
+  border-radius: 2px;
+  border: unset;
+  padding: 5px;
+  align-items: center;
+  display: flex;
+}

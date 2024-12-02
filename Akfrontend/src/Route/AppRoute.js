@@ -1,9 +1,10 @@
-
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
 import DefaultLayout from "../layout/DefaultLayout";
 import Loader from "./Loader"; // A fallback loader component (optional)
+import OrderHistory from "../views/adminpanel/orderhistory";
+import Delivery from "../views/adminpanel/delivery/Delivery";
 
 // Lazy load components
 const Adminpanel = lazy(() => import("../views/adminpanel/Adminpanel"));
@@ -43,15 +44,16 @@ function AppRoutes() {
             <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="/adminpanel" element={<Adminpanel />} />
-              <Route path="/adminpanel/product" element={<Product />} />
+              <Route path="/adminpanel/product" element={<Product/>} />
               <Route path="/adminpanel/areas" element={<Areas />} />
               <Route path="/adminpanel/order" element={<Orderplace />} />
               <Route path="/adminpanel/route" element={<Routess />} />
               <Route path="/adminpanel/cafe" element={<Cafe />} />
-              <Route path="/adminpanel/cafeduser" element={<CafeUser />} />
+              <Route path="/adminpanel/cafeuser" element={<CafeUser />} />
               <Route path="/adminpanel/cafedeal" element={<CafeDeals />} />
               <Route path="/adminpanel/employee" element={<Employees />} />
               <Route path="/adminpanel/payment" element={<Payment />} />
+              <Route path="/adminpanel/delivery" element={<Delivery/>} />
               <Route
                 path="/adminpanel/modulepermmission"
                 element={<Modulepermmission />}
@@ -65,6 +67,10 @@ function AppRoutes() {
               <Route
                 path="/adminpanel/order/paymentcheckout"
                 element={< PaymentCheckout/>}
+              />
+              <Route
+                path="/adminpanel/order/history"
+                element={<OrderHistory />}
               />
             </Route>
           </Route>

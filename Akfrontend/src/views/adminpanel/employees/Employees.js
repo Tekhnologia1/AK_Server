@@ -13,38 +13,34 @@ import {
   fetchEmployeeTypes,
   updateEmployee,
 } from "../../store/employeeSlice";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Modal } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import Pagination1 from "../../../commancomponet/Pagination1";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
 import EmployeeForm from "./EmployeeForm";
 import Backpage from "../../../commancomponet/Backpage";
+import ShowModal from "../../../commancomponet/ShowModal";
+import { isMobileView } from "../../../Utils/utils";
+import { PiEyeBold, PiNotePencilBold, PiTrashBold } from "react-icons/pi";
 
 function Employees() {
   const { employees, status, error } = useSelector((state) => state.employees);
   const employeeType = useSelector((state) => state.employees.employeeTypes);
 
   const dispatch = useDispatch();
+  const [showModal1, setShowModal1] = useState(false);
   const [showFirstModal, setShowFirstModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [errors1, setErrors1] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [modaledata, seModaledata] = useState({});
   const [deleteid, setDelete] = useState();
-  const navigate = useNavigate();
-
   const handleFirstModalClose = () => setShowFirstModal(false);
   const handleFirstModalShow = (id) => {
     setDelete(id);
     setShowFirstModal(true);
   };
 
-  // console.log("employee", employee);
-  // const handleSecondModalClose = () => setShowSecondModal(false);
-  // const handleSecondModalShow = () => setShowSecondModal(true);
 
   const [formData, setFormData] = useState({
     employeeName: "",
@@ -100,7 +96,6 @@ function Employees() {
     "Employee Type",
     "Contact No",
     "Action",
-    "View",
   ];
 
   // Fetch employees from the backend
@@ -131,7 +126,6 @@ function Employees() {
   const handleDelete = async () => {
     if (deleteid) {
       const result = await dispatch(deleteEmployee(deleteid));
-      console.log(result);
       if (result.meta.requestStatus === "fulfilled") {
         dispatch(fetchEmployees());
         setShowFirstModal(false);
@@ -157,8 +151,8 @@ function Employees() {
   useEffect(() => {
     const filteredEmployees = employees
       ? employees.filter((emp) =>
-          emp.name?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
-        )
+        emp.name?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
+      )
       : [];
 
     const pages = Math.ceil(filteredEmployees.length / pageSize);
@@ -210,11 +204,19 @@ function Employees() {
         updateEmployee({ updatedData: updatedEmployee, id: id })
       );
 
-      dispatch(fetchEmployees());
+      console.log("api result ", result);
 
-      setShowUpdateModal(false);
-      setAlert({ show: true, message: "Employee Updated", varient: "success" });
-      return { success: true };
+      if (result.meta.requestStatus === "rejected" || result.error) {
+        setAlert({ show: true, message: error?.message ? error.message : "Can't update employee!", varient: "danger" });
+        return { success: false, error: error.message };
+      } else {
+        dispatch(fetchEmployees());
+
+        setShowUpdateModal(false);
+        setAlert({ show: true, message: "Employee Updated", varient: "success" });
+        return { success: true };
+      }
+
     } catch (error) {
       setAlert({ show: true, message: error.message, varient: "danger" });
       return { success: false, error: error.message };
@@ -223,8 +225,6 @@ function Employees() {
 
   const handleUpdateModalOpen = (employee) => {
     setSelectedEmployee(employee);
-    console.log("data to be updated ", employee);
-
     setFormData1({
       employeeName: employee.name,
       username: employee.username,
@@ -270,7 +270,6 @@ function Employees() {
   };
 
   const handleAdd = async (employee) => {
-    console.log("form values ", employee);
 
     const value = {
       name: employee.employeeName,
@@ -314,14 +313,29 @@ function Employees() {
     }
   };
 
+
+
+
+  const modalContent = (
+    <Row className="m-0">
+      <Col className="gy-2" lg={6}><span className="fw-bold">Employee Name :</span> {modaledata?.name}</Col>
+      <Col className="gy-2" lg={6}> <span className="fw-bold">Employee Type :</span> {modaledata?.employee_type_name} </Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Employee UserName :</span> {modaledata?.username}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Employee Salary :</span> {modaledata?.salary}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Employee Email :</span> {modaledata?.email}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Mobile No :</span> {modaledata?.cell_number}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Entrollment DateTime :</span> {modaledata?.enrollment_datetime}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Increament DateTime :</span> {modaledata?.increament_datetime}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Increment Amount :</span> {modaledata?.increament_amount}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold"> Employee Add By :</span> {modaledata?.created_by}</Col>
+    </Row>
+  );
+
+
   return (
     <div className="p-lg-5 p-3">
-
-
-
-
       <Backpage
-        mainPage="Adminpanel"
+        mainPage="Admin Panel"
         mainPagePath="/adminpanel"
         currentPage="Employees"
       />
@@ -362,7 +376,87 @@ function Employees() {
                   <td>{item.name}</td>
                   <td>{item.employee_type_name}</td>
                   <td>{item.cell_number}</td>
-                  <td>
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          seModaledata(item);
+                          setShowModal1(true);
+                        }}
+                      >
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
+                        }
+                      >
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            seModaledata(item);
+                            setShowModal1(true);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateModalOpen(item);
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateModalOpen(item);
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
+
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFirstModalShow(item.employees_id);
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFirstModalShow(item.employees_id);
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
+                  </td>
+                  {/* <td>
                     <div className="d-flex justify-content-center">
                       <Button
                         variant="outline-primary"
@@ -382,25 +476,8 @@ function Employees() {
                       >
                         <FaTrash />
                       </Button>
-                      {/* <Button
-                                                size="sm"
-                                                style={{
-                                                    background: "white",
-                                                    border: "none",
-                                                    color: "black",
-                                                }}
-                                            >
-                                                <FaEllipsisV />
-                                            </Button> */}
                     </div>
-                  </td>
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
-                        <FaEye />
-                      </Button>
-                    </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (
@@ -443,6 +520,17 @@ function Employees() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+
+
+      <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}
+        title="Employee Detail"
+        bodyContent={modalContent}
+
+        data={modaledata}
+      />
 
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
         <Modal.Header closeButton>

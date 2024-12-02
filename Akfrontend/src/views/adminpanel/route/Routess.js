@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Table from "react-bootstrap/Table";
-import { Button } from "react-bootstrap";
+import { Button, Row, Col, Tooltip, OverlayTrigger } from "react-bootstrap";
 import SearchBox from "../../../commancomponet/Searchbox";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import { HiOutlineEye, HiOutlinePencilSquare } from "react-icons/hi2"
 import { useDispatch, useSelector } from "react-redux";
 import {
   createRoute,
@@ -15,6 +16,11 @@ import CommonModal from "../../../commancomponet/CommanModale";
 import Pagination1 from "../../../commancomponet/Pagination1";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
 import Backpage from "../../../commancomponet/Backpage";
+import ShowModal from "../../../commancomponet/ShowModal";
+import { isMobileView } from "../../../Utils/utils";
+import { IoEyeOutline } from "react-icons/io5";
+import { PiEyeBold, PiNotePencilBold, PiTrashBold, PiTrashLight, PiTrashThin } from "react-icons/pi"
+import "./route.css";
 
 const MemoizedSearchBox = React.memo(SearchBox);
 const MemoizedPagination1 = React.memo(Pagination1);
@@ -23,6 +29,8 @@ const MemoizedBackdropAlert = React.memo(BackdropAlert);
 const MemoizedBackpage = React.memo(Backpage);
 
 function Routess() {
+  const [showModal1, setShowModal1] = useState(false);
+
   const dispatch = useDispatch();
   const routes = useSelector((state) => state.routes.routes);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +38,7 @@ function Routess() {
   const [showModal, setShowModal] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [modaledata, seModaledata] = useState({});
   const [alert, setAlert] = useState({
     show: false,
     message: "",
@@ -44,16 +53,12 @@ function Routess() {
     );
   }, [routes, searchTerm]);
 
-
-
   // Memoized paginated routes
   const paginatedRoutes = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     return filteredRoutes.slice(start, end);
   }, [filteredRoutes, currentPage, pageSize]);
-
-
 
   const totalPages = useMemo(
     () => Math.ceil(filteredRoutes.length / pageSize),
@@ -63,7 +68,6 @@ function Routess() {
   useEffect(() => {
     dispatch(fetchRoutes());
   }, [dispatch]);
-  
 
   const handleAdd = useCallback(
     async (values) => {
@@ -147,12 +151,21 @@ function Routess() {
     setSearchTerm(e.target.value);
   }, []);
 
-  const columns = ["SR.NO.", "Route Name", "City Name", "Status", "View"];
+  const columns = ["SR.NO.", "Route Name", "City Name", "Action"];
+
+  const modalContent = (
+    <Row className="m-0">
+      <Col className="gy-2" lg={6}><span className="fw-bold">Route Name :</span> {modaledata?.cities_name}</Col>
+      <Col className="gy-2" lg={6}> <span className="fw-bold">City Name :</span> {modaledata?.route_name} </Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">start point :</span> {modaledata?.route_start_point}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">End point :</span> {modaledata?.route_name}</Col>
+    </Row>
+  );
 
   return (
-    <div className="p-lg-5">
+    <div className="p-lg-5 route_view p-3">
       <MemoizedBackpage
-        mainPage="Adminpanel"
+        mainPage="Admin Panel"
         mainPagePath="/adminpanel"
         currentPage="Route"
       />
@@ -196,32 +209,85 @@ function Routess() {
                   <td>{rowIndex + 1 + (currentPage - 1) * pageSize}</td>
                   <td>{item.route_name}</td>
                   <td>{item.cities_name}</td>
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => setSelectedRoute(item) || setShowUpdate(true)}
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          seModaledata(item);
+                          setShowModal1(true);
+                        }}
                       >
-                        <FaEdit />
-                      </Button>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => setSelectedRoute(item) || setShowModal(true)}
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
+                        }
                       >
-                        <FaTrash />
-                      </Button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
-                        <FaEye />
-                      </Button>
-                    </div>
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            seModaledata(item);
+                            setShowModal1(true);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRoute(item) || setShowUpdate(true)
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRoute(item) || setShowUpdate(true)
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
+
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRoute(item) || setShowModal(true)
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRoute(item) || setShowModal(true)
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
                   </td>
                 </tr>
               ))
@@ -252,6 +318,14 @@ function Routess() {
         handleConfirm={handleDelete}
       />
 
+      <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}
+        title="Route Detail"
+        bodyContent={modalContent}
+
+        data={modaledata}
+      />
       <CommonModal
         show={showUpdate}
         handleClose={() => setShowUpdate(false)}
@@ -266,7 +340,6 @@ function Routess() {
           />
         }
       />
-
       <MemoizedBackdropAlert
         closeAlert={() => setAlert({ ...alert, show: false })}
         show={alert.show}

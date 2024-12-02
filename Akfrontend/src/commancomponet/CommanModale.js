@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
 
-const CommonModal = React.memo(({ show, handleClose, isUpdate, component, title, message, handleConfirm }) => {
+const CommonModal = ({ show, handleClose, isUpdate, component, title, message, handleConfirm }) => {
     return (
         <Modal
             show={show}
@@ -26,5 +26,6 @@ const CommonModal = React.memo(({ show, handleClose, isUpdate, component, title,
             </Modal.Footer>}
         </Modal>
     )
-});
+}
+
 export default CommonModal;

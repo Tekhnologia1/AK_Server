@@ -4,10 +4,7 @@ import SelectBox from "../../../commancomponet/SelectBox";
 import InputBox from "../../../commancomponet/InputBox";
 import { validateCafeDealForm } from "../../validation/Validationall";
 import { useSelector, dispatch, useDispatch } from "react-redux";
-import { fetchRoutes } from "../../store/routeSlice";
-import { fetchAreas, fetchCities } from "../../store/areaSlice";
-import { fetchCafes, fetchSpecialDeals } from "../../store/cafeSlice";
-import { fetchDeals } from "../../store/cafeDealsSlice";
+import { fetchCafes } from "../../store/cafeSlice";
 import { fetchProducts } from "../../store/productSlice";
 
 const CafeDealsForm = ({ data = {}, handleSubmit, isEditMode, className }) => {

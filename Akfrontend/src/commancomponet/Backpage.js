@@ -1,11 +1,9 @@
 import React from 'react';
 import { MdNavigateNext } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-
-const Backpage = React.memo(({ mainPage, mainPagePath, currentPage }) => {
-  const navigate = useNavigate();
-
-  return (
+const Backpage = ({ mainPage, mainPagePath, currentPage }) => {
+const navigate = useNavigate();
+return (
     <div className="pb-2 ps-2">
       <span
         onClick={() => navigate(mainPagePath)}
@@ -23,6 +21,6 @@ const Backpage = React.memo(({ mainPage, mainPagePath, currentPage }) => {
       </span>
     </div>
   );
-});
+};
 
 export default Backpage;

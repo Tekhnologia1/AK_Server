@@ -3,7 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { apiurl } from '../../Api/apiurl';
 const API_BASE_URL = apiurl;
-
+const token = localStorage.getItem("token");
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 const initialState = {
   cafeDeal1: [],
   status: 'idle', // idle | loading | succeeded | failed

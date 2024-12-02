@@ -2,7 +2,7 @@
 import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-const Pagination = React.memo(({ page, totalPages, onPageChange }) => {
+const Pagination = ({ page, totalPages, onPageChange }) => {
   const handlePrevious = () => {
     onPageChange(Math.max(page - 1, 1));
   };
@@ -38,6 +38,6 @@ const Pagination = React.memo(({ page, totalPages, onPageChange }) => {
       </nav>
     </div>
   );
-});
+};
 
 export default Pagination;

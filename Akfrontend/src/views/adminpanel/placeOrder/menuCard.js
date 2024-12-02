@@ -2,7 +2,7 @@ import React from "react";
 import './menucard.css';
 import { Button, Card } from "react-bootstrap";
 
-const MenuCard = ({ image, type, name, description, price, className, onClick, handleAdd }) => {
+const MenuCard = ({ image, type, name, description, price, className, onClick, handleAdd, item }) => {
     return (
         <div className={`custom_card_container ${className}`}>
             <div className="img_container">
@@ -21,9 +21,11 @@ const MenuCard = ({ image, type, name, description, price, className, onClick, h
 
                     <Card.Title>{name}</Card.Title>
                     <Card.Text className="custom_truncate">{description}</Card.Text>
-                    <div className="row align-items-center flex-grow-1">
+                    <div className="row align-items-end flex-grow-1">
                         <div className="col-sm-5 ps-2 pe-0 col-4">
-                            <p className="menu_cost">₹{price}</p>
+                            <p className="menu_cost">₹{price}
+                                {item?.dealPrice && <del className="real_price ms-1"> {item.base_price}</del>}
+                            </p>
                         </div>
                         <div className="col-sm-7 ps-0 text-end pe-2 col-8">
                             <Button className="cream_btn" onClick={handleAdd}>Add to cart</Button>

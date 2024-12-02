@@ -12,7 +12,7 @@ import cafeuserReducer from './cafeuserSlice'
 import cafeDeal1Reducer from './cafeDeal1Slice'
 import placeOrderReducer from './placeOrderSlice'
 import ordersReducer from "./orderSlice"
-
+import franchiseReducer from './franchiseSlice'
 export default configureStore({
   reducer: {
     ui: uiReducer,
@@ -26,7 +26,9 @@ export default configureStore({
     cafeusers: cafeuserReducer,  
     cafeDeal1: cafeDeal1Reducer,
     placeOrder: placeOrderReducer,
-    orders: ordersReducer
+    orders: ordersReducer,  
+    franchises: franchiseReducer,
+
   },
 });
 

@@ -1,119 +1,217 @@
-.radio_cont{
-    width: 75%;
-    margin: auto;
-    border: 1px solid #D3CCB4;
-    justify-content: center;
-    gap: 1.5rem;
+.radio_cont {
+  width: 75%;
+  margin: auto;
+  border: 1px solid #D3CCB4;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 
 .toggler_cont .toggle-group {
-    width: 50%;
+  width: 50%;
 }
 
-.toggler_cont .toggle-button{
-    transition: all 0.3s ease;
-    /* transition: background-color 0.1s ease, color 0.3s */
+.toggler_cont .toggle-button {
+  transition: all 0.3s ease;
+  /* transition: background-color 0.1s ease, color 0.3s */
 }
 
 .toggler_cont .toggle-button:focus,
 .toggler_cont .toggle-button:active {
-    outline: none;
-    box-shadow: none;
-    background: #7B3F00;
-    border: inherit;
+  outline: none;
+  box-shadow: none;
+  background: #7B3F00;
+  border: inherit;
 }
 
 .toggler_cont .toggle-button {
-    width: 50%;
-    border-radius: 8px;
-    border: 1px solid #D3CCB4;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
+  width: 50%;
+  border-radius: 8px;
+  border: 1px solid #D3CCB4;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .toggler_cont .toggle-button.active {
-    background: #7B3F00;
-    color: white;
+  background: #7B3F00;
+  color: white;
 }
 
 .toggler_cont .outline-btn {
-    background: transparent;
-    color: #7B3F00;
+  background: transparent;
+  color: #7B3F00;
+}
+
+.toggler_cont .outline-btn:hover {
+  background: #7B3F00;
+  color: white;
+}
+
+.link_btn {
+  background: #7B3F00;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.link_btn:hover {
+  background: white;
+  color: #7B3F00;
+  border: 1px solid #7B3F00;
 }
 
 /* For mobole view */
-  @media screen and (max-width: 355px){
-    .radio_cont{
-        width: 100%;
-        gap: 0;
-    }
-    .toggler_cont .toggle-group{
-      width: 100%;
-    }
-    .custom-radio label{
-        padding-left: 1.5rem;
-    }
+@media screen and (max-width: 355px) {
+  .radio_cont {
+    width: 100%;
+    gap: 0;
   }
 
-  /* Order Details View CSS */
-  .order_details .modal-content{
-    padding: 1rem;
-  }
-  .order_details .modal-header{
-    border-bottom: 1px solid #7B3F0080;
-    padding-left: 0;
-    padding-bottom: .5rem;
-  }
-  .order_details .modal-header .modal-title{
-    color: #7B3F00;
+  .toggler_cont .toggle-group {
+    width: 100%;
   }
 
-  .order_details .order_table thead th{
-    color:  #7B3F0080;
-    padding-bottom: 1rem;
+  .custom-radio label {
+    padding-left: 1.5rem;
+  }
+}
+
+/* Order Details View CSS */
+.order_details .modal-content {
+  padding: 1rem;
+}
+
+.order_details .modal-header {
+  border-bottom: 1px solid #7B3F0080;
+  padding-left: 0;
+  padding-bottom: .5rem;
+}
+
+.order_details .modal-header .modal-title {
+  color: #7B3F00;
+}
+
+.order_details .order_table thead th {
+  color: #7B3F0080;
+  padding-bottom: 1rem;
+}
+
+.order_details .name_column {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.order_details .name_column p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.order_details .order_table td {
+  font-size: 14px;
+}
+
+.order_details .name_column img{
+  width: 50px;
+  margin-right: .5rem;
+}
+
+@media screen and (max-width: 360px) {
+  .order_details .name_column {
+    flex-direction: column;
   }
 
-  .order_details .name_column{
-    display: flex;
-    align-items: center;
-    justify-content: start;
+  .order_details .name_column img {
+    width: 100%;
+    margin-right: .5rem;
+    height: 40px;
   }
 
-  .order_details .name_column p{
-    font-size: 14px;
-    margin-bottom: 0;
+  .order_details .order_table td {
+    font-size: 12px;
   }
 
-  .order_details .order_table td{
-    font-size: 14px;
+  .order_details .name_column p {
+    font-size: 12px;
   }
+}
 
-  /* Order List CSS */
-  .order_list .btn-brown {
-    background: #7B3F00;
-    box-shadow: 0px 8px 17px 0px #6D31ED26;
-    box-shadow: 0px 0px 2px 0px #6D31ED1F;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 4px;
-    border: 1px solid transparent;
+/* Order List CSS */
+.order_list .btn-brown {
+  background: #7B3F00;
+  box-shadow: 0px 8px 17px 0px #6D31ED26;
+  box-shadow: 0px 0px 2px 0px #6D31ED1F;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid transparent;
 }
 
 .order_list .btn-brown:focus,
 .order_list .btn-brown:active {
-    outline: none;
-    box-shadow: none;
-    background-color: #7B3F00;
-    color: white;
+  outline: none;
+  box-shadow: none;
+  background-color: #7B3F00;
+  color: white;
 }
 
 .order_list .btn-brown:hover {
-    border: 1px solid #7B3F00;
-    background: transparent;
-    color: #7B3F00;
+  border: 1px solid #7B3F00;
+  background: transparent;
+  color: #7B3F00;
+}
+
+
+.order_list .custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.order_list .custom-checkbox input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.order_list .checkmark {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  background-color: transparent;
+  border: 1px solid #7a4209;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.order_list .custom-checkbox input:checked+.checkmark {
+  background-color: #7a4209;
+  border: none;
+}
+
+.order_list .custom-checkbox .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.order_list .custom-checkbox input:checked+.checkmark:after {
+  display: block;
 }
 
 /* Custom styles for the modal */
@@ -123,7 +221,8 @@
 }
 
 .thank_order .modal-content .btn-warning {
-  background-color: #7B3F00; /* Custom color to match the design */
+  background-color: #7B3F00;
+  /* Custom color to match the design */
   border: 1px solid #D9D9D9;
   font-weight: 500;
 }
@@ -135,14 +234,14 @@
   box-shadow: 0px 4px 4px 0px #00000040;
 }
 
-.thank_order .modal-content .btn-outline-light{
+.thank_order .modal-content .btn-outline-light {
   font-weight: 500;
   border: 1px solid #D9D9D9;
   border-radius: 4px;
   color: #7B3F00;
 }
 
-.thank_order .modal-content .btn-outline-light:hover{
+.thank_order .modal-content .btn-outline-light:hover {
   color: #7B3F00;
 
 }
@@ -156,7 +255,7 @@
   color: #7B3F00;
 }
 
-.thank_order .nav_dashboard:hover{
+.thank_order .nav_dashboard:hover {
   background: #7B3F00;
   color: white !important;
 }

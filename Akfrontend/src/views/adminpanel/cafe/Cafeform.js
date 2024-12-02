@@ -9,6 +9,7 @@ import { fetchAreas, fetchCities } from "../../store/areaSlice";
 import { fetchSpecialDeals } from "../../store/cafeSlice";
 import { fetchDeals } from "../../store/cafeDealsSlice";
 import { fetchCafeDeal1 } from "../../store/cafeDeal1Slice";
+import { fetchFranchises } from "../../store/franchiseSlice";
 
 const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className }) => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
   const areas = useSelector((state) => state.areas.areas);
   const deals = useSelector((state) => state.deals.deals);
   const cafeDeal1 = useSelector((state) => state.cafeDeal1.cafeDeal1);
+  const franchises = useSelector((state) => state.franchises.franchises);
 
   const [values, setValues] = useState({
     selectedCity: data.selectedCity || "",
@@ -26,6 +28,7 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
     area: data.area || "",
     selectedRoute: data.selectedRoute || "",
     selectedDeal: data.selectedDeal || "",
+    franchise_id:data.franchise_id||  null,
     // cafedeal:data.cafedeal||"",
     selectedPaymentTerm: data.selectedPaymentTerm || "",
     contactPerson: data.contactPerson || "",
@@ -39,20 +42,27 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
     dispatch(fetchSpecialDeals());
     dispatch(fetchAreas());
     dispatch(fetchDeals());
+    dispatch(fetchFranchises());
     dispatch(fetchCafeDeal1());
   }, []);
 
-  console.log(routes);
+
   const transformedpaymentterm = paymentTerm.map((paymentterm) => ({
     label: paymentterm.name,
     option: paymentterm.payment_terms_id,
   }));
 
+
+  const transformedfranchises = franchises.map((franchises) => ({
+    label: franchises.name,
+    option: franchises.franchise_id,
+  }));
+
+
   const transformedCities = cities.map((city) => ({
     label: city.name,
     option: city.cities_id,
   }));
-
   const transformeddeals = cafeDeal1.map((deals) => ({
     label: deals.cafe_id,
     option: deals.cafe_deals_id,
@@ -88,10 +98,11 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
         area: data.area || "",
         selectedRoute: data.selectedRoute || "",
         selectedDeal:
-          data.selectedDeal == 0 ? 0 : data.selectedDeal == 1 ? 1 : "",
+        data.selectedDeal == 0 ? 0 : data.selectedDeal == 1 ? 1 : "",
         // cafedeal:data.cafedeal||"",
         selectedPaymentTerm: data.selectedPaymentTerm || "",
         contactPerson: data.contactPerson || "",
+        franchise_id:data.franchise_id||null
       });
     }
   }, []);
@@ -116,6 +127,7 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
         cafeName: "",
         address: "",
         area: "",
+        franchise_id:"",
         selectedRoute: "",
         selectedDeal: "",
         // cafedeal: "",
@@ -131,6 +143,20 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
   return (
     <form className={className} onSubmit={handleFormSubmit}>
       <div className="row">
+
+       <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
+          <SelectBox
+            label={isEditMode ? "Franchise Name" : ""}
+            options={transformedfranchises}
+            value={values.franchise_id}
+            onChange={handleChange}
+            name="franchise_id"
+            defaultValue="Franchise Name"
+          />
+          <p className="text-danger">{errors.franchise_id}</p>
+        </div>
+
+
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <InputBox
             label={isEditMode ? "Cafe Name" : ""}
@@ -153,7 +179,15 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
           <p className="text-danger">{errors.address}</p>
         </div>
 
-        <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
+   
+      </div>
+
+
+
+      <div className="row">
+
+
+      <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <SelectBox
             label={isEditMode ? "Area" : ""}
             options={transformedarea}
@@ -164,9 +198,7 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
           />
           <p className="text-danger">{errors.area}</p>
         </div>
-      </div>
 
-      <div className="row">
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <SelectBox
             label={isEditMode ? "City Name" : ""}
@@ -191,7 +223,15 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
           <p className="text-danger">{errors.selectedRoute}</p>
         </div>
 
-        <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
+      
+      </div>
+
+
+
+
+      <div className="row justify-content-center">
+
+      <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <SelectBox
             label={isEditMode ? "Special Deal" : ""}
             options={cafesdeals} 
@@ -202,9 +242,8 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
           />
           <p className="text-danger">{errors.selectedDeal}</p>
         </div>
-      </div>
 
-      <div className="row justify-content-center">
+
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <SelectBox
             label={isEditMode ? "Payment Term" : ""}
@@ -219,7 +258,7 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
 
         <div className={isEditMode ? "" : "col-lg-4 gy-4"}>
           <InputBox
-            label={isEditMode ? "Contact Perso" : ""}
+            label={isEditMode ? "Contact Person" : ""}
             placeholder="Contact Person"
             value={values.contactPerson}
             onChange={handleChange}
@@ -228,6 +267,10 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
           <p className="text-danger">{errors.contactPerson}</p>
         </div>
       </div>
+
+
+
+
 
       <div className="d-flex justify-content-center pt-3">
         <CommanButton
@@ -241,5 +284,4 @@ const CafeForm = React.memo(({ data = {}, handleSubmit, isEditMode, className })
     </form>
   );
 });
-
-export default CafeForm;
+export default CafeForm

@@ -20,18 +20,14 @@ const createEmployee = async (req, res) => {
         increament_amount, 
         created_by 
     } = req.body;
-
     // Validate required fields
     if (!name || !username || !password || !employee_type_id || !email || !cell_number) {
         return res.status(400).json({ message: 'All fields are required' });
     }
-
     try {
         // Hash the password before storing it
         const hashedPassword = bcrypt.hashSync(password, 8);
-
         console.log(increament_datetime)
-
         // Call the stored procedure to create the employee, passing in the hashed password
         const result = await sql.query('CALL CreateEmployee(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             name,
@@ -46,7 +42,6 @@ const createEmployee = async (req, res) => {
             increament_amount,
             created_by
         ]);
-
        // Check if insertion was successful
        if (!result[0]?.insertId) {
         // If the employee is successfully created, return the employee ID
@@ -71,18 +66,15 @@ const createEmployee = async (req, res) => {
 const getAllEmployees = async (req, res) => {
     try {
         const [rows] = await sql.query('CALL getAllEmployees()');
-
         if (!rows || rows.length === 0) {
             return res.status(404).json({ message: 'No employees found.' });
         }
-
         // Adjust timezone for dates
         const employees = rows[0].map((employee) => ({
             ...employee,
             enrollment_datetime: moment(employee.enrollment_datetime).format('YYYY-MM-DD HH:mm:ss'),
             increament_datetime: moment(employee.increament_datetime).format('YYYY-MM-DD HH:mm:ss'),
         }));
-
         res.status(200).json({
             message: 'Employees retrieved successfully.',
             employees,
@@ -97,14 +89,12 @@ const getAllEmployees = async (req, res) => {
 // Get API to retrieve data employeeById wise 
 const findEmployeeById = async (req, res) => {
     const { id } = req.params; 
-   
     try {
         const [rows] = await sql.query('CALL FindEmployeeById(?)', [id]);
 
         if (!rows || rows.length === 0) {
             return res.status(404).json({ message: 'Employee not found.' });
         }
-
         res.status(200).json({
             message: 'Employee retrieved successfully.',
             employee: rows[0][0] 
@@ -118,14 +108,12 @@ const findEmployeeById = async (req, res) => {
 // DELETE API to remove an employee by ID
 const deleteEmployeeById = async (req, res) => {
     const { id } = req.params; // Expecting the employee ID to be passed as a route parameter
-
     try {
         const [result] = await sql.query('CALL DeleteEmployeeById(?)', [id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Employee not found.' });
         }
-
         res.status(200).json({
             message: 'Employee deleted successfully.',
             deletedEmployeeId: id
@@ -152,7 +140,6 @@ const updateEmployeeById = async (req, res) => {
         increament_amount,
         updated_by
     } = req.body;
-
     // Validate required fields
     if (!name || !username || !password || !employee_type_id || 
         !email || cell_number === undefined || !salary ||
@@ -162,7 +149,6 @@ const updateEmployeeById = async (req, res) => {
             message: 'All fields are required.' 
         });
     }
-
     try {
         const hashedPassword = password ? bcrypt.hashSync(password, 8) : undefined;
         const [result] = await sql.query('CALL UpdateEmployeeById(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
@@ -179,11 +165,9 @@ const updateEmployeeById = async (req, res) => {
             increament_amount,
             updated_by
         ]);
-
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Employee not found.' });
         }
-
         res.status(200).json({
             message: 'Employee updated successfully.',
             updatedEmployeeId: id
@@ -200,17 +184,15 @@ const updateEmployeeById = async (req, res) => {
 // login employee API 
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
-
     // Validate required fields
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required' });
     }
-
     try {
         // Assume `sql.query` is working as expected and returns the user record
         const result = await sql.query('CALL loginUser(?)', [username]);
         const employee = result[0][0]; 
-        
+        // console.log(employee);
         if (!employee) {
             return res.status(401).json({ message: 'Invalid username or password' });
         }
@@ -223,14 +205,13 @@ const loginUser = async (req, res) => {
         }
 
         // Step 2: Check employee types and create JWT token
-        const { id, employee_type_id } = employee;
-
+        const { employees_id, employee_type_id } = employee[0];
         const token = jwt.sign(
-            { id, employee_type_id }, 
+            {employees_id, employee_type_id }, 
             'AKGoldenCrust@99', 
-            { expiresIn: '1h' }
+            { expiresIn: '10h' }
         );
-
+        // console.log(jwt.decode(token));
         res.status(200).json({
             message: 'Login successful',
             token,
@@ -241,7 +222,6 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'An error occurred while logging in.' });
     }
 };
-
 
 
 

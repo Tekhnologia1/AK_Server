@@ -1,5 +1,5 @@
 const { query } = require('express');
-const sql = require('../config/database'); 
+const sql = require('../config/database');
 
 const createProduct = async (req, res) => {
     const {
@@ -48,6 +48,45 @@ const getAllProducts = async (req, res) => {
         const [products] = await sql.query('CALL GetAllProducts()');
 
         return res.status(200).json(products); // Return the products
+    } catch (error) {
+        console.error('Error retrieving products:', error);
+
+        return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+};
+
+const GetAllDealsProducts = async (req, res) => {
+    const cafeId = parseInt(req.params.id, 10);
+    let products = [];
+    let DProducts = [];
+
+    if (isNaN(cafeId)) {
+        return res.status(400).json({ message: 'Invalid product ID.' });
+    }
+
+    try {
+        // Call the stored procedure to get all products
+        const [allProducs] = await sql.query('CALL GetAllProducts()');
+
+        const [DealsProducts] = await sql.query('CALL FindByCafeIdProducts(?)', [cafeId]);
+        console.log("Deals ",DealsProducts[0])
+
+        if(DealsProducts[0]){
+            const dealProductIds = new Set(DealsProducts[0].map(obj => obj.product_id));
+            allProducs[0].map((pro) => {
+                console.log(pro, "is pro contain",dealProductIds.has(pro.product_id))
+                if(dealProductIds.has(pro.product_id)){
+                    const newProduct = {
+                        ...pro,
+                        dealPrice: DealsProducts[0].find(obj => obj.product_id === pro.product_id).deal_price
+                    }
+                    DProducts.push(newProduct)
+                }else{
+                    products.push(pro);
+                }
+            })
+        }
+        return res.status(200).json({dealProducts: DProducts, restProducts: products}); // Return the products
     } catch (error) {
         console.error('Error retrieving products:', error);
 
@@ -150,4 +189,4 @@ const updateProductById = async (req, res) => {
 };
 
 
-module.exports = {createProduct,getAllProducts, findProductById, deleteProductById, updateProductById}
+module.exports = { createProduct, getAllProducts, GetAllDealsProducts, findProductById, deleteProductById, updateProductById }

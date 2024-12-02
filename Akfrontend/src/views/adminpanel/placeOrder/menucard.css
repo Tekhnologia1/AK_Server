@@ -70,7 +70,7 @@
 .menu_card .menu_cost{
     font-size: 12px;
     color: #171A1F;
-    margin-bottom: 0;
+    margin-bottom: 0.25rem;
     font-weight: 600;
 }
 
@@ -86,6 +86,11 @@
 
 .menu_card .cream_btn:hover{
     box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+.menu_card .real_price{
+    font-size: 12px;
+    opacity: 0.5;
 }
 
 @media only screen and (min-width: 1400px){

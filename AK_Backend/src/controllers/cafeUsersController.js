@@ -19,7 +19,6 @@ const createCafeUser = async (req, res) => {
     if (!cafe_id || !name || !username || !password || !user_type_id || !email || !cell_number) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
-
     try {
                 // Hash the password before storing it
                 const hashedPassword = await bcrypt.hash(password, 10);
@@ -150,24 +149,24 @@ const updateCafeUser = async (req, res) => {
 
 // login Cafe Users 
 const loginCafeUser = async (req, res) => {
-    const { cafe_id, username, password } = req.body;
+    const { username, password } = req.body;
 
     // Validate input fields
-    if (!cafe_id || !username || !password) {
+    if (!username || !password) {
         return res.status(400).json({ message: 'Cafe ID, username, and password are required.' });
     }
-
     try {
         // Query the database to get the user data based on cafe_id and username
-        const result = await sql.query('CALL GetCafeUserByUsernameAndCafeId(?, ?)', [cafe_id, username]);
+        const result = await sql.query('CALL LoginCafeUser(?)', [username]);
         const user = result[0][0]; // Assuming result[0][0] contains the user data
+        // console.log("user ",user)
         
         if (!user) {
             return res.status(401).json({ message: 'Invalid username or cafe ID.' });
         }
 
         // Check if the provided password matches the stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user[0].password);
 
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid password.' });
@@ -175,21 +174,24 @@ const loginCafeUser = async (req, res) => {
 
         // If password is valid, generate a JWT token
         const token = jwt.sign(
-            { id: user.id, cafe_id: user.cafe_id, user_type_id: user.user_type_id },
+            { cafe_id: user[0].cafe_id, user_type_id: user[0].user_type_id, cafe_users_id: user[0].cafe_users_id },
             'AKGoldenCrust@99', // Secret key
-            { expiresIn: '1h' }  // Token expiration time
+            { expiresIn: '10h' }  // Token expiration time
         );
-
+        //  console.log("Token data view",jwt.decode(token));
         return res.status(200).json({
             message: 'Login successful.',
             token: token,
+            cafeId: user.cafe_id,
             userTypeId: user.user_type_id,
-            cafeId: user.cafe_id
+            cafeUserId: user.cafe_users_id
         });
+       
     } catch (error) {
-        console.error('Error logging in:', error);
-        return res.status(500).json({ message: 'An error occurred while logging in.', error: error.message });
+        console.error('Error loggingCafe User in:', error);
+        return res.status(500).json({ message: 'An error occurred while logging Cafe User in.', error: error.message });
     }
 };
+
 
 module.exports = {createCafeUser, getAllCafeUsers, findCafeUserById, deleteCafeUser, updateCafeUser, loginCafeUser}

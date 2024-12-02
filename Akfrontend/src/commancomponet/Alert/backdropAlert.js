@@ -6,7 +6,7 @@ function BackdropAlert({show, closeAlert, varient, message}) {
     if (show) {
       const timer = setTimeout(() => {
         closeAlert();
-      }, 10000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -25,13 +25,13 @@ function BackdropAlert({show, closeAlert, varient, message}) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 1040, // Ensures it stays above other elements
+            zIndex: 1100, // Ensures it stays above other elements
           }}
           onClick={closeAlert} // Close alert on backdrop click
         >
           {/* Alert box */}
           <div
-            className={`alert ${varient === 'success' ? 'alert-success' : varient === 'danger' && 'alert-danger'}`}
+            className={`alert ${varient === 'success' ? 'alert-success' : varient === 'danger' ? 'alert-danger' : varient === 'warning' && 'alert-warning'}`}
             role="alert"
             style={{
               zIndex: 1050, // Keeps alert above backdrop

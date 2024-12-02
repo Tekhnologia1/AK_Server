@@ -6,52 +6,57 @@ const createCafeOrder = async (req, res) => {
     const {
         cafe_id,
         route_id,
-        order_number,
         order_date,
         total_amount,
         tax,
         delivery_charges,
         payment_status,
-        payment_term_id,
         note,
+        delivery_status,
+        cafe_invoice_id,
+        cafe_order_delivery_id,
         products // Array of products to add to order details
     } = req.body;
 
     // Validate the main order fields
-    if (!cafe_id || !route_id || !order_number || !order_date || !total_amount || payment_status === undefined || !payment_term_id || !products || products.length === 0) {
-        return res.status(400).json({ message: 'All fields are required and at least one product must be provided.' });
+    if (!cafe_id || !route_id || !order_date || !total_amount || !products || products.length === 0) {
+        return res.status(400).json({ message: 'All fields are required, and at least one product must be provided.' });
     }
 
-    // Validate product array
+    // Validate each product
     for (let product of products) {
         const { product_id, description, quantity, rate, sub_total_amount } = product;
         if (!product_id || !description || !quantity || !rate || !sub_total_amount) {
             return res.status(400).json({ message: 'All product fields are required.' });
         }
     }
-
     try {
+        // console.log("totalbb",  order_number)
         // Call the stored procedure to create the cafe order
-        const result = await sql.query('CALL CreateCafeOrder(?, ?, ?, ?, ?, ?, ?, ?, ?,?, @order_id)', [
+      const [result] =  await sql.query('CALL CreateCafeOrder(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @order_id, @p_code, @order_number)', [
             cafe_id,
             route_id,
-            order_number,
             order_date,
-            total_amount,
+            total_amount ,
             tax,
             delivery_charges,
             payment_status,
-            payment_term_id,
-            note
+            note,
+            delivery_status,
+            cafe_invoice_id,
+            cafe_order_delivery_id
         ]);
-        const [outParam] = await sql.query('SELECT @order_id AS order_id');
+     console.log("result",result)
+        // Retrieve the generated order ID from the OUT parameter
+        const [outParam] = await sql.query('SELECT @order_id AS order_id, @order_number AS order_number');
+        const cafe_order_id = outParam[0]?.order_id;
+        const order_number = outParam[0]?.order_number;
 
-        const cafe_order_id = outParam[0].order_id; 
-        // Check if the result is as expected
-        if (!cafe_order_id) {
-            return res.status(500).json({ message: 'Failed to create cafe order. No order ID returned.' });
+        // Check if the order was created successfully
+        if (!cafe_order_id|| !order_number) {
+            return res.status(500).json({ message: 'Failed to create cafe order and order number. No order ID returned.' });
         }
-        
+
         // Insert products into the cafe_order_details table
         for (let product of products) {
             const { product_id, description, quantity, rate, sub_total_amount } = product;
@@ -67,10 +72,19 @@ const createCafeOrder = async (req, res) => {
             ]);
         }
 
-        return res.status(201).json({ message: 'Cafe order and order details created successfully.', cafe_order_id });
+        // Return success response
+        return res.status(201).json({ 
+            message: 'Cafe order and order details created successfully.', 
+            order_number 
+        });
     } catch (error) {
         console.error('Error creating cafe order:', error);
-        return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+
+        // Return error response
+        return res.status(500).json({ 
+            message: 'Internal Server Error', 
+            error: error.message 
+        });
     }
 };
 
@@ -103,26 +117,45 @@ const getAllCafeOrders = async (req, res) => {
     }
 };
 
-const findCafeOrderById = async (req, res) => {
-    const { id } = req.params; 
-    try {
-        const [rows] = await sql.query('CALL FindCafeOrderById(?)', [id]);
+const findCafeOrderByCafeId = async (req, res) => {
+    // const { cafe_id } = req.params;
+    const cafe_id = parseInt(req.params.id, 10);
 
-        // Check if any results were returned
-        if (!rows || rows.length === 0) {
-            return res.status(404).json({ message: 'Cafe Order not found.' });
+    // Validate the input
+    if (!cafe_id) {
+        return res.status(400).json({ 
+            message: 'Cafe ID is required.' 
+        });
+    }
+
+    try {
+        // Call the stored procedure
+        const [results] = await sql.query('CALL FindCafeOrderBycafeId(?)', [cafe_id]);
+
+        // The result of a stored procedure is usually wrapped in an array
+        if (!results || results.length === 0) {
+            return res.status(404).json({ 
+                message: 'No orders found for the specified cafe ID.' 
+            });
         }
 
-        // Return the order details
+        // Return the retrieved cafe orders
         return res.status(200).json({
-            message: 'Cafe Order retrieved successfully.',
-            orderDetails: rows[0] 
+            message: 'Cafe orders retrieved successfully.',
+            data: results[0] // The first index contains the data
         });
+
     } catch (error) {
-        console.error('Error retrieving cafe order :', error);
-        return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+        console.error('Error fetching cafe orders:', error);
+
+        // Return error response
+        return res.status(500).json({ 
+            message: 'Internal Server Error', 
+            error: error.message 
+        });
     }
 };
+
 
 // Delete Cafe Order
 const deleteCafeOrder = async (req, res) => {
@@ -149,7 +182,6 @@ const updateCafeOrderById = async (req, res) => {
     const {
         cafe_id,
         route_id,
-        order_number,
         order_date,
         total_amount,
         tax,
@@ -158,7 +190,7 @@ const updateCafeOrderById = async (req, res) => {
         delivery_status,
         cafe_invoice_id,
         cafe_order_delivery_id,
-        payment_term_id
+        note
     } = req.body;  // Get the updated data from the request body
 
     // Validate that the cafe_order_id is valid
@@ -170,11 +202,10 @@ const updateCafeOrderById = async (req, res) => {
 
     try {
         // Call the stored procedure to update the cafe order by id
-        const [result] = await sql.query('CALL UpdateCafeOrderById(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        const [result] = await sql.query('CALL UpdateCafeOrderById(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             id,
             cafe_id,
             route_id,
-            order_number,
             order_date,
             total_amount,
             tax,
@@ -183,7 +214,7 @@ const updateCafeOrderById = async (req, res) => {
             delivery_status,
             cafe_invoice_id,
             cafe_order_delivery_id,
-            payment_term_id
+            note
         ]);
 
         // If no rows are affected, the order doesn't exist or no changes were made
@@ -204,5 +235,33 @@ const updateCafeOrderById = async (req, res) => {
     }
 };
 
+// Update Payment Status and Delivary Status 
+const updatePaymentAndDeliveryStatus = async (req, res) => {
+    const { id } = req.params; 
+    const { payment_status, delivery_status } = req.body;
 
-module.exports = {createCafeOrder, getAllCafeOrders, findCafeOrderById, deleteCafeOrder, updateCafeOrderById}
+    try {
+        // Call the stored procedure
+        await sql.query('CALL UpdatePaymentAndDeliveryStatus(?, ?, ?)', [
+            id,
+            payment_status,
+            delivery_status,
+        ]);
+
+        // Return success response
+        return res.status(200).json({
+            message: 'Payment and delivery status updated successfully.',
+        });
+    } catch (error) {
+        console.error(' :', error);
+
+        // Return error response
+        return res.status(500).json({
+            message: 'Internal Server Error',
+            error: error.message,
+        });
+    }
+};
+
+
+module.exports = {createCafeOrder, getAllCafeOrders, findCafeOrderByCafeId, deleteCafeOrder, updateCafeOrderById, updatePaymentAndDeliveryStatus}

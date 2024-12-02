@@ -1,4 +1,4 @@
-// src/utils/validation.js
+
 export const validateRegisterData = (data) => {
   console.log(data);
   const errors = {};
@@ -60,24 +60,6 @@ export const validateLoginData = (data) => {
   if (!data.password) {
     errors.password = "Password is required";
   }
-  // else {
-  //   if (data.password.length < 8) {
-  //     errors.password = "Password must be at least 8 characters";
-  //   } else
-  //     if (!/[A-Z]/.test(data.password)) {
-  //       errors.password = "Password must contains uppercase letter"
-  //     } else
-  //       if (!/[a-z]/.test(data.password)) {
-  //         errors.password = "Password must contains lowercase letter"
-  //       } else
-  //         if (!/[0-9]/.test(data.password)) {
-  //           errors.password = "Password must contains number"
-  //         } else
-  //           if (!/[!@#$%^&*(),.?":{}|<>]/.test(data.password)) {
-  //             errors.password = "Password must contains special character"
-  //           }
-  // }
-
   return errors;
 };
 
@@ -148,16 +130,18 @@ export const validateCafeForm = (values) => {
   // Validation for cafeName
   if (!values.cafeName) {
     errors.cafeName = "Cafe Name is required.";
-  } else if (values.cafeName.trim().length < 3) {
-    errors.cafeName = "Cafe Name must be at least 3 characters long.";
-  }
+  } 
+  // else if (values.cafeName.trim().length < 3) {
+  //   errors.cafeName = "Cafe Name must be at least 3 characters long.";
+  // }
 
   // Validation for address
   if (!values.address) {
     errors.address = "Address is required.";
-  } else if (values.address.trim().length < 10) {
-    errors.address = "Address must be at least 10 characters long.";
   }
+  //  else if (values.address.trim().length < 10) {
+  //   errors.address = "Address must be at least 10 characters long.";
+  // }
 
   // Validation for area
   if (!values.area) {
@@ -187,9 +171,10 @@ export const validateCafeForm = (values) => {
   // Validation for contactPerson
   if (!values.contactPerson) {
     errors.contactPerson = "Contact Person is required.";
-  } else if (values.contactPerson.trim().length < 3) {
-    errors.contactPerson = "Contact Person must be at least 3 characters long.";
-  }
+  } 
+  // else if (values.contactPerson.trim().length < 3) {
+  //   errors.contactPerson = "Contact Person must be at least 3 characters long.";
+  // }
 
   return errors;
 };
@@ -228,12 +213,17 @@ export const validateCafeUserForm = (data) => {
   if (!data.userName) {
     errors.userName = "Username is required";
   }
+  // else if (!/^[A-Za-z]\w{5,24}$/.test(data.userName)) {
+  //   errors.userName = "Username must start with a letter and be 6-30 characters long.";
+  // }
+  
 
   if (!data.password) {
     errors.password = "Password is required";
-  } else if (data.password.length < 8) {
-    errors.password = "Password must be at least 8 characters";
   }
+  // else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(data.password)) {
+  //   errors.password = "Password must be 8+ chars with uppercase, lowercase, number & special char.";
+  // }
 
   if (!data.userType) {
     errors.userType = "User type is required";
@@ -270,16 +260,19 @@ export const validateEmployeeData = (values) => {
   // Validate Username
   if (!values.username) {
     errors.username = "Username is required.";
-  } else if (values.username.length < 4) {
-    errors.username = "Username must be at least 4 characters.";
   }
+  // else if (!/^[A-Za-z]\w{5,24}$/.test(values.username)) {
+  //   errors.username = "Username must start with a letter and be 6-30 characters long.";
+  // }
 
   // Validate Password
   if (!values.password) {
     errors.password = "Password is required.";
-  } else if (values.password.length < 6) {
-    errors.password = "Password must be at least 6 characters.";
   }
+  // else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(values.password)) {
+  //   errors.password = "Password must be 8+ chars with uppercase, lowercase, number & special char.";
+  // }
+
 
   // Validate Email
   if (!values.email) {
@@ -346,16 +339,18 @@ export const validateRouteForm = (values) => {
   // Validation for name
   if (!values.name) {
     errors.name = "Name is required.";
-  } else if (values.name.trim().length < 3) {
-    errors.name = "Name must be at least 3 characters long.";
-  }
+  } 
+  // else if (values.name.trim().length < 3) {
+  //   errors.name = "Name must be at least 3 characters long.";
+  // }
 
   // Validation for details
   if (!values.details) {
     errors.details = "Details are required.";
-  } else if (values.details.trim().length < 10) {
-    errors.details = "Details must be at least 10 characters long.";
-  }
+  } 
+  // else if (values.details.trim().length < 10) {
+  //   errors.details = "Details must be at least 10 characters long.";
+  // }
 
   // Validation for area
   if (!values.area || values.area.length === 0) {
@@ -391,13 +386,13 @@ export const validatePlaceOrderForm = (data) => {
     errors.orderDate = "Order date is required";
   }
 
-  if(data.paymentStatus !== 0 && !data.paymentStatus){
-    errors.paymentStatus = "Payment status is required"
-  }
+  // if(data.paymentStatus !== 0 && !data.paymentStatus){
+  //   errors.paymentStatus = "Payment status is required"
+  // }
 
-  if(!data.paymentTerm){
-    errors.paymentTerm = "Payment term is required"
-  }
+  // if(!data.paymentTerm){
+  //   errors.paymentTerm = "Payment term is required"
+  // }
 
   if(!data.note){
     errors.note = "Note is required"
@@ -416,53 +411,6 @@ export const validateRepeatOrderForm = (data) => {
   return errors;
 };
 
-//  export const validateProductForm = (data) => {
-//   const errors = {};
-
-//   if (!data.product_master_id) {
-//     errors.product_master_id = "Product master ID is required";
-//   }
-
-//   if (!data.name) {
-//     errors.name = "Name is required";
-//   }
-
-//   if (!data.details) {
-//     errors.details = "Details are required";
-//   }
-
-//   if (!data.product_fill) {
-//     errors.product_fill = "Product fill is required";
-//   } else if (data.product_fill == 1) {
-//     if (!data.fill_items) {
-//       errors.fill_items = "Fill items are required when product fill is 'yes'";
-//     }
-//   }
-
-//   if (!data.weight) {
-//     errors.weight = "Weight is required";
-//   } else if (isNaN(data.weight) || data.weight <= 0) {
-//     errors.weight = "Weight must be a positive number";
-//   }
-
-//   if (!data.basePrice) {
-//     errors.basePrice = "Base price is required";
-//   } else if (isNaN(data.basePrice) || data.basePrice <= 0) {
-//     errors.basePrice = "Base price must be a positive number";
-//   }
-
-//   if (!data.makingPrice) {
-//     errors.makingPrice = "Making price is required";
-//   } else if (isNaN(data.makingPrice) || data.makingPrice <= 0) {
-//     errors.makingPrice = "Making price must be a positive number";
-//   }
-
-//   if (!data.price_scale) {
-//     errors.price_scale = "Price scale is required";
-//   }
-
-//   return errors;
-// };
 export const validateProductForm = (data) => {
   const errors = {};
 

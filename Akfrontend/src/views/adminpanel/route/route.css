@@ -1,3 +1,7 @@
 .p-multiselect-panel.p-component.p-ripple-disabled.p-connected-overlay-enter-done{
     z-index: 1100 !important;
 }
+
+.route_view #Action{
+    max-width: 130px;
+}

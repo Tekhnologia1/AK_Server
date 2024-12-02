@@ -9,7 +9,7 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <div className="ak_pages">
       {/* <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login/>} />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
 import { Search } from 'react-bootstrap-icons'; // Importing a search icon
 
-const SearchBox = React.memo(({ placeholder, value, onChange, onSearch }) => {
+const SearchBox = ({ placeholder, value, onChange, onSearch }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -48,6 +48,6 @@ const SearchBox = React.memo(({ placeholder, value, onChange, onSearch }) => {
       </InputGroup>
     </Form>
   );
-});
+};
 
 export default SearchBox;

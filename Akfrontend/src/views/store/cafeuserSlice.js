@@ -3,7 +3,8 @@ import axios from 'axios';
 import { apiurl } from '../../Api/apiurl';
 
 const API_BASE_URL = apiurl;
-
+const token = localStorage.getItem("token");
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 const initialState = {
   usertype: [],
   users: [],
@@ -44,8 +45,12 @@ export const createCafeUser = createAsyncThunk(
 export const updateCafeUser = createAsyncThunk(
   'cafeusers/updateCafeUser',
   async ({ id, updatedData }) => {
+
+
+
     console.log(id)
     console.log(updatedData)
+
     const response = await axios.put(`${API_BASE_URL}/UpdateCafeUser/${id}`, updatedData);
     return response.data;
   }

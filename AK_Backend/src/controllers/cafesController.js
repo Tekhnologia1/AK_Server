@@ -5,31 +5,37 @@ const createCafe = async (req, res) => {
     const {
         franchise_id,
         name,
+        code,
         address,
         area,
         route_id,
         cities_id,
         special_deal,
+        cafe_deal_id,
         payment_term_id,
-        contact_person
+        contact_person,
+        cafe_status_type_id
     } = req.body;
 
     // Validate input
-    if (!name || !address || !area || !route_id || !cities_id || !contact_person) {
+    if (!name || !code || !address || !area || !route_id || !cities_id || !contact_person) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
     try {
-        const [result] = await sql.query('CALL CreateCafe(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        const [result] = await sql.query('CALL CreateCafe(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             franchise_id,
             name,
+            code,
             address,
             area,
             route_id,
             cities_id,
             special_deal,
+            cafe_deal_id,
             payment_term_id,
-            contact_person
+            contact_person,
+            cafe_status_type_id
         ]);
 
         return res.status(201).json({ message: 'Cafe created successfully'});
@@ -44,7 +50,7 @@ const getAllCafes = async (req, res) => {
         // Call the stored procedure to get all cafes
         const [cafes] = await sql.query('CALL GetAllCafes()');
 
-        return res.status(200).json(cafes); // Return the cafes
+        return res.status(200).json(cafes); 
     } catch (error) {
         console.error('Error retrieving cafes:', error);
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
@@ -52,7 +58,7 @@ const getAllCafes = async (req, res) => {
 };
 
 const findCafeById = async (req, res) => {
-    const cafeId = parseInt(req.params.id, 10); // Get the cafe ID from request parameters
+    const cafeId = parseInt(req.params.id, 10);
 
     // Validate input
     if (isNaN(cafeId)) {
@@ -61,7 +67,7 @@ const findCafeById = async (req, res) => {
 
     try {
         const [result] = await sql.query('CALL FindCafeById(?)', [cafeId]);
-        const cafe = result[0]; // Assuming the cafe data is in the first element of the array
+        const cafe = result[0]; 
 
         if (!cafe) {
             return res.status(404).json({ message: 'Cafe not found.' });
@@ -76,7 +82,7 @@ const findCafeById = async (req, res) => {
 
 
 const deleteCafeById = async (req, res) => {
-    const cafeId = parseInt(req.params.id, 10); // Get the cafe ID from request parameters
+    const cafeId = parseInt(req.params.id, 10); 
 
     // Validate input
     if (isNaN(cafeId)) {
@@ -98,17 +104,18 @@ const deleteCafeById = async (req, res) => {
     }
 };
 
-
 const updateCafe = async (req, res) => {
-    const cafeId = parseInt(req.params.id, 10); // Get the cafe ID from request parameters
+    const cafeId = parseInt(req.params.id, 10);
     const {
         franchise_id,
         name,
+        code,
         address,
         area,
         route_id,
         cities_id,
         special_deal,
+        cafe_deal_id,
         payment_term_id,
         contact_person,
     } = req.body;
@@ -119,21 +126,22 @@ const updateCafe = async (req, res) => {
     }
 
     // Validate required fields
-    if (!name || !address || area == null) {
+    if (!name || !code || !address || area == null) {
         return res.status(400).json({ message: 'Cafe name, address, and area are required.' });
     }
-
     try {
         // Execute the stored procedure
-        const [result] = await sql.query('CALL UpdateCafe(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        const [result] = await sql.query('CALL UpdateCafe(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
             franchise_id,
-            cafeId, // Note: Ensure cafe ID is passed as the second argument
+            cafeId, 
             name,
+            code,
             address,
             area,
             route_id,
             cities_id,
             special_deal,
+            cafe_deal_id,
             payment_term_id,
             contact_person,
         ]);
@@ -149,9 +157,6 @@ const updateCafe = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
-
-
-
 
 
 module.exports = {createCafe, getAllCafes, deleteCafeById, findCafeById, updateCafe}

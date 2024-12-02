@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Table,Row,Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import SearchBox from "../../../commancomponet/Searchbox";
-import {
-  FaArrowRight,
-  FaEdit,
-  FaEllipsisV,
-  FaEye,
-  FaTrash,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination1 from "../../../commancomponet/Pagination1";
 
@@ -23,8 +15,10 @@ import {
 import ProductForm from "./ProductForm";
 import CommonModal from "../../../commancomponet/CommanModale";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
-import { MdNavigateNext } from "react-icons/md";
 import Backpage from "../../../commancomponet/Backpage";
+import ShowModal from "../../../commancomponet/ShowModal";
+import { isMobileView } from "../../../Utils/utils";
+import { PiEyeBold, PiNotePencilBold, PiTrashBold } from "react-icons/pi";
 
 const MemoizedSearchBox = React.memo(SearchBox);
 const MemoizedPagination1 = React.memo(Pagination1);
@@ -35,10 +29,8 @@ const MemoizedBackpage = React.memo(Backpage);
 
 function Product() {
   const products = useSelector((state) => state.products.products);
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [showModal1, setShowModal1] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState();
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,6 +39,7 @@ function Product() {
   const [totalPages, setTotalPages] = useState(0);
   const [pageProducts, setPageProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [modaledata, seModaledata] = useState({});
   const [alert, setAlert] = useState({
     show: false,
     message: "",
@@ -61,7 +54,6 @@ function Product() {
     "Price",
     "Marking Price",
     "Action",
-    "View"
   ];
 
   useEffect(() => {
@@ -81,9 +73,6 @@ function Product() {
     setShowUpdateModal(true);
   };
 
-
-
-
   const handleDelete = async () => {
     if (deleteId) {
       const result = await dispatch(deleteProduct(deleteId));
@@ -99,10 +88,6 @@ function Product() {
       setShowDeleteModal(false);
     }
   };
-
-
-
-
 
   const handleUpdate = async (values) => {
     try {
@@ -181,15 +166,27 @@ function Product() {
     setCurrentPage(newPage);
   };
 
+  const modalContent = (
+    <Row className="m-0">
+      <Col  className="gy-2" lg={6}><span className="fw-bold">Master Name :</span> {modaledata?.Product_Master_Name}</Col>
+      <Col  className="gy-2" lg={6}> <span className="fw-bold">Product Name :</span> {modaledata?.name} </Col>
+      <Col  className="gy-2" lg={6}><span className="fw-bold">Filling Item :</span> {modaledata?.filling_name}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Product weight :</span> {modaledata?.product_weight}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Base Price :</span> {modaledata?.base_price}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Making Price :</span> {modaledata?.making_price}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Price Scale :</span> {modaledata?.route_name}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Product Details :</span> {modaledata?.price_scale}</Col>
+    </Row>
+  );
+
   return (
     <div className="p-lg-5">
 
       <MemoizedBackpage
-        mainPage="Adminpanel"
+        mainPage="Admin Panel"
         mainPagePath="/adminpanel"
         currentPage="Product"
       />
-
 
       <MemoizedProductForm
         className="row m-0 form_container pt-lg-4 pb-4"
@@ -229,31 +226,85 @@ function Product() {
                   <td>{product.details}</td>
                   <td>{product.base_price}</td>
                   <td>{product.making_price}</td>
-                  <td>
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleUpdateModalOpen(product)}
-                    >
-                      <FaEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleDeleteModalShow(product)}
-                    >
-                      <FaTrash />
-                    </Button>
-                  </td>
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          seModaledata(product);
+                          setShowModal1(true);
+                        }}
+                      >
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
+                        }
+                      >
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            seModaledata(product);
+                            setShowModal1(true);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateModalOpen(product);
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateModalOpen(product);
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
 
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
-                        <FaEye />
-                      </Button>
-                    </div>
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteModalShow(product);
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteModalShow(product);
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
                   </td>
                 </tr>
               ))
@@ -277,6 +328,16 @@ function Product() {
           />
         </div>
       )}
+
+
+      
+   <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}
+        title="Product Detail"
+        bodyContent={modalContent}
+        data={modaledata}
+      />
       
       <CommonModal
         show={showDeleteModal}
@@ -296,8 +357,6 @@ function Product() {
         component={<MemoizedProductForm isEditMode={true} data={selectedProduct} handleSubmit={handleUpdate}/>}
       />
 
-
-
      <MemoizedBackdropAlert
         closeAlert={() => {
           setAlert({ ...alert, show: false });
@@ -312,7 +371,6 @@ function Product() {
 }
 
 export default Product;
-
 
 
 

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { apiurl } from '../../Api/apiurl'; 
+import { apiurl } from '../../Api/apiurl'; // Replace with your actual API base URL
 
 const API_BASE_URL = apiurl;
 
@@ -20,7 +20,7 @@ export const loginUser = createAsyncThunk(
       console.log("login data ",response);
       return response.data;  
     } catch (error) {
-      return rejectWithValue(error.response.data); 
+      return rejectWithValue(error.response.data); // Pass error message
     }
   }
 );
@@ -31,9 +31,9 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/register`, userData);
-      return response.data;  
+      return response.data;  // Assuming response.data contains user info
     } catch (error) {
-      return rejectWithValue(error.response.data); 
+      return rejectWithValue(error.response.data); // Pass error message
     }
   }
 );
@@ -43,9 +43,9 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = null;      
-      state.status = 'idle';   
-      state.error = null;      
+      state.user = null;      // Clear user data on logout
+      state.status = 'idle';   // Reset status
+      state.error = null;      // Clear error messages
     },
   },
   extraReducers: (builder) => {
@@ -58,11 +58,11 @@ const loginSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         console.log("inside login user success",action.payload)
         state.status = 'succeeded';
-        state.user = action.payload;  
+        state.user = action.payload;  // Store user data
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload || 'Login failed'; 
+        state.error = action.payload || 'Login failed'; // Set error message
       })
 
       // Handle registration
@@ -72,11 +72,11 @@ const loginSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload;  
+        state.user = action.payload;  // Store user data after registration
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload || 'Registration failed'; 
+        state.error = action.payload || 'Registration failed'; // Set error message
       });
   },
 });

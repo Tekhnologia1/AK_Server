@@ -7,9 +7,10 @@ import cafeUser from "../../assets/images/Cafe User.png";
  import employeesImage from "../../assets/images/Employees Icon.png"; 
  import ordersImage from "../../assets/images/Group 3466052.png"
  import invoicesImage from "../../assets/images/Vector (26).png";  
-import payment from "../../assets/images/PaymentIcon.png"; // Example image for Payments
+import payment from "../../assets/images/PaymentIcon.png"; // Example image for 
  import modulesImage from "../../assets/images/Vector (27).png";  // Example image for Modules & Permissions
  import enquiryImage from  "../../assets/images/Vector (28).png"; // Example image for Enquiry
+ import deliveryImage from "../../assets/images/DeliveryIcon.png"
 
  const Adminpaneldata = [
   {
@@ -68,7 +69,7 @@ import payment from "../../assets/images/PaymentIcon.png"; // Example image for 
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/adminpanel/cafeduser'
+    path:'/adminpanel/cafeuser'
 
   },
   {
@@ -121,14 +122,14 @@ import payment from "../../assets/images/PaymentIcon.png"; // Example image for 
   },
   {
     id: 10,
-    title: "Payments",
-    imageSrc: payment,
-    altText: "Payments Image",
+    title: "Delivery",
+    imageSrc: deliveryImage,
+    altText: "Delivery Image",
     color: "#7B3F00",
     boxShadow: true,
     imageWidth: "32px",
     imageHeight: "32px",
-    path:'/adminpanel/payment'
+    path:'/adminpanel/delivery'
 
   },
   {

@@ -84,7 +84,7 @@ function EmployeeForm({ data = {}, handleSubmit, isEditMode, className }) {
             } else {
                 // Handle failure case if needed
                 // For example, you could display a message or log an error
-                console.error("Form submission failed:", response.error);
+                // console.error("Form submission failed:", response.error);
             }
         } else {
             setErrors(validationErrors);
@@ -125,6 +125,7 @@ function EmployeeForm({ data = {}, handleSubmit, isEditMode, className }) {
                         value={values.password}
                         onChange={handleChange}
                         name="password"
+                        type={isEditMode ? "password" : "text"}
                     />
                     <p className="text-danger error_text">{errors.password}</p>
                 </div>

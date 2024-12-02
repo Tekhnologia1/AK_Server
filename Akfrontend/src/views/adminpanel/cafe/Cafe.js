@@ -4,12 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {createCafe,deleteCafe,fetchCafes,updateCafe,} from "../../store/cafeSlice";
 import { useMemo } from "react";
-import { Button, Modal, Table } from "react-bootstrap";
-import CafeForm from "./Cafeform";
+import { Button, Modal, Table,Row,Col, Tooltip, OverlayTrigger } from "react-bootstrap";
 import SearchBox from "../../../commancomponet/Searchbox";
 import Pagination1 from "../../../commancomponet/Pagination1"; // Importing the Pagination1 component
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
 import Backpage from "../../../commancomponet/Backpage";
+import CafeForm from './Cafeform'
+import ShowModal from "../../../commancomponet/ShowModal";
+import { PiEyeBold, PiNotePencilBold, PiTrashBold } from "react-icons/pi";
+import { isMobileView } from "../../../Utils/utils";
+
 // Memoize child components to avoid unnecessary re-renders
 const MemoizedSearchBox = React.memo(SearchBox);
 const MemoizedPagination1 = React.memo(Pagination1);
@@ -18,11 +22,15 @@ const MemoizedBackdropAlert = React.memo(BackdropAlert);
 const MemoizedBackpage = React.memo(Backpage);
 
 function Cafe() {
+  const [showModal1, setShowModal1] = useState(false);
   const dispatch = useDispatch();
   const cafes = useSelector((state) => state.cafes.cafes);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
+  const [modaledata, seModaledata] = useState({});
+
+  console.log("object",cafes)
   const [formData, setFormData] = useState({
     cafeName: "",
     address: "",
@@ -30,6 +38,7 @@ function Cafe() {
     selectedCity: "",
     selectedRoute: "",
     selectedDeal: "",
+    franchise_id:"",
     // cafedeal: "",
     selectedPaymentTerm: "",
   });
@@ -67,7 +76,7 @@ function Cafe() {
   }, [cafes, currentPage, searchTerm]);
 
   const columns = useMemo(
-    () => ["SR.NO.", "Cafe Name", "City", "Contact Person", "Actions", "View"],
+    () => ["SR.NO.", "Cafe Name", "City", "Contact Person", "Actions"],
     []
   );
 
@@ -79,9 +88,6 @@ function Cafe() {
     setDeleteId(id);
     setShowDeleteModal(true);
   }, []);
-
-
-
 
   const handleDelete = useCallback(async () => {
     if (deleteId) {
@@ -103,9 +109,6 @@ function Cafe() {
     }
   }, [deleteId, dispatch, pageCafes.length, currentPage]);
 
-
-
-
   const handleUpdateModalOpen = (cafe) => {
     setSelectedCafe(cafe);
     console.log(cafe);
@@ -117,6 +120,7 @@ function Cafe() {
       selectedCity: cafe.cities_id,
       selectedRoute: cafe.routes_id,
       selectedDeal: cafe.special_deal,
+      franchise_id:cafe.franchise_id ,
       // selectedCafedeal: cafe.cafe_deals_id,
       selectedPaymentTerm: cafe.payment_terms_id,
     });
@@ -126,6 +130,8 @@ function Cafe() {
   const handleUpdate = useCallback(
     async (values) => {
       const id = selectedCafe.cafe_id;
+      const fraid = values.franchise_id ? values.franchise_id : null;
+      const spe = values.cafeName.trim().substring(0, 3).toUpperCase();
       const updatedData = {
         name: values.cafeName,
         address: values.address,
@@ -135,6 +141,8 @@ function Cafe() {
         special_deal: values.selectedDeal,
         payment_term_id: values.selectedPaymentTerm,
         contact_person: values.contactPerson,
+        franchise_id:fraid,
+        code:spe
       };
 
       const response = await dispatch(updateCafe({ updatedData, id }));
@@ -157,6 +165,8 @@ function Cafe() {
 
   const handleAddClick = useCallback(
     async (values) => {
+      const fraid = values.franchise_id ? values.franchise_id : null;
+      const spe = values.cafeName.trim().substring(0, 3).toUpperCase();
       const data = {
         name: values.cafeName,
         address: values.address,
@@ -166,8 +176,9 @@ function Cafe() {
         special_deal: values.selectedDeal,
         payment_term_id: values.selectedPaymentTerm,
         contact_person: values.contactPerson,
+        franchise_id:fraid,
+        code:spe
       };
-
       const response = await dispatch(createCafe(data));
       if (response.meta.requestStatus === "fulfilled") {
         setAlert({ show: true, message: "Cafe Created!", varient: "success" });
@@ -187,19 +198,27 @@ function Cafe() {
         selectedCity: "",
         selectedRoute: "",
         selectedDeal: "",
+        franchise_id:"",
         selectedPaymentTerm: "",
       });
     },
     [dispatch]
   );
+  
+  const modalContent = (
+    <Row className="m-0">
+      <Col  className="gy-2" lg={6}><span className="fw-bold">Cafe Name :</span> {modaledata?.cafe_name}</Col>
+      <Col  className="gy-2" lg={6}> <span className="fw-bold">Address :</span> {modaledata?.address} </Col>
+      <Col  className="gy-2" lg={6}><span className="fw-bold">Route Name :</span> {modaledata?.route_name}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">City Name :</span> {modaledata?.cities_name}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Contact Person :</span> {modaledata?.contact_person}</Col>
+    </Row>
+  );
 
-  console.log("pageCafes", pageCafes);
-
-  console.log(cafes);
   return (
     <div className="p-lg-5">
       <MemoizedBackpage
-        mainPage="Adminpanel"
+        mainPage="Admin Panel"
         mainPagePath="/adminpanel"
         currentPage="Cafes"
       />
@@ -244,7 +263,87 @@ function Cafe() {
                   <td>{item.cafe_name}</td>
                   <td>{item.cities_name}</td>
                   <td>{item.contact_person}</td>
-                  <td>
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          seModaledata(item);
+                          setShowModal1(true);
+                        }}
+                      >
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
+                        }
+                      >
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            seModaledata(item);
+                          setShowModal1(true);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateModalOpen(item);
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateModalOpen(item);
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
+
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteModalShow(item.cafe_id);
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteModalShow(item.cafe_id);
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
+                  </td>
+                  {/* <td>
                     <div className="d-flex justify-content-center">
                       <Button
                         variant="outline-primary"
@@ -262,25 +361,19 @@ function Cafe() {
                       >
                         <FaTrash />
                       </Button>
-                      {/* <Button
-                        size="sm"
-                        style={{
-                          background: "white",
-                          border: "none",
-                          color: "black",
-                        }}
-                      >
-                        <FaEllipsisV />
-                      </Button> */}
+                     
                     </div>
-                  </td>
-                  <td>
+                  </td> */}
+                  {/* <td>
                     <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
+                      <Button variant="" size="sm" className="me-2"   onClick={() => {
+                          seModaledata(item);
+                          setShowModal1(true);
+                        }} >
                         <FaEye />
                       </Button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (
@@ -321,6 +414,15 @@ function Cafe() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}
+        title="Cafe Detail"
+        bodyContent={modalContent}
+        data={modaledata}
+      />
+
 
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
         <Modal.Header closeButton>

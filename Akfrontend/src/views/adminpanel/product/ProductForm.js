@@ -12,8 +12,8 @@ import InputBox from "../../../commancomponet/InputBox";
 import CommanButton from "../../../commancomponet/CommanButton";
 
 const priceScales = [
-  { label: "Per Item", option: 2 },
-  { label: "Per Kg", option: 1 },
+  { label: "Per Item", option: "Per Item" },
+  { label: "Per Kg", option: "Per kg" },
 ];
 
 const productfilling = [
@@ -34,7 +34,8 @@ const ProductForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
     makingPrice: data.making_price || "",
     price_scale: data.price_scale || "",
   });
-
+  
+  console.log("values ",values)
   const dispatch = useDispatch();
   const masterProducts = useSelector((state) => state.products.masterProducts);
   const fillingTypes = useSelector((state) => state.products.fillingTypes);

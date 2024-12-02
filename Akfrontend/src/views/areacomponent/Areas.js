@@ -10,19 +10,22 @@ import {
   fetchCities,
   updateArea,
 } from "../store/areaSlice";
-import { Modal, Button, ModalBody, Table } from "react-bootstrap";
+import { Modal, Button, Table,Row,Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { validateAreaForm } from "../validation/Validationall";
 import InputBox from "../../commancomponet/InputBox";
 import SelectBox from "../../commancomponet/SelectBox";
 import CommanButton from "../../commancomponet/CommanButton";
 import SearchBox from "../../commancomponet/Searchbox";
 import Pagination1 from "../../commancomponet/Pagination1";
-import { FaEdit, FaEllipsisV, FaEye, FaTrash } from "react-icons/fa";
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import BackdropAlert from "../../commancomponet/Alert/backdropAlert";
-import { MdNavigateNext } from "react-icons/md";
 import Backpage from "../../commancomponet/Backpage";
-
+import ShowModal from '../../commancomponet/ShowModal.js'
+import { PiEyeBold, PiNotePencilBold, PiTrashBold } from "react-icons/pi";
+import { isMobileView } from "../../Utils/utils.js";
 function Areas() {
+  const [showModal1, setShowModal1] = useState(false);
+
   const dispatch = useDispatch();
   const cities = useSelector((state) => state.areas.cities);
   const areas = useSelector((state) => state.areas.areas);
@@ -35,12 +38,14 @@ function Areas() {
   const [deleteId, setDeleteId] = useState(null);
   const [totalPages, setTotalPages] = useState();
   const [pageAreas, setPageAreas] = useState([]);
+  const [modaledata, seModaledata] = useState({});
+
   const [alert, setAlert] = useState({
     show: false,
     message: "",
     varient: "success",
   });
-  const columns = ["SR.NO.", "Area Name", "City Name", "Action", "View"];
+  const columns = ["SR.NO.", "Area Name", "City Name", "Action"];
 
   const [formData, setFormData] = useState({
     areaName: "",
@@ -210,10 +215,28 @@ function Areas() {
     }
   };
 
+
+  const handleModal=(item)=>{
+
+    console.log("tyuiojpjuiwehfuyuyguyguyuyguyg",item)
+    seModaledata(item);
+    setShowModal1(true);
+    
+  }
+
+
+  const modalContent = (
+    <Row className="m-0">
+      <Col  className="gy-2" lg={6}><span className="fw-bold">Area Name :</span> {modaledata?.name}</Col>
+      <Col  className="gy-2" lg={6}> <span className="fw-bold">City Name :</span> {modaledata?.cities_name} </Col>
+      <Col  className="gy-2" lg={6}><span className="fw-bold">Area Details :</span> {modaledata?.area_details}</Col>
+    </Row>
+  );
+
   return (
     <div className="p-lg-5">
       <Backpage
-        mainPage="Adminpanel"
+        mainPage="Admin Panel"
         mainPagePath="/adminpanel"
         currentPage="Area / Location"
       />
@@ -282,13 +305,6 @@ function Areas() {
         </div>
       </div>
 
-      {/* <div className="pt-4">
-        <AreaTable
-          areas={currentAreas}
-          onUpdate={handleUpdateModalOpen}
-          onDelete={handleFirstModalShow}
-        />
-      </div> */}
 
       <div className="pt-4">
         <Table responsive="sm">
@@ -311,8 +327,85 @@ function Areas() {
                   <td>{rowIndex + 1 + (currentPage - 1) * pageSize}</td>
                   <td>{item.name}</td>
                   <td>{item.cities_name}</td>
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleModal(item);
+                        }}
+                      >
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
+                        }
+                      >
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleModal(item);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateModalOpen(item);
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateModalOpen(item);
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
 
-                  <td>
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFirstModalShow(item);
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFirstModalShow(item);
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
+                  </td>
+                  {/* <td>
                     <Button
                       variant="outline-primary"
                       size="sm"
@@ -329,18 +422,16 @@ function Areas() {
                     >
                       <FaTrash />
                     </Button>
-                    {/* <Button variant="transparent">
-                      <FaEllipsisV />
-                    </Button> */}
-                  </td>
+             
+                  </td> */}
 
-                  <td>
+                  {/* <td>
                     <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
+                      <Button variant="" size="sm" className="me-2"   onClick={() =>{handleModal(item)} }>
                         <FaEye />
                       </Button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (
@@ -364,7 +455,19 @@ function Areas() {
         </div>
       )}
 
-      {/* Add Area Modal */}
+
+
+
+
+      <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}    
+        title="Area Detail"
+        bodyContent={modalContent}
+        data={modaledata}
+      />
+
+
       <Modal show={showFirstModal} onHide={handleFirstModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>

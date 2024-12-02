@@ -20,7 +20,7 @@ const RouteForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
   const [values, setValues] = useState({
     name: data.name || "",
     details: data.route_details || "",
-    startPoint: data.startPoint || "",
+    startPoint: data.startPoint || "Ak",
     endPoint: data.route_end_point || "",
     city: data.cities_id || "",
   });
@@ -64,7 +64,7 @@ const RouteForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
         name: data.route_name || "",
         details: data.route_details || "",
         area: result,
-        startPoint: data.route_start_point || "",
+        startPoint: data.route_start_point || "Ak",
         endPoint: data.route_end_point || "",
         city: data.cities_id || "",
       });

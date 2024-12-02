@@ -1,12 +1,14 @@
 
 import { createSlice } from '@reduxjs/toolkit'
 
+// Define the initial state
 const initialState = {
   sidebarShow: true,
-  sidebarUnfoldable: false, 
+  sidebarUnfoldable: false, // Add this line
   theme: 'light',
 }
 
+// Create a slice of the state with a reducer
 const uiSlice = createSlice({
   name: 'ui',
   initialState,
@@ -17,5 +19,6 @@ const uiSlice = createSlice({
   },
 })
 
+// Export the action creators and the reducer
 export const { set } = uiSlice.actions
 export default uiSlice.reducer

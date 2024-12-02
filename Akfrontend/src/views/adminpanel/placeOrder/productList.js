@@ -15,12 +15,13 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../../commancomponet/Header";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Pagination } from "swiper/modules";
+
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import "swiper/swiper-bundle.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../../store/productSlice";
+import { fetchDealProducts, fetchProducts } from "../../store/productSlice";
 import {
   addProduct,
   updateProductQuantity,
@@ -29,9 +30,11 @@ import {
 import { MdOutlineClear } from "react-icons/md";
 import MenuCard from "./menuCard";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
+import InputBox from "../../../commancomponet/InputBox";
+
 function ProductList() {
-  const { products, status } = useSelector((state) => state.products);
-  const { data, cartProducts } = useSelector((state) => state.placeOrder);
+  const { dealProducts, products, status } = useSelector((state) => state.products);
+  const { data, cartProducts, cafe } = useSelector((state) => state.placeOrder);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -47,34 +50,29 @@ function ProductList() {
     setShowModal(true);
   };
 
-  console.log(data);
-
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedItem(null);
   };
 
-  console.log(cartProducts);
-
   useEffect(() => {
-    if (data) {
-      dispatch(fetchProducts());
+    if (data && cafe) {
+      dispatch(fetchDealProducts(cafe.cafe_id));
     } else {
       navigate("/adminpanel/order");
     }
-  },[data]);
+  }, [data]);
 
+  console.log("deals product ", dealProducts)
   const addToCart = (e, menu) => {
     e.stopPropagation();
-    console.log(cartProducts);
-
     if (
       cartProducts.some((product) => product.product_id === menu.product_id)
     ) {
       setAlert({
         show: true,
         message: "Product already exist into cart",
-        varient: "danger",
+        varient: "warning",
       });
     } else {
       const product = {
@@ -82,14 +80,14 @@ function ProductList() {
         name: menu.name,
         description: menu.details,
         quantity: 1,
-        rate: menu.making_price,
-        sub_total_amount: menu.making_price,
+        rate: menu.base_price,
+        sub_total_amount: menu.base_price,
+        price_scale: menu.price_scale,
       };
       dispatch(addProduct(product));
     }
   };
 
-  console.log(cartProducts);
   const CarouselImageFirst = ({ text, image }) => (
     <img src={home1} alt={text} className="d-block w-100" />
   );
@@ -118,12 +116,21 @@ function ProductList() {
     );
   };
 
-  // const [selectedOption, setSelectedOption] = useState("Delivery");
+  const [selectedOption, setSelectedOption] = useState("Delivery");
   const incrementQuantity = (item) => {
     dispatch(
       updateProductQuantity({
         id: item.product_id,
         quantity: item.quantity + 1,
+      })
+    );
+  };
+
+  const updatequntity = (item, quantity) => {
+    dispatch(
+      updateProductQuantity({
+        id: item.product_id,
+        quantity: quantity,
       })
     );
   };
@@ -153,26 +160,56 @@ function ProductList() {
         <div className="row p-3 m-0">
           <div className="col-md-9 col-lg-8 col-12">
             <h2 className="fs-5 fw-bold pb-2 mb-0">Menu</h2>
-            {products && (
+            {dealProducts && (
               <div className="row m-0">
-                {products.slice(0, 8).map((menu, index) => (
-                  <div
-                    onClick={() => handleShowModal(menu)}
-                    className="col-sm-4 ps-0 col-md-4 col-lg-3 col-6 mt-2 pt-2"
-                    key={index}
-                  >
-                    <MenuCard
-                      image={bg}
-                      type={menu.type}
-                      name={menu.name}
-                      description={menu.details}
-                      price={menu.making_price}
-                      handleAdd={(e) => {
-                        addToCart(e, menu);
-                      }}
-                    />
-                  </div>
-                ))}
+                {
+                  dealProducts?.dealProducts?.length !== 0 ?
+                    <>
+                      {dealProducts?.dealProducts && <>
+                        {dealProducts?.dealProducts.map((menu, index) => (
+                          <div
+                            onClick={() => handleShowModal(menu)}
+                            className="col-sm-4 ps-0 col-md-4 col-lg-3 col-6 mt-2 pt-2"
+                            key={index}
+                          >
+                            <MenuCard
+                              image={bg}
+                              type={menu.type}
+                              name={menu.name}
+                              description={menu.details}
+                              price={menu.dealPrice}
+                              handleAdd={(e) => {
+                                addToCart(e, menu);
+                              }}
+                              item={menu}
+                            />
+                          </div>
+                        ))}
+                      </>}
+                    </> :
+                    <>
+                      {
+                        dealProducts?.restProducts.slice(0, 8).map((menu, index) => (
+                          <div
+                            onClick={() => handleShowModal(menu)}
+                            className="col-sm-4 ps-0 col-md-4 col-lg-3 col-6 mt-2 pt-2"
+                            key={index}
+                          >
+                            <MenuCard
+                              image={bg}
+                              type={menu.type}
+                              name={menu.name}
+                              description={menu.details}
+                              price={menu.base_price}
+                              handleAdd={(e) => {
+                                addToCart(e, menu);
+                              }}
+                            />
+                          </div>
+                        ))
+                      }
+                    </>
+                }
               </div>
             )}
           </div>
@@ -183,47 +220,71 @@ function ProductList() {
                 <div>
                   {cartProducts.map((cart) => (
                     <div
-                      className="row m-0 align-items-center"
+                      className="row m-0 mb-2 align-items-center"
                       key={cart.product_id}
                     >
-                      <div className="col-lg-7 col-7 p-2">
+                      <div className="col-lg-7 col-md-12 col-7 p-2">
                         <div style={{ fontSize: "14px" }}>
-                          <span className="fw-bold">{cart.name}</span> (
-                          {cart.quantity} Piece)
+                          {cart.name} ({cart.quantity}  {cart.price_scale === "Per Item" ? `${cart.quantity > 1 ? "Pieces" : "Piece"}` : "Kg"} )
                         </div>
                         <div style={{ fontSize: "14px" }}>
-                          {cart.quantity} x ₹{cart.making_price} = ₹
+                          {cart.quantity} x ₹{cart.rate} = ₹
                           {cart.quantity * cart.rate}
                         </div>
                       </div>
-                      <div className="col-lg-5 col-5 text-end quantity_grp">
-                        <ButtonGroup className="increment-decrement-group">
-                          <Button
-                            className="btn-custom px-1"
-                            onClick={() => {
-                              decrementQuantity(cart);
-                            }}
-                          >
-                            -
-                          </Button>
-                          <Button className="btn-custom count-display">
-                            {cart.quantity}
-                          </Button>
-                          <Button
-                            className="btn-custom px-1"
-                            onClick={() => {
-                              incrementQuantity(cart);
-                            }}
-                          >
-                            +
-                          </Button>
-                        </ButtonGroup>
-                        <MdOutlineClear
-                          className="ms-2 remove_icon"
-                          onClick={() => {
-                            dispatch(removeProduct(cart.product_id));
-                          }}
-                        />
+                      <div className="col-lg-5 col-md-12 col-5 mb-2 text-end text-md-center quantity_grp px-1">
+                        {cart.price_scale == "Per Item" ? (
+                          <div className="input_quantity">
+                            {" "}
+                            <ButtonGroup className="increment-decrement-group w-100">
+                              <Button
+                                className="btn-custom px-1"
+                                onClick={() => {
+                                  decrementQuantity(cart);
+                                }}
+                              >
+                                -
+                              </Button>
+                              <Button className="btn-custom count-display">
+                                {cart.quantity}
+                              </Button>
+                              <Button
+                                className="btn-custom px-1"
+                                onClick={() => {
+                                  incrementQuantity(cart);
+                                }}
+                              >
+                                +
+                              </Button>
+                            </ButtonGroup>
+                            <MdOutlineClear
+                              className="ms-2 remove_icon "
+                              onClick={() => {
+                                dispatch(removeProduct(cart.product_id));
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="input_quantity">
+                            <InputBox
+                              placeholder="In Kg"
+                              name="updatevalue"
+                              className="m-0 p-1"
+                              value={cart.quantity}
+                              style={{ width: "100%" }}
+                              type="number"
+                              onChange={(e) => {
+                                updatequntity(cart, e.target.value);
+                              }}
+                            />
+                            <MdOutlineClear
+                              className="ms-2 remove_icon"
+                              onClick={() => {
+                                dispatch(removeProduct(cart.product_id));
+                              }}
+                            />
+                          </div>
+                        )}
                       </div>
                       <hr />
                     </div>
@@ -257,7 +318,7 @@ function ProductList() {
           </div>
         </div>
 
-        {products.length > 8 && (
+        {(dealProducts?.restProducts?.length !== 0) &&
           <div className=" p-3">
             <h2 className="fs-5 mt-3 fw-bold">You may also Like</h2>
             <Swiper
@@ -281,69 +342,112 @@ function ProductList() {
                 1280: { slidesPerView: 4 },
               }}
             >
-              {products.slice(8).map((item) => (
-                <SwiperSlide key={item.product_id} className="p-sm-2 p-3 ">
-                  <div className=" m-4">
-                    <div key={item.product_id} className="swip_cont">
-                      <div className="img_cont">
-                        <img
-                          src={bg}
-                          alt="Croissants"
-                          className="swip_card_img"
-                        />
-                      </div>
-                      <Card
-                        onClick={() => handleShowModal(item)}
-                        style={{ cursor: "pointer" }}
-                        className="swipper_card"
-                      >
-                        <Card.Body className="p-2">
-                          <div className="pb-2 ps-1 pt-2">
+              {
+                dealProducts?.dealProducts?.length === 0 ?
+                  <>
+                    {dealProducts?.restProducts.slice(8).map((item) => (
+                      <SwiperSlide key={item.product_id} className="p-sm-2 p-3">
+                        <div key={item.product_id} className="swip_cont">
+                          <div className="img_cont">
                             <img
-                              style={{ height: "1rem", width: "1rem" }}
-                              src={Veg}
-                              alt=""
+                              src={bg}
+                              alt="Croissants"
+                              className="swip_card_img"
                             />
                           </div>
-                          <h5
-                            className="card-title ps-1 text-truncate"
-                            style={{ fontSize: "14px" }}
+                          <Card
+                            onClick={() => handleShowModal(item)}
+                            style={{ cursor: "pointer" }}
+                            className="swipper_card"
                           >
-                            {item.name}
-                          </h5>
-                          <div className="row ps-1 align-items-center flex-grow-1">
-                            <div className="col-sm-5 pe-0 col-4">
-                              <p className="menu_cost">₹{item.making_price}</p>
-                            </div>
-                            <div className="col-sm-7 ps-0 text-end  col-8">
-                              <Button
-                                onClick={(e) => {
-                                  addToCart(e, item);
-                                }}
-                                className="cream_btn"
-                              >
-                                Add to cart
-                              </Button>
-                            </div>
+                            <Card.Body className="p-2">
+                              <div className="pb-2 ps-1 pt-2">
+                                <img
+                                  style={{ height: "1rem", width: "1rem" }}
+                                  src={Veg}
+                                  alt=""
+                                />
+                              </div>
+                              <h5 className="card-title ps-1 text-truncate" style={{ fontSize: "14px" }}>
+                                {item.name}
+                              </h5>
+                              <div className="row ps-1 align-items-end flex-grow-1">
+                                <div className="col-sm-5 pe-0 col-4">
+                                  <p className="menu_cost">₹{item.base_price}</p>
+                                </div>
+                                <div className="col-sm-7 ps-0 text-end  col-8">
+                                  <Button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      alert("Add Cart")
+                                    }}
+                                    className="cream_btn"
+                                  >Add to cart</Button>
+                                </div>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </> :
+                  <>
+                  {dealProducts?.restProducts?.map((item) => (
+                      <SwiperSlide key={item.product_id} className="p-sm-2 p-3">
+                        <div key={item.product_id} className="swip_cont">
+                          <div className="img_cont">
+                            <img
+                              src={bg}
+                              alt="Croissants"
+                              className="swip_card_img"
+                            />
                           </div>
-                        </Card.Body>
-                      </Card>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
+                          <Card
+                            onClick={() => handleShowModal(item)}
+                            style={{ cursor: "pointer" }}
+                            className="swipper_card"
+                          >
+                            <Card.Body className="p-2">
+                              <div className="pb-2 ps-1 pt-2">
+                                <img
+                                  style={{ height: "1rem", width: "1rem" }}
+                                  src={Veg}
+                                  alt=""
+                                />
+                              </div>
+                              <h5 className="card-title ps-1 text-truncate" style={{ fontSize: "14px" }}>
+                                {item.name}
+                              </h5>
+                              <div className="row ps-1 align-items-end flex-grow-1">
+                                <div className="col-sm-5 pe-0 col-4">
+                                  <p className="menu_cost">₹{item.base_price}</p>
+                                </div>
+                                <div className="col-sm-7 ps-0 text-end  col-8">
+                                  <Button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      alert("Add Cart")
+                                    }}
+                                    className="cream_btn"
+                                  >Add to cart</Button>
+                                </div>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </>
+              }
             </Swiper>
-          </div>
-        )}
+          </div>}
         {selectedItem && (
           <Modal
             size="md"
             aria-labelledby="contained-modal-title-vcenter"
             centered
             show={showModal}
-            onHide={handleCloseModal}
-          >
-            {/* Custom Header with Background Image */}
+            onHide={handleCloseModal}>
             <div className="p-3">
               <div
                 style={{
@@ -355,15 +459,16 @@ function ProductList() {
                   borderTopRightRadius: "5px",
                   position: "relative",
                 }}
-              ></div>
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={handleCloseModal}
-                className="custom_close_btn"
               >
-                &times;
-              </button>
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="custom_close_btn"
+                >
+                  &times;
+                </button>
+
+              </div>
             </div>
             <Modal.Body>
               <h5
@@ -371,7 +476,7 @@ function ProductList() {
                 style={{ cursor: "default" }}
               >
                 <div>
-                  <img src={Veg} alt="veg" />
+                  <img src={Veg} />{" "}
                   <Badge
                     style={{ backgroundColor: "#d7bb9e", color: "#7b3f00" }}
                     bg="#d7bb9e"
@@ -380,7 +485,7 @@ function ProductList() {
                   </Badge>
                 </div>
                 <div>
-                  <img style={{ cursor: "pointer" }} src={Share} alt="share" />
+                  <img style={{ cursor: "pointer" }} src={Share} />
                 </div>
               </h5>
               <div className="d-flex justify-content-between align-items-center">
@@ -388,7 +493,7 @@ function ProductList() {
                   {selectedItem.name}
                 </Modal.Title>
                 <span style={{ cursor: "default" }} className="h5 fw-bold">
-                  ₹{selectedItem.making_price}
+                  ₹{selectedItem.base_price}
                 </span>
               </div>
 
@@ -397,13 +502,13 @@ function ProductList() {
             <Modal.Footer>
               <CommanButton
                 label="Add to Cart"
-                onClick={(e) => {
-                  addToCart(e, selectedItem);
-                  handleCloseModal();
-                }}
                 variant="#7B3F0080"
                 className="mb-3 ps-4 pe-4 w-100"
                 style={{ borderRadius: "5px" }}
+                onClick={(e) => {
+                  addToCart(e, selectedItem);
+                  handleCloseModal()
+                }}
               />
             </Modal.Footer>
           </Modal>

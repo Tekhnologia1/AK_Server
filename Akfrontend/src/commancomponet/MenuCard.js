@@ -2,7 +2,7 @@ import React from "react";
 import "./menucard.css";
 import { Button, Card } from "react-bootstrap";
 
-const MenuCard = React.memo(({ image, type, name, description, price }) => {
+const MenuCard = ({ image, type, name, description, price }) => {
   return (
     <div className="custom_card_container">
       <div className="img_container" >
@@ -41,6 +41,6 @@ const MenuCard = React.memo(({ image, type, name, description, price }) => {
     </div>
    
   );
-});
+};
 
 export default MenuCard;

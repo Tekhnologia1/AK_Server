@@ -57,35 +57,11 @@ const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
     }));
   };
 
-  // const handleFormSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("object,",values)
-  //   const validationErrors = validateUserForm(values);
-  //   if (Object.keys(validationErrors).length === 0) {
-
-  //   console.log("object,",values)
-  //     handleSubmit(values);
-  //     setValues({
-  //       cafe: "",
-  //       name: "",
-  //       userName: "",
-  //       password: "",
-  //       userType: "",
-  //       email: "",
-  //       contactNo: "",
-  //     });
-  //  } else {
-  //     setErrors(validationErrors);
-  //   } 
-  // };
-
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
     console.log("Form values before validation:", values);
     const validationErrors = validateCafeUserForm(values);
     if (Object.keys(validationErrors).length == 0) {
-      console.log("Submitting:", values);
       handleSubmit(values);
 
       setValues({
@@ -102,12 +78,6 @@ const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
       setErrors(validationErrors);
     }
   };
-
-
-
-
-  console.log("cafe", cafe)
-  // console.log("cafe",usertype)
 
   const transformedcafe = cafe.map((cafe) => ({
     label: cafe.cafe_name,
@@ -132,14 +102,6 @@ const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
             onChange={handleChange}
             value={values.cafe}
           />
-          {/* <SelectBox
-            label={isEditMode ? "Cafe" : ""}
-            options={transformedcafe}
-            value={values.cafe}
-            onChange={handleChange}
-            name="cafe"
-            defaultValue="Cafe"
-          /> */}
           <p className="text-danger">{errors.cafe}</p>
         </div>
 
@@ -174,6 +136,7 @@ const CafeUserForm = ({ data = {}, handleSubmit, isEditMode, className }) => {
             value={values.password}
             onChange={handleChange}
             name="password"
+            type={isEditMode ? "password" : 'text'}
           />
           <p className="text-danger">{errors.password}</p>
         </div>

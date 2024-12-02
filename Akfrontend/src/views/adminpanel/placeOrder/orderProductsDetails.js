@@ -1,12 +1,12 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import proImage from "../../../assets/images/doughnut.jpeg"
+import "./placeOrder.css";
 
 const ProductModal = ({ showModal, handleCloseModal, data }) => {
+    
     const orders = data ? data : [];
-
-    console.log(orders);
-
+    
     return (
         <Modal
             size="md"
@@ -39,7 +39,7 @@ const ProductModal = ({ showModal, handleCloseModal, data }) => {
                                         <img
                                             src={proImage} // Replace with your image path
                                             alt={order.name}
-                                            style={{ width: '50px', marginRight: '10px' }}
+                                            // style={{ width: '50px', marginRight: '10px' }}
                                         />
                                         <p>{order.name}</p>
                                         </div>

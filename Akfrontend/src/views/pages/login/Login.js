@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import "./login.css";
 import { jwtDecode } from "jwt-decode";
@@ -7,19 +6,20 @@ import CommanButton from "../../../commancomponet/CommanButton";
 import facebook from "../../../assets/images/Group 3466061.png";
 import Gmail from "../../../assets/images/Group 3466060.png";
 import { NavLink, useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../store/loginSlice";
 import { validateLoginData } from "../../validation/Validationall";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
 import { apiurl } from "../../../Api/apiurl";
 import axios from "axios";
 
-
-
 function Login() {
-  // const { user, status } = useSelector((state) => state.auth);
+  const { user, status } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [alert, setAlert] = useState({ show: false, message: "", varient: 'success' })
   const API_BASE_URL = apiurl;
+  // Consolidated state for email and password
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -49,12 +49,12 @@ function Login() {
         //   withCredentials: true // Ensure cookies are included
         // }
       );
-
-
       const token = response.data.token;
         const decodedToken = jwtDecode(token);
         const UserData = decodedToken;
-        console.log("user data ", UserData);
+        console.log("user data ", response);
+        console.log("decoded data ", decodedToken);
+
         localStorage.setItem("token", token);
         setAlert({ show: true, message: "Login Successfull!", varient: 'success' });
         navigate("/");

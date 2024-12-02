@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaEllipsisV } from 'react-icons/fa'; // Importing icons from react-icons
 
-const Tablecom = React.memo(({ columns, data, onEdit, onDelete, onMoreActions }) => {
+const Tablecom = ({ columns, data, onEdit, onDelete, onMoreActions }) => {
   return (
     <Table responsive="sm">
       <thead className="bg-dark">
@@ -60,6 +60,6 @@ const Tablecom = React.memo(({ columns, data, onEdit, onDelete, onMoreActions })
       </tbody>
     </Table>
   );
-});
+};
 
 export default Tablecom;

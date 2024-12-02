@@ -14,11 +14,14 @@ const verifyToken = (req, res, next) => {
         }
         req.employee_id = decoded.id;  
         req.employee_type_id = decoded.employee_type_id;
+        req.cafe_id = decoded.cafe_id;
+        req.user_type_id = decoded.user_type_id;
+        req.cafe_users_id = decoded.cafe_users_id;
 
-        if (req.employee_type_id !== 1) { // Example: Only allow employee type 1 (e.g., admin)
-            return res.status(403).json({ message: 'Access forbidden: You do not have sufficient permissions' });
-        }
-
+        // if (req.employee_type_id !== 1) { // Example: Only allow employee type 1 (e.g., admin)
+        //     return res.status(403).json({ message: 'Access forbidden: You do not have sufficient permissions' });
+        // }
+        
         next(); 
     });
 };

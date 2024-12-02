@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import InputBox from "../../../commancomponet/InputBox";
 import SearchDropdown from "../../../commancomponet/SearchDropdown";
 import DateInputs from "../../../commancomponet/DateInput";
 import Note from "../../../commancomponet/Note";
@@ -92,18 +91,7 @@ const NewOrder = () => {
             const cafe = cafes.find(item => item.cafe_id === formData.cafeId)
             dispatch(setData({ values, cafe }))
             navigate('/adminpanel/order/home')
-            //   console.log(values);
-            //   handleSubmit(values);
-
-            //   setFormData({
-            //     orderNumber: "",
-            //     cafeId: "",
-            //     orderDate: "",
-            //     paymentTerm: "",
-            //     totalPayment: "",
-            //     paymentStatus: "",
-            //     note: "",
-            //   });
+          
             setErrors({})
         } else {
             setErrors(validationErrors);
@@ -112,15 +100,7 @@ const NewOrder = () => {
     return (
         <>
             <div className="row m-0">
-                {/* <div className="col-lg-4 gy-4">
-                    <InputBox
-                        placeholder="Order Number"
-                        value={formData.orderNumber}
-                        // onChange={handleChange}
-                        name="orderNumber"
-                        disabled
-                    />
-                </div> */}
+     
                 <div className="col-lg-4 gy-4">
                     <SearchDropdown
                         name={"cafeId"}
@@ -133,24 +113,19 @@ const NewOrder = () => {
                     {errors.cafeId && <p className="text-danger error_text">{errors.cafeId}</p>}
                 </div>
                 <div className="col-lg-4 gy-4 ">
-                    {/* <DateInputBox
-                                        value={formData.orderDate}
-                                        onChange={handleChange}
-                                        placeholder="Date"
-                                        name="orderDate"
-                                        className="my-date-input"
-                                    /> */}
+               
                     <DateInputs
                         value={formData.orderDate}
                         onChange={handleChange}
                         placeholder="Date"
                         name="orderDate"
-                    // className="my-date-input"
                     />
                     {errors.orderDate && <p className="text-danger error_text">{errors.orderDate}</p>}
 
                 </div>
-                <div className="col-lg-4 gy-4 ">
+
+
+                {/* <div className="col-lg-4 gy-4 ">
                     <SearchDropdown
                         name={"paymentStatus"}
                         placeholder="Payment Status"
@@ -160,7 +135,9 @@ const NewOrder = () => {
                         value={formData.paymentStatus}
                     />
                     {errors.paymentStatus && <p className="text-danger error_text">{errors.paymentStatus}</p>}
-                </div>
+                </div> */}
+
+{/* 
                 <div className="col-lg-4 gy-4">
                     <SearchDropdown
                         name={"paymentTerm"}
@@ -172,8 +149,10 @@ const NewOrder = () => {
                     />
                     {errors.paymentTerm && <p className="text-danger error_text">{errors.paymentTerm}</p>}
 
-                </div>
-                <div className="col-lg-8 gy-3">
+                </div> */}
+
+
+                <div className="col-lg-4 gy-3">
                     <Note
                         placeholder="Note"
                         value={formData.note}
@@ -188,20 +167,6 @@ const NewOrder = () => {
 
             </div>
 
-            {/* <div className="row m-0 justify-content-center pt-4">
-                <div className="col-lg-10">
-                    <Note
-                        placeholder="Note"
-                        value={formData.note}
-                        onChange={(e) =>
-                            handleChange({
-                                target: { name: "note", value: e.target.value },
-                            })
-                        }
-                    />
-                    {errors.note && <p className="text-danger error_text">{errors.note}</p>}
-                </div>
-            </div> */}
             <div className="d-flex justify-content-center">
                 <CommanButton
                     label="Select Product"

@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { apiurl } from '../../Api/apiurl';  
 const API_BASE_URL = apiurl;
-
-const initialState = {
+const token = localStorage.getItem("token");
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;const initialState = {
   routes: [],  
   cities: [],
   status: 'idle',
@@ -35,6 +35,19 @@ export const createRoute = createAsyncThunk(
     return response.data; // Adjust based on your API response structure
   }
 );
+// Update an existing route
+// export const updateRoute = createAsyncThunk(
+//   'routes/updateRoute',
+//   async ({ id, updatedData }) => {
+
+//     console.log("id",id)
+//     console.log("updatedData",updatedData)
+
+//     const response = await axios.put(`${API_BASE_URL}/UpdateRoutes/${id}`, updatedData);
+//     return response.data; // Adjust based on your API response structure
+//   }
+// );
+
 
 export const updateRoute = createAsyncThunk(
   "routes/updateRoute",
@@ -52,7 +65,7 @@ export const deleteRoute = createAsyncThunk(
   'routes/deleteRoute',
   async (id) => {
     await axios.delete(`${API_BASE_URL}/deleteRoute/${id}`);
-    return id;  
+    return id;  // Return the deleted route's ID
   }
 );
 
@@ -69,7 +82,7 @@ const routeSlice = createSlice({
       })
       .addCase(fetchRoutes.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.routes = action.payload; 
+        state.routes = action.payload; // Ensure this aligns with your API response
       })
       .addCase(fetchRoutes.rejected, (state, action) => {
         state.status = 'failed';
@@ -82,7 +95,7 @@ const routeSlice = createSlice({
       })
       .addCase(fetchCities.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.cities = action.payload; 
+        state.cities = action.payload; // Ensure this aligns with your API response
       })
       .addCase(fetchCities.rejected, (state, action) => {
         state.status = 'failed';
@@ -95,6 +108,7 @@ const routeSlice = createSlice({
       })
       .addCase(createRoute.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        // Use spread operator to ensure immutability
         state.routes = [...state.routes, action.payload]; 
       })
       .addCase(createRoute.rejected, (state, action) => {
@@ -112,7 +126,7 @@ const routeSlice = createSlice({
           (route) => route.id === action.payload.id
         );
         if (index !== -1) {
-          state.routes[index] = action.payload; 
+          state.routes[index] = action.payload; // Update the route
         }
       })
       .addCase(updateRoute.rejected, (state, action) => {
@@ -127,7 +141,7 @@ const routeSlice = createSlice({
       .addCase(deleteRoute.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.routes = state.routes.filter(
-          (route) => route.id !== action.payload 
+          (route) => route.id !== action.payload // Remove the deleted route
         );
       })
       .addCase(deleteRoute.rejected, (state, action) => {
@@ -137,4 +151,5 @@ const routeSlice = createSlice({
   },
 });
 
+// Export the reducer to be used in the store configuration
 export default routeSlice.reducer;

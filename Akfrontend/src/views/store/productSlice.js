@@ -1,15 +1,14 @@
-
-
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { apiurl } from "../../Api/apiurl"; 
+import { apiurl } from "../../Api/apiurl"; // Your API URL
 const API_BASE_URL = apiurl;
-
+const token = localStorage.getItem("token");
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 const initialState = {
   products: [],
-  masterProducts: [], 
-  fillingTypes: [],  
+  dealProducts:{},
+  masterProducts: [], // New field
+  fillingTypes: [],   // New field
   status: "idle",
   error: null,
 };
@@ -47,6 +46,20 @@ export const fetchProducts = createAsyncThunk(
     try {
       const response = await axios.get(`${API_BASE_URL}/GetAllProduct`);
       return response.data[0];
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch products");
+    }
+  }
+);
+
+// Fetch deal products
+export const fetchDealProducts = createAsyncThunk(
+  "products/fetchDealProducts",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/GetAllDealsProducts/${id}`);
+      console.log("check cafe id",response);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch products");
     }
@@ -113,6 +126,20 @@ const productSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Fetch Deal Products
+      .addCase(fetchDealProducts.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDealProducts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.dealProducts = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchDealProducts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })

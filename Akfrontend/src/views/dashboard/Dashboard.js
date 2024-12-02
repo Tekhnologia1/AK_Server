@@ -59,7 +59,7 @@ function Dashboard() {
                     { label: "This week's Order", value: "10" },
                     { label: "This week's Visitors", value: "500" }
                 ].map((item, index) => (
-                    <Col key={index} md={3} className='gy-2'>
+                    <Col key={index} md={3}>
                         <Card className="text-center shadow" style={{ backgroundColor: '#f7f1e5', borderRadius: '10px', backgroundColor: '#f7f1e5' }}>
                             <Card.Body>
                                 <Card.Title style={{ fontSize: '16px', color: '#b08b60', fontWeight: '600' }}>

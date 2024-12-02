@@ -1,8 +1,6 @@
-// import { MultiSelect } from 'primereact/multiselect';
-import 'primereact/resources/themes/saga-blue/theme.css';  // Theme file
-import 'primereact/resources/primereact.min.css';          // Core CSS
-import 'primeicons/primeicons.css';                        // Icons
-// import { Form } from "react-bootstrap";
+import 'primereact/resources/themes/saga-blue/theme.css'; 
+import 'primereact/resources/primereact.min.css';          
+import 'primeicons/primeicons.css';                       
 import '../common.css';
 import React, { useState } from "react";
 import { Dropdown } from 'primereact/dropdown';
@@ -16,19 +14,7 @@ export default function SearchDropdown({
     name,
     options,
     onChange }) {
-    const [selectedCountry, setSelectedCountry] = useState(null);
-    const countries = [
-        { name: 'Australia', code: 'AU' },
-        { name: 'Brazil', code: 'BR' },
-        { name: 'China', code: 'CN' },
-        { name: 'Egypt', code: 'EG' },
-        { name: 'France', code: 'FR' },
-        { name: 'Germany', code: 'DE' },
-        { name: 'India', code: 'IN' },
-        { name: 'Japan', code: 'JP' },
-        { name: 'Spain', code: 'ES' },
-        { name: 'United States', code: 'US' }
-    ];
+   
 
     return (
         <Dropdown

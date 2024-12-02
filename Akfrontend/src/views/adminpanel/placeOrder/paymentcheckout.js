@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./paymentcheckout.css";
-import { Button, ButtonGroup, Form, NavLink } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateProductQuantity,
@@ -8,11 +13,18 @@ import {
   clearAllData,
 } from "../../store/placeOrderSlice";
 import bg from "../../../assets/images/doughnut.jpeg";
-import { MdOutlineClear } from "react-icons/md";
+import {
+  MdOutlineClear,
+} from "react-icons/md";
 import { createOrder } from "../../store/orderSlice";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import PlaceOrderConfirmation from "./orderPlacedConfirmation";
+import { FaShoppingBag } from "react-icons/fa";
+import { calculateGST, calculateTotal, getGrandTotal, isMobileView } from "../../../Utils/utils";
+import InputBox from "../../../commancomponet/InputBox";
+
+const GST_percent = 18;
 
 const PaymentCheckout = () => {
   const [isChecked, setIsChecked] = useState(true);
@@ -23,6 +35,7 @@ const PaymentCheckout = () => {
     varient: "success",
   });
   const [confirm, setConfirm] = useState(false);
+  const [orderNumber, setOrderNumber] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -32,19 +45,14 @@ const PaymentCheckout = () => {
     }
   }, []);
 
-  const buttonStyles = {
-    backgroundColor: "white",
-    color: "brown",
-    border: "1px solid brown",
-    width: "100%",
-    marginTop: "8px",
+  const updatequntity = (item, quantity) => {
+    dispatch(
+      updateProductQuantity({
+        id: item.product_id,
+        quantity: quantity,
+      })
+    );
   };
-
-  const hoverStyles = {
-    backgroundColor: " #7B3F00",
-    color: "white",
-  };
-
   // Function to increment the count
   const handleIncrement = (item) => {
     dispatch(
@@ -53,7 +61,6 @@ const PaymentCheckout = () => {
         quantity: item.quantity + 1,
       })
     );
-    // setCount(prevCount => prevCount + 1);
   };
 
   // Function to decrement the count
@@ -72,24 +79,8 @@ const PaymentCheckout = () => {
     setIsChecked(!isChecked);
   };
 
-  const calculateTotal = () => {
-    return cartProducts.reduce(
-      (total, item) => total + item.rate * item.quantity,
-      0
-    );
-  };
-
-  const handleCartDelete = (product) => {
-    dispatch(removeProduct(product.product_id));
-  };
-
   const placeOrder = async () => {
     if (data && cafe && cartProducts.length !== 0) {
-      console.log(
-        data.orderDate,
-        "date ",
-        new Date(data.orderDate).toISOString().split("T")[0]
-      );
       const date = new Date(data.orderDate);
       const formattedDate =
         date.getFullYear() +
@@ -97,72 +88,51 @@ const PaymentCheckout = () => {
         String(date.getMonth() + 1).padStart(2, "0") +
         "-" +
         String(date.getDate()).padStart(2, "0");
-
-
-
-        console.log("cartProducts",cartProducts)
-
-
-        const filteredProduct = cartProducts.map(({ name, ...rest }) => rest);
-
-
-        console.log("filteredProduct",filteredProduct)
-
-
+      const products = cartProducts.map(item => {
+        const { price_scale, ...rest } = item;
+        return rest;
+      });
       const order = {
         cafe_id: data.cafeId,
         route_id: cafe.routes_id,
         order_number: "ORDER" + data.cafeId,
         order_date: formattedDate,
-        total_amount: calculateTotal(),
+        total_amount: getGrandTotal(calculateTotal(cartProducts), data?.deliveryCharges ? data.deliveryCharges : 0, 0),
         tax: 0,
-        delivery_charges: 0,
-        payment_status: data.paymentStatus,
+        delivery_charges: data?.deliveryCharges ? data.deliveryCharges : 0,
+        payment_status: 0,
         delivery_status: 0,
-        payment_term_id: 1,
         note: data.note,
-        products: filteredProduct,
+        products: products,
       };
-      console.log(order);
       try {
         const result = await dispatch(createOrder(order));
+        console.log("create order result ", result);
         if (result.error || result.meta.requestStatus === "rejected") {
           setAlert({
             show: true,
             message: result?.payload?.message
               ? result?.payload?.message
-              : "Order noy placed. Please try again!",
+              : "Order not placed. Please try again!",
             varient: "danger",
           });
         } else {
-
-
-  
+          if (result?.payload?.order_number) {
+            setOrderNumber(result.payload.order_number)
+          }
           dispatch(clearAllData());
-      
           setConfirm(true);
         }
       } catch (error) {
         console.log(error);
         setAlert({ show: true, message: error.message, varient: "danger" });
       }
-    } else {
-      console.log("no data");
-      // alert("Data not sufficient")
     }
   };
 
-
-
-  const handleplaceplaceOrder =()=>{
-
-    dispatch(clearAllData());
-
-    navigate('/adminpanel/order')
-}
   return (
     <div className="">
-      <div className="pc_container pt-5">
+      <div className="pc_container">
         <div className="row row_margin">
           <div className="col-12 col-md-7">
             <div className="cards">
@@ -189,13 +159,8 @@ const PaymentCheckout = () => {
                 </svg>
                 <div>
                   <h2 className="mb-0 card-title">{cafe?.cafe_name}</h2>
-                  <p className="mb-0 sub-text">Baner, Pune</p>
                 </div>
               </div>
-              <Button className={`toggle-button active inner_spacing w-100`}>
-                Delivery
-              </Button>
-
               <div className="d-flex align-items-center gap-2">
                 <svg
                   width="32"
@@ -241,7 +206,7 @@ const PaymentCheckout = () => {
                     <div className="col-7 d-flex gap-1 pe-0 ps-1 align-items-center">
                       <img
                         src={bg}
-                        alt={cart.product_name}
+                        alt={cart.name}
                         style={{
                           width: "50px",
                           height: "50px",
@@ -261,52 +226,97 @@ const PaymentCheckout = () => {
                         />
                       </svg>
 
-                      <h3 className="mb-0 sub-title">
-                        {cart.name} (100gms)
-                      </h3>
+                      <h3 className="mb-0 sub-title">{cart.name} {cart.price_scale === "Per Item" ? cart.quantity > 1 ? `${cart.quantity} pieces` : `${cart.quantity} piece` : `${cart.quantity} kg`}</h3>
                     </div>
-                    <div className="price_container col-5">
-                      <ButtonGroup className="increment-decrement-group">
-                        <Button
-                          className="btn-custom px-1"
-                          onClick={() => {
-                            handleDecrement(cart);
-                          }}
-                        >
-                          -
-                        </Button>
-                        <Button className="btn-custom count-display">
-                          {cart.quantity}
-                        </Button>
-                        <Button
-                          className="btn-custom px-1"
-                          onClick={() => {
-                            handleIncrement(cart);
-                          }}
-                        >
-                          +
-                        </Button>
-                      </ButtonGroup>
-
-                      <h3 className="mb-0 sub-title">
-                        ₹ {cart.quantity * cart.rate}
-                      </h3>
-
-                      {/* <button className="remove-btn" onClick={() => {}}>R</button> */}
-                      <MdOutlineClear
-                        className="remove_cart"
-                        onClick={() => {
-                          handleCartDelete(cart);
-                        }}
-                      />
+                    <div className="col-5 px-1">
+                      {cart.price_scale == "Per Item" ? (
+                        <div className="price_container">
+                          {" "}
+                          <ButtonGroup className="increment-decrement-group w-100 me-2">
+                            <Button
+                              className="btn-custom px-1"
+                              onClick={() => {
+                                handleDecrement(cart);
+                              }}
+                            >
+                              -
+                            </Button>
+                            <Button className="btn-custom count-display">
+                              {cart.quantity}
+                            </Button>
+                            <Button
+                              className="btn-custom px-1"
+                              onClick={() => {
+                                handleIncrement(cart);
+                              }}
+                            >
+                              +
+                            </Button>
+                          </ButtonGroup>
+                          <h3 className="mb-0 sub-title">
+                            ₹ {cart.quantity * cart.rate}
+                          </h3>
+                          <MdOutlineClear
+                            className="ms-2 remove_cart"
+                            onClick={() => {
+                              dispatch(removeProduct(cart.product_id));
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="price_container">
+                          <InputBox
+                            placeholder="In Kg"
+                            name="updatevalue"
+                            className="m-0 p-1 me-2"
+                            value={cart.quantity}
+                            style={{ width: "100%" }}
+                            type="number"
+                            onChange={(e) => {
+                              updatequntity(cart, e.target.value);
+                            }}
+                          />
+                          <h3 className="mb-0 sub-title">
+                            ₹ {cart.quantity * cart.rate}
+                          </h3>
+                          <MdOutlineClear
+                            className="ms-2 remove_cart"
+                            onClick={() => {
+                              dispatch(removeProduct(cart.product_id));
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
+                <div className="text-end">
+                  {isMobileView() ?
+                    <NavLink
+                      to={"/adminpanel/order/home"}
+                      className={"custom_link"}
+                    >
+                      <FaShoppingBag size={25} style={{ color: " #7B3F00" }} />
+                    </NavLink>
+                    : <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id="tooltip-bottom">Add Products</Tooltip>
+                      }
+                    >
+                      <NavLink
+                        to={"/adminpanel/order/home"}
+                        className={"custom_link"}
+                      >
+                        <FaShoppingBag size={25} style={{ color: " #7B3F00" }} />
+                      </NavLink>
+                    </OverlayTrigger>}
+                </div>
               </div>
             </div>
           </div>
           <div className="col-12 col-md-5">
-            <div className="cards">
+            <div className="cards d-none">
               <div className="combo_offer">
                 <svg
                   width="32"
@@ -331,13 +341,14 @@ const PaymentCheckout = () => {
                 </div>
               </div>
             </div>
+            <h2 className="mb-2 card-title">Bill Details</h2>
             <div className="cards">
               <div className="row">
                 <div className="col-6">
                   <p className="payment_text">Subtotal</p>
                 </div>
                 <div className="col-6 text-end">
-                  <p className="payment_text">₹ {calculateTotal()}</p>
+                  <p className="payment_text">₹ {calculateTotal(cartProducts)}</p>
                 </div>
               </div>
               <div className="row">
@@ -345,7 +356,7 @@ const PaymentCheckout = () => {
                   <p className="payment_text">GST @</p>
                 </div>
                 <div className="col-6 text-end">
-                  <p className="payment_text">₹ 0</p>
+                  <p className="payment_text">₹ {calculateGST(calculateTotal(cartProducts), GST_percent)}</p>
                 </div>
               </div>
               <div className="row">
@@ -353,46 +364,28 @@ const PaymentCheckout = () => {
                   <p className="payment_text">Delivery</p>
                 </div>
                 <div className="col-6 text-end">
-                  <p className="payment_text">₹ 0</p>
+                  <p className="payment_text">₹ {data?.deliveryCharges ? data.deliveryCharges : 0}</p>
                 </div>
               </div>
               <div className="row">
-                <div className="col-6">
+                <div className="col-8">
                   <p className="payment_text">Packaging Charges</p>
                 </div>
-                <div className="col-6 text-end">
+                <div className="col-4 text-end">
                   <p className="payment_text">₹ 0</p>
                 </div>
               </div>
               <div className="row">
-                <div className="col-6">
-                  <p className="payment_total">Subtotal</p>
+                <div className="col-8">
+                  <p className="payment_total">Grand Total</p>
                 </div>
-                <div className="col-6 text-end">
-                  <p className="payment_total">₹ {calculateTotal()}</p>
+                <div className="col-4 text-end">
+                  <p className="payment_total">₹ {getGrandTotal(calculateTotal(cartProducts), data?.deliveryCharges ? data.deliveryCharges : 0, 0)}</p>
                 </div>
               </div>
               <Button className="btn-brown mt-2 w-100" onClick={placeOrder}>
                 Place Order
               </Button>
-
-              <Button
-                style={buttonStyles}
-                className="w-100 mt-2"
-                onClick={handleplaceplaceOrder}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = hoverStyles.backgroundColor;
-                  e.target.style.color = hoverStyles.color;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = buttonStyles.backgroundColor;
-                  e.target.style.color = buttonStyles.color;
-                }}
-
-              >
-                Cancel Order
-              </Button>
-
               <div className="checkbox-container">
                 <label className="custom-checkbox">
                   <input
@@ -444,7 +437,7 @@ const PaymentCheckout = () => {
         varient={alert.varient}
         message={alert.message}
       />
-      <PlaceOrderConfirmation show={confirm} setShow={setConfirm} />
+      <PlaceOrderConfirmation show={confirm} setShow={setConfirm} id={orderNumber} />
     </div>
   );
 };

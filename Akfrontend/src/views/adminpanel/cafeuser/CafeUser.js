@@ -1,10 +1,7 @@
-
-
-
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button, Modal, Table, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import CafeUserForm from "./CafeUserForm";
 import {
   createCafeUser,
@@ -16,13 +13,18 @@ import SearchBox from "../../../commancomponet/Searchbox";
 import Pagination1 from "../../../commancomponet/Pagination1";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
 import Backpage from "../../../commancomponet/Backpage";
+import ShowModal from "../../../commancomponet/ShowModal";
+import { isMobileView } from "../../../Utils/utils";
+import { PiEyeBold, PiNotePencilBold, PiTrashBold } from "react-icons/pi";
 
 function CafeUser() {
+  const [showModal1, setShowModal1] = useState(false);
   const dispatch = useDispatch();
   const cafeuser = useSelector((state) => state.cafeusers.users);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
+  const [modaledata, seModaledata] = useState({});
   const [formData, setFormData] = useState({
     cafe: "",
     name: "",
@@ -63,7 +65,7 @@ function CafeUser() {
   }, [cafeuser, currentPage, searchTerm]);
 
   const columns = useMemo(
-    () => ["SR.NO.", "Cafe", "Cafe User Name", "Contact Number", "Actions", "View"],
+    () => ["SR.NO.", "Cafe", "Cafe User Name", "Contact Number", "Actions"],
     []
   );
 
@@ -190,9 +192,21 @@ function CafeUser() {
 
   const handlePageChange = useCallback((page) => setCurrentPage(page), []);
 
+  const modalContent = (
+    <Row className="m-0">
+      <Col className="gy-2" lg={6}><span className="fw-bold">Cafe Name :</span> {modaledata?.cafe_name}</Col>
+      <Col className="gy-2" lg={6}> <span className="fw-bold">Cafe User Name :</span> {modaledata?.name} </Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">UserName :</span> {modaledata?.username}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">User Type :</span> {modaledata?.user_type_name}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Email :</span> {modaledata?.email}</Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Mobile No :</span> {modaledata?.cell_number}</Col>
+
+    </Row>
+  );
+
   return (
     <div className="p-lg-5">
-      <Backpage mainPage="Adminpanel" mainPagePath="/adminpanel" currentPage="CafeUser" />
+      <Backpage mainPage="Admin Panel" mainPagePath="/adminpanel" currentPage="CafeUser" />
       <CafeUserForm handleSubmit={handleAddClick} isEditMode={false} className="row m-0 form_container p-4" />
       <div className="pt-5">
         <div className="row justify-content-end m-0">
@@ -220,22 +234,85 @@ function CafeUser() {
                   <td>{item.cafe_name}</td>
                   <td>{item.name}</td>
                   <td>{item.cell_number}</td>
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleUpdateModalOpen(item)}>
-                        <FaEdit />
-                      </Button>
-                      <Button variant="outline-danger" size="sm" className="me-2" onClick={() => handleDeleteModalShow(item.cafe_users_id)}>
-                        <FaTrash />
-                      </Button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
-                        <FaEye />
-                      </Button>
-                    </div>
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          seModaledata(item);
+                          setShowModal1(true);
+                        }}
+                      >
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
+                        }
+                      >
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            seModaledata(item);
+                            setShowModal1(true);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateModalOpen(item);
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateModalOpen(item);
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
+
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteModalShow(item.cafe_users_id);
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteModalShow(item.cafe_users_id);
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
                   </td>
                 </tr>
               ))
@@ -268,9 +345,19 @@ function CafeUser() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+
+      <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}
+        title="Cafe User"
+        bodyContent={modalContent}
+        data={modaledata}
+      />
+
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} backdrop="static" keyboard={false} scrollable>
         <Modal.Header closeButton>
-          <Modal.Title>Update Cafe</Modal.Title>
+          <Modal.Title>Update Cafe User</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <CafeUserForm data={formData} handleSubmit={handleUpdate} isEditMode={true} />

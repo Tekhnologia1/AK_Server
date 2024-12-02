@@ -1,9 +1,8 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button, Modal, Table, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import CafeDealsForm from "./CafeDealsForm";
 import SearchBox from "../../../commancomponet/Searchbox";
 import { useCallback } from "react";
@@ -16,6 +15,9 @@ import {
 import Pagination1 from "../../../commancomponet/Pagination1";
 import BackdropAlert from "../../../commancomponet/Alert/backdropAlert";
 import Backpage from "../../../commancomponet/Backpage";
+import ShowModal from "../../../commancomponet/ShowModal";
+import { isMobileView } from "../../../Utils/utils";
+import { PiEyeBold, PiNotePencilBold, PiTrashBold } from "react-icons/pi";
 
 const MemoizedSearchBox = React.memo(SearchBox);
 const MemoizedPagination1 = React.memo(Pagination1);
@@ -24,11 +26,14 @@ const MemoizedBackdropAlert = React.memo(BackdropAlert);
 const MemoizedBackpage = React.memo(Backpage);
 
 function CafeDeals() {
+  const [showModal1, setShowModal1] = useState(false);
   const dispatch = useDispatch();
   const deals = useSelector((state) => state.deals.deals);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
+  const [modaledata, seModaledata] = useState({});
+
   const [formData, setFormData] = useState({
     cafe: "",
     products: "",
@@ -50,18 +55,21 @@ function CafeDeals() {
     dispatch(fetchDeals()); // Fetch cafes on mount
   }, [dispatch]);
 
-
   const columns = useMemo(
-    () => ["SR.NO.", "Cafe Name", "Product Name", "Deal Price", "Actions", "View"],
+    () => ["SR.NO.", "Cafe Name", "Product Name", "Deal Price", "Actions"],
     []
   );
 
-
-
   useEffect(() => {
-    const filteredDeals = deals.filter((deal) =>
-      deal.Cafe_name?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
-    );
+    let filteredDeals = deals
+    // Filter by search term if it is not empty
+    if (searchTerm.trim() !== "") {
+      filteredDeals = filteredDeals.filter(obj =>
+        Object.values(obj).some(value =>
+          value != null && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
     const pages = Math.ceil(filteredDeals.length / pageSize);
     setTotalPages(pages);
     const deal = filteredDeals.slice(
@@ -70,29 +78,6 @@ function CafeDeals() {
     );
     setPageDeals(deal);
   }, [deals, searchTerm, currentPage]);
-
-
-
-  // const filteredDeals = useMemo(() => {
-  //   return deals.filter((deal) =>
-  //     deal.Cafe_name?.toLowerCase().includes(searchTerm.toLowerCase() || "")
-  //   );
-  // }, [deals, searchTerm]);
-
-
-
-  // const pageDeals = useMemo(() => {
-  //   const pages = Math.ceil(filteredDeals.length / pageSize);
-  //   setTotalPages(pages);
-  //   return filteredDeals.slice(
-  //     (currentPage - 1) * pageSize,
-  //     currentPage * pageSize
-  //   );
-  // }, [filteredDeals, currentPage]);
-
-
-
-
 
   const handleDeleteModalClose = useCallback(
     () => setShowDeleteModal(false),
@@ -105,6 +90,7 @@ function CafeDeals() {
   }, []);
 
   const handleDelete = useCallback(async () => {
+    console.log(deleteId)
     if (deleteId) {
       const response = await dispatch(deleteDeal(deleteId));
       if (response.meta.requestStatus === "fulfilled") {
@@ -130,7 +116,7 @@ function CafeDeals() {
 
   const handleUpdate = useCallback(
     async (values) => {
-      const id = selectedCafe.cafe_deal_details_id;
+      const id = selectedCafe.cafe_deals_id;
       const updatedData = {
         cafe_id: values.cafe,
         product_id: values.products,
@@ -194,10 +180,19 @@ function CafeDeals() {
     });
   };
 
+
+  const modalContent = (
+    <Row className="m-0">
+      <Col className="gy-2" lg={6}><span className="fw-bold">Cafe Name :</span> {modaledata?.cafe_name}</Col>
+      <Col className="gy-2" lg={6}> <span className="fw-bold">Product Name :</span> {modaledata?.name} </Col>
+      <Col className="gy-2" lg={6}><span className="fw-bold">Deals Price :</span> {modaledata?.deal_price}</Col>
+      {/* <Col className="gy-2" lg={6}><span className="fw-bold">Cafe Deal :</span> {modaledata?.cafe_deal_details_id}</Col> */}
+    </Row>
+  );
   return (
     <div className="p-lg-5">
       <MemoizedBackpage
-        mainPage="Adminpanel"
+        mainPage="Admin Panel"
         mainPagePath="/adminpanel"
         currentPage="Cafe Deals"
       />
@@ -237,38 +232,88 @@ function CafeDeals() {
               pageDeals.map((item, rowIndex) => (
                 <tr key={item.id} className="text-center">
                   <td>{rowIndex + 1 + (currentPage - 1) * pageSize}</td>
-                  <td>{item.Cafe_name}</td>
-                  <td>{item.product_name}</td>
+                  <td>{item.cafe_name}</td>
+                  <td>{item.name}</td>
                   <td>{item.deal_price}</td>
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => handleUpdateModalOpen(item)}
+                  <td className="d-flex justify-content-center gap-2">
+                    {isMobileView() ?
+                      <button className="icon_blue"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          seModaledata(item);
+                          setShowModal1(true);
+                        }}
                       >
-                        <FaEdit />
-                      </Button>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        className="me-2"
-                        onClick={() =>
-                          handleDeleteModalShow(item.cafe_deal_details_id)
+                        <PiEyeBold
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">View</Tooltip>
                         }
                       >
-                        <FaTrash />
-                      </Button>
-                    </div>
-                  </td>
+                        <button className="icon_blue"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            seModaledata(item);
+                            setShowModal1(true);
+                          }}
+                        >
+                          <PiEyeBold />
+                        </button>
+                      </OverlayTrigger>}
+                    {isMobileView() ?
+                      <button className="icon_green"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateModalOpen(item);
+                        }}
+                      >
+                        <PiNotePencilBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Edit</Tooltip>
+                        }
+                      >
+                        <button className="icon_green"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateModalOpen(item);
+                          }}>
+                          <PiNotePencilBold />
+                        </button>
+                      </OverlayTrigger>}
 
-                  <td>
-                    <div className="d-flex justify-content-center">
-                      <Button variant="" size="sm" className="me-2">
-                        <FaEye />
-                      </Button>
-                    </div>
+                    {isMobileView() ?
+                      <button className="icon_red"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteModalShow(item.cafe_deals_id);
+                        }}
+                      >
+                        <PiTrashBold />
+                      </button>
+                      :
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="tooltip-bottom">Delete</Tooltip>
+                        }
+                      >
+                        <button className="icon_red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteModalShow(item.cafe_deals_id);
+                          }}>
+                          <PiTrashBold />
+                        </button>
+                      </OverlayTrigger>}
                   </td>
                 </tr>
               ))
@@ -291,6 +336,13 @@ function CafeDeals() {
           />
         </div>
       )}
+      <ShowModal
+        show={showModal1}
+        setShow={setShowModal1}
+        title="Cafe Deal"
+        bodyContent={modalContent}
+        data={modaledata}
+      />
 
       <Modal
         show={showDeleteModal}
